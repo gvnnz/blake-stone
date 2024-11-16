@@ -13,12 +13,11 @@
 //  typedefs
 //-------------------------------------------------------------------------
 
-
 //-------------------------------------------------------------------------
 // Function prototypes
 //-------------------------------------------------------------------------
 void mclear(void);
-void mprintf(char *msg, ...);
-void fmprint(char far *text);
+void mprintf(char* msg, ...);
+void fmprint(char far* text);
 
 #endif

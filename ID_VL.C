@@ -1,44 +1,42 @@
 // ID_VL.C
 
-#include <dos.h>
-#include <alloc.h>
-#include <mem.h>
-#include <string.h>
 #include "ID_HEAD.H"
 #include "ID_VL.H"
+#include <alloc.h>
+#include <dos.h>
+#include <mem.h>
+#include <string.h>
 #pragma hdrstop
-
 
 //
 // SC_INDEX is expected to stay at SC_MAPMASK for proper operation
 //
 
-unsigned	bufferofs;
-unsigned	displayofs,pelpan;
+unsigned bufferofs;
+unsigned displayofs, pelpan;
 
-unsigned	screenseg=SCREENSEG;		// set to 0xa000 for asm convenience
+unsigned screenseg = SCREENSEG; // set to 0xa000 for asm convenience
 
-unsigned	linewidth;
-unsigned	ylookup[MAXSCANLINES];
+unsigned linewidth;
+unsigned ylookup[MAXSCANLINES];
 
-boolean		screenfaded;
-unsigned	bordercolor;
+boolean  screenfaded;
+unsigned bordercolor;
 
-//boolean		fastpalette;				// if true, use outsb to set
+// boolean		fastpalette;				// if true, use outsb to set
 
-byte		far	palette1[256][3],far palette2[256][3];
+byte far palette1[256][3], far palette2[256][3];
 
 //===========================================================================
 
 // asm
 
-int	 VL_VideoID (void);
-void VL_SetCRTC (int crtc);
-void VL_SetScreen (int crtc, int pelpan);
-void VL_WaitVBL (int vbls);
+int  VL_VideoID(void);
+void VL_SetCRTC(int crtc);
+void VL_SetScreen(int crtc, int pelpan);
+void VL_WaitVBL(int vbls);
 
 //===========================================================================
-
 
 /*
 =======================
@@ -67,9 +65,9 @@ void	VL_Startup (void)
 =======================
 */
 
-void	VL_Shutdown (void)
+void VL_Shutdown(void)
 {
-	VL_SetTextMode ();
+    VL_SetTextMode();
 }
 
 #if RESTART_PICTURE_PAUSE
@@ -82,13 +80,11 @@ void	VL_Shutdown (void)
 =======================
 */
 
-void	VL_SetVGAPlaneMode (void)
+void VL_SetVGAPlaneMode(void)
 {
-asm	mov	ax,0x13
-asm	int	0x10
-	VL_DePlaneVGA ();
-	VGAMAPMASK(15);
-	VL_SetLineWidth (40);
+    asm mov ax, 0x13 asm int 0x10 VL_DePlaneVGA();
+    VGAMAPMASK(15);
+    VL_SetLineWidth(40);
 }
 
 #endif
@@ -101,10 +97,9 @@ asm	int	0x10
 =======================
 */
 
-void	VL_SetTextMode (void)
+void VL_SetTextMode(void)
 {
-asm	mov	ax,3
-asm	int	0x10
+    asm mov ax, 3 asm int 0x10
 }
 
 //===========================================================================
@@ -121,38 +116,29 @@ asm	int	0x10
 =================
 */
 
-void VL_ClearVideo (byte color)
+void VL_ClearVideo(byte color)
 {
-asm	mov	dx,GC_INDEX
-asm	mov	al,GC_MODE
-asm	out	dx,al
-asm	inc	dx
-asm	in	al,dx
-asm	and	al,0xfc				// write mode 0 to store directly to video
-asm	out	dx,al
+    asm mov dx, GC_INDEX asm mov al, GC_MODE asm out dx, al asm inc dx asm in al, dx asm and al, 0xfc // write mode 0 to store directly to video
+        asm out dx,
+        al
 
-asm	mov	dx,SC_INDEX
-asm	mov	ax,SC_MAPMASK+15*256
-asm	out	dx,ax				// write through all four planes
+        asm mov          dx,
+        SC_INDEX asm mov ax, SC_MAPMASK + 15 * 256 asm out dx, ax // write through all four planes
 
-asm	mov	ax,SCREENSEG
-asm	mov	es,ax
-asm	mov	al,[color]
-asm	mov	ah,al
-asm	mov	cx,0x8000			// 0x8000 words, clearing 8 video bytes/word
-asm	xor	di,di
-asm	rep	stosw
+        asm mov           ax,
+        SCREENSEG asm mov es, ax asm mov al, [color] asm mov ah, al asm mov cx, 0x8000 // 0x8000 words, clearing 8 video bytes/word
+                                                                                    asm xor
+                                                                                    di,
+        di asm rep stosw
 }
-
 
 /*
 =============================================================================
 
-			VGA REGISTER MANAGEMENT ROUTINES
+            VGA REGISTER MANAGEMENT ROUTINES
 
 =============================================================================
 */
-
 
 /*
 =================
@@ -162,46 +148,46 @@ asm	rep	stosw
 =================
 */
 
-void VL_DePlaneVGA (void)
+void VL_DePlaneVGA(void)
 {
 
-//
-// change CPU addressing to non linear mode
-//
+    //
+    // change CPU addressing to non linear mode
+    //
 
-//
-// turn off chain 4 and odd/even
-//
-	outportb (SC_INDEX,SC_MEMMODE);
-	outportb (SC_INDEX+1,(inportb(SC_INDEX+1)&~8)|4);
+    //
+    // turn off chain 4 and odd/even
+    //
+    outportb(SC_INDEX, SC_MEMMODE);
+    outportb(SC_INDEX + 1, (inportb(SC_INDEX + 1) & ~8) | 4);
 
-	outportb (SC_INDEX,SC_MAPMASK);		// leave this set throughought
+    outportb(SC_INDEX, SC_MAPMASK); // leave this set throughought
 
-//
-// turn off odd/even and set write mode 0
-//
-	outportb (GC_INDEX,GC_MODE);
-	outportb (GC_INDEX+1,inportb(GC_INDEX+1)&~0x13);
+    //
+    // turn off odd/even and set write mode 0
+    //
+    outportb(GC_INDEX, GC_MODE);
+    outportb(GC_INDEX + 1, inportb(GC_INDEX + 1) & ~0x13);
 
-//
-// turn off chain
-//
-	outportb (GC_INDEX,GC_MISCELLANEOUS);
-	outportb (GC_INDEX+1,inportb(GC_INDEX+1)&~2);
+    //
+    // turn off chain
+    //
+    outportb(GC_INDEX, GC_MISCELLANEOUS);
+    outportb(GC_INDEX + 1, inportb(GC_INDEX + 1) & ~2);
 
-//
-// clear the entire buffer space, because int 10h only did 16 k / plane
-//
-	VL_ClearVideo (0);
+    //
+    // clear the entire buffer space, because int 10h only did 16 k / plane
+    //
+    VL_ClearVideo(0);
 
-//
-// change CRTC scanning from doubleword to byte mode, allowing >64k scans
-//
-	outportb (CRTC_INDEX,CRTC_UNDERLINE);
-	outportb (CRTC_INDEX+1,inportb(CRTC_INDEX+1)&~0x40);
+    //
+    // change CRTC scanning from doubleword to byte mode, allowing >64k scans
+    //
+    outportb(CRTC_INDEX, CRTC_UNDERLINE);
+    outportb(CRTC_INDEX + 1, inportb(CRTC_INDEX + 1) & ~0x40);
 
-	outportb (CRTC_INDEX,CRTC_MODE);
-	outportb (CRTC_INDEX+1,inportb(CRTC_INDEX+1)|0x40);
+    outportb(CRTC_INDEX, CRTC_MODE);
+    outportb(CRTC_INDEX + 1, inportb(CRTC_INDEX + 1) | 0x40);
 }
 
 //===========================================================================
@@ -216,27 +202,27 @@ void VL_DePlaneVGA (void)
 ====================
 */
 
-void VL_SetLineWidth (unsigned width)
+void VL_SetLineWidth(unsigned width)
 {
-	int i,offset;
+    int i, offset;
 
-//
-// set wide virtual screen
-//
-	outport (CRTC_INDEX,CRTC_OFFSET+width*256);
+    //
+    // set wide virtual screen
+    //
+    outport(CRTC_INDEX, CRTC_OFFSET + width * 256);
 
-//
-// set up lookup tables
-//
-	linewidth = width*2;
+    //
+    // set up lookup tables
+    //
+    linewidth = width * 2;
 
-	offset = 0;
+    offset = 0;
 
-	for (i=0;i<MAXSCANLINES;i++)
-	{
-		ylookup[i]=offset;
-		offset += linewidth;
-	}
+    for (i = 0; i < MAXSCANLINES; i++)
+    {
+        ylookup[i] = offset;
+        offset += linewidth;
+    }
 }
 
 #endif
@@ -263,19 +249,17 @@ void VL_SetSplitScreen (int linenum)
 	outportb (CRTC_INDEX+1,inportb(CRTC_INDEX+1) & (255-64));
 }
 
-#endif  
-
+#endif
 
 /*
 =============================================================================
 
-						PALETTE OPS
+                        PALETTE OPS
 
-		To avoid snow, do a WaitVBL BEFORE calling these
+        To avoid snow, do a WaitVBL BEFORE calling these
 
 =============================================================================
 */
-
 
 /*
 =================
@@ -285,21 +269,20 @@ void VL_SetSplitScreen (int linenum)
 =================
 */
 
-void VL_FillPalette (int red, int green, int blue)
+void VL_FillPalette(int red, int green, int blue)
 {
-	int	i;
+    int i;
 
-	outportb (PEL_WRITE_ADR,0);
-	for (i=0;i<256;i++)
-	{
-		outportb (PEL_DATA,red);
-		outportb (PEL_DATA,green);
-		outportb (PEL_DATA,blue);
-	}
+    outportb(PEL_WRITE_ADR, 0);
+    for (i = 0; i < 256; i++)
+    {
+        outportb(PEL_DATA, red);
+        outportb(PEL_DATA, green);
+        outportb(PEL_DATA, blue);
+    }
 }
 
 //===========================================================================
-
 
 #if 0		
 /*
@@ -317,8 +300,7 @@ void VL_SetColor	(int color, int red, int green, int blue)
 	outportb (PEL_DATA,green);
 	outportb (PEL_DATA,blue);
 }
-#endif 
-
+#endif
 
 //===========================================================================
 
@@ -340,7 +322,7 @@ void VL_GetColor	(int color, int *red, int *green, int *blue)
 	*blue = inportb (PEL_DATA);
 }
 
-#endif 	
+#endif
 
 //===========================================================================
 
@@ -355,17 +337,13 @@ void VL_GetColor	(int color, int *red, int *green, int *blue)
 =================
 */
 
-void VL_SetPalette (byte firstreg, unsigned numregs, byte far *palette)
+void VL_SetPalette(byte firstreg, unsigned numregs, byte far* palette)
 {
-	int	i; 	//,three=3;
+    int i; //,three=3;
 
-	VL_WaitVBL(1);
+    VL_WaitVBL(1);
 
-	asm	mov	dx,PEL_WRITE_ADR
-	asm	mov	al,[firstreg]
-	asm	out	dx,al
-	asm	mov	dx,PEL_DATA
-	asm	lds	si,[palette]
+    asm mov dx, PEL_WRITE_ADR asm mov al, [firstreg] asm out dx, al asm mov dx, PEL_DATA asm lds si, [palette]
 
 #if 0
 	asm	test	[ss:fastpalette],1
@@ -380,25 +358,18 @@ void VL_SetPalette (byte firstreg, unsigned numregs, byte far *palette)
 	asm	jmp	done
 #endif
 
-// set palette slowly for some video cards
-//
-slowset:
-	asm	mov	cx,[numregs]
-setloop:
-	asm	lodsb
-	asm	out	dx,al
-	asm	lodsb
-	asm	out	dx,al
-	asm	lodsb
-	asm	out	dx,al
-	asm	loop	setloop
+        // set palette slowly for some video cards
+        //
+        slowset : asm mov                                  cx,
+                  [numregs] setloop : asm lodsb asm out    dx,
+                                      al asm lodsb asm out dx,
+                                      al asm lodsb asm out dx,
+                                      al asm loop setloop
 
-done:
-	asm	mov	ax,ss
-	asm	mov	ds,ax
-
+                                          done : asm mov    ax,
+                                                 ss asm mov ds,
+                                                 ax
 }
-
 
 //===========================================================================
 
@@ -413,20 +384,19 @@ done:
 =================
 */
 
-void VL_GetPalette (byte firstreg, unsigned numregs, byte far *palette)
+void VL_GetPalette(byte firstreg, unsigned numregs, byte far* palette)
 {
-	int	i;
+    int i;
 
-	numregs *= 3;
+    numregs *= 3;
 
-	VL_WaitVBL(1);
-	outportb (PEL_READ_ADR,firstreg);
-	for (i=0;i<numregs;i++)
-		*palette++ = inportb(PEL_DATA);
+    VL_WaitVBL(1);
+    outportb(PEL_READ_ADR, firstreg);
+    for (i = 0; i < numregs; i++)
+        *palette++ = inportb(PEL_DATA);
 }
 
 //===========================================================================
-
 
 /*
 =================
@@ -438,45 +408,44 @@ void VL_GetPalette (byte firstreg, unsigned numregs, byte far *palette)
 =================
 */
 
-void VL_FadeOut (int start, int end, int red, int green, int blue, int steps)
+void VL_FadeOut(int start, int end, int red, int green, int blue, int steps)
 {
-	int		i,j,orig,delta;
-	byte	far *origptr, far *newptr;
+    int       i, j, orig, delta;
+    byte far *origptr, far *newptr;
 
-	VL_GetPalette (0,256,&palette1[0][0]);
-	_fmemcpy (palette2,palette1,768);
+    VL_GetPalette(0, 256, &palette1[0][0]);
+    _fmemcpy(palette2, palette1, 768);
 
-//
-// fade through intermediate frames
-//
-	for (i=0;i<steps;i++)
-	{
-		origptr = &palette1[start][0];
-		newptr = &palette2[start][0];
-		for (j=start;j<=end;j++)
-		{
-			orig = *origptr++;
-			delta = red-orig;
-			*newptr++ = orig + delta * i / steps;
-			orig = *origptr++;
-			delta = green-orig;
-			*newptr++ = orig + delta * i / steps;
-			orig = *origptr++;
-			delta = blue-orig;
-			*newptr++ = orig + delta * i / steps;
-		}
+    //
+    // fade through intermediate frames
+    //
+    for (i = 0; i < steps; i++)
+    {
+        origptr = &palette1[start][0];
+        newptr  = &palette2[start][0];
+        for (j = start; j <= end; j++)
+        {
+            orig      = *origptr++;
+            delta     = red - orig;
+            *newptr++ = orig + delta * i / steps;
+            orig      = *origptr++;
+            delta     = green - orig;
+            *newptr++ = orig + delta * i / steps;
+            orig      = *origptr++;
+            delta     = blue - orig;
+            *newptr++ = orig + delta * i / steps;
+        }
 
-		VL_SetPalette (0,256,&palette2[0][0]);
-	}
+        VL_SetPalette(0, 256, &palette2[0][0]);
+    }
 
-//
-// final color
-//
-	VL_FillPalette (red,green,blue);
+    //
+    // final color
+    //
+    VL_FillPalette(red, green, blue);
 
-	screenfaded = true;
+    screenfaded = true;
 }
-
 
 /*
 =================
@@ -486,66 +455,66 @@ void VL_FadeOut (int start, int end, int red, int green, int blue, int steps)
 =================
 */
 
-void VL_FadeIn (int start, int end, byte far *palette, int steps)
+void VL_FadeIn(int start, int end, byte far* palette, int steps)
 {
-	int		i,j,delta;
+    int i, j, delta;
 
-	VL_GetPalette (0,256,&palette1[0][0]);
-	_fmemcpy (&palette2[0][0],&palette1[0][0],sizeof(palette1));
+    VL_GetPalette(0, 256, &palette1[0][0]);
+    _fmemcpy(&palette2[0][0], &palette1[0][0], sizeof(palette1));
 
-	start *= 3;
-	end = end*3+2;
+    start *= 3;
+    end = end * 3 + 2;
 
-//
-// fade through intermediate frames
-//
-	for (i=0;i<steps;i++)
-	{
-		for (j=start;j<=end;j++)
-		{
-			delta = palette[j]-palette1[0][j];
-			palette2[0][j] = palette1[0][j] + delta * i / steps;
-		}
+    //
+    // fade through intermediate frames
+    //
+    for (i = 0; i < steps; i++)
+    {
+        for (j = start; j <= end; j++)
+        {
+            delta          = palette[j] - palette1[0][j];
+            palette2[0][j] = palette1[0][j] + delta * i / steps;
+        }
 
-		VL_SetPalette (0,256,&palette2[0][0]);
-	}
+        VL_SetPalette(0, 256, &palette2[0][0]);
+    }
 
-//
-// final color
-//
-	VL_SetPalette (0,256,palette);
-	screenfaded = false;
+    //
+    // final color
+    //
+    VL_SetPalette(0, 256, palette);
+    screenfaded = false;
 }
 
 //------------------------------------------------------------------------
 // VL_SetPaletteIntensity()
 //------------------------------------------------------------------------
-void VL_SetPaletteIntensity(int start, int end, byte far *palette, char intensity)
+void VL_SetPaletteIntensity(int start, int end, byte far* palette, char intensity)
 {
-	short loop;
-	char red,green,blue;
-	byte far *cmap = &palette1[0][0]+start*3;
+    short     loop;
+    char      red, green, blue;
+    byte far* cmap = &palette1[0][0] + start * 3;
 
-	intensity = 63 - intensity;
-	for (loop=start; loop<=end;loop++)
-	{
-		red = *palette++ - intensity;
-		if (red < 0)
-			red = 0;
-		*cmap++ = red;
+    intensity = 63 - intensity;
+    for (loop = start; loop <= end; loop++)
+    {
+        red = *palette++ - intensity;
+        if (red < 0)
+            red = 0;
+        *cmap++ = red;
 
-		green = *palette++ - intensity;
-		if (green < 0)
-			green = 0;
-		*cmap++ = green;
+        green = *palette++ - intensity;
+        if (green < 0)
+            green = 0;
+        *cmap++ = green;
 
-		blue = *palette++ - intensity;
-		if (blue < 0)
-			blue = 0;
-		*cmap++ = blue;
-	}
+        blue = *palette++ - intensity;
+        if (blue < 0)
+            blue = 0;
+        *cmap++ = blue;
+    }
 
-	VL_SetPalette(start,end-start+1,&palette1[0][0]);
+    VL_SetPalette(start, end - start + 1, &palette1[0][0]);
 }
 
 #if 0
@@ -579,9 +548,6 @@ void FadeIn(char *colormap, short numcolors, char delay)
 	}
 }
 #endif
-
-
-
 
 #if 0
 /*
@@ -618,29 +584,26 @@ void VL_TestPaletteSet (void)
 ==================
 */
 
-void VL_ColorBorder (int color)
+void VL_ColorBorder(int color)
 {
-	_AH=0x10;
-	_AL=1;
-	_BH=color;
-	geninterrupt (0x10);
-	bordercolor = color;
+    _AH = 0x10;
+    _AL = 1;
+    _BH = color;
+    geninterrupt(0x10);
+    bordercolor = color;
 }
-
-
 
 /*
 =============================================================================
 
-							PIXEL OPS
+                            PIXEL OPS
 
 =============================================================================
 */
 
-byte	pixmasks[4] = {1,2,4,8};
-byte	leftmasks[4] = {15,14,12,8};
-byte	rightmasks[4] = {1,3,7,15};
-
+byte pixmasks[4]   = {1, 2, 4, 8};
+byte leftmasks[4]  = {15, 14, 12, 8};
+byte rightmasks[4] = {1, 3, 7, 15};
 
 /*
 =================
@@ -650,16 +613,15 @@ byte	rightmasks[4] = {1,3,7,15};
 =================
 */
 
-void VL_Plot (int x, int y, int color)
+void VL_Plot(int x, int y, int color)
 {
-	byte mask;
+    byte mask;
 
-	mask = pixmasks[x&3];
-	VGAMAPMASK(mask);
-	*(byte far *)MK_FP(SCREENSEG,bufferofs+(ylookup[y]+(x>>2))) = color;
-	VGAMAPMASK(15);
+    mask = pixmasks[x & 3];
+    VGAMAPMASK(mask);
+    *(byte far*)MK_FP(SCREENSEG, bufferofs + (ylookup[y] + (x >> 2))) = color;
+    VGAMAPMASK(15);
 }
-
 
 /*
 =================
@@ -669,42 +631,41 @@ void VL_Plot (int x, int y, int color)
 =================
 */
 
-void VL_Hlin (unsigned x, unsigned y, unsigned width, unsigned color)
+void VL_Hlin(unsigned x, unsigned y, unsigned width, unsigned color)
 {
-	unsigned		xbyte;
-	byte			far *dest;
-	byte			leftmask,rightmask;
-	int				midbytes;
+    unsigned  xbyte;
+    byte far* dest;
+    byte      leftmask, rightmask;
+    int       midbytes;
 
-	xbyte = x>>2;
-	leftmask = leftmasks[x&3];
-	rightmask = rightmasks[(x+width-1)&3];
-	midbytes = ((x+width+3)>>2) - xbyte - 2;
+    xbyte     = x >> 2;
+    leftmask  = leftmasks[x & 3];
+    rightmask = rightmasks[(x + width - 1) & 3];
+    midbytes  = ((x + width + 3) >> 2) - xbyte - 2;
 
-	dest = MK_FP(SCREENSEG,bufferofs+ylookup[y]+xbyte);
+    dest = MK_FP(SCREENSEG, bufferofs + ylookup[y] + xbyte);
 
-	if (midbytes<0)
-	{
-	// all in one byte
-		VGAMAPMASK(leftmask&rightmask);
-		*dest = color;
-		VGAMAPMASK(15);
-		return;
-	}
+    if (midbytes < 0)
+    {
+        // all in one byte
+        VGAMAPMASK(leftmask & rightmask);
+        *dest = color;
+        VGAMAPMASK(15);
+        return;
+    }
 
-	VGAMAPMASK(leftmask);
-	*dest++ = color;
+    VGAMAPMASK(leftmask);
+    *dest++ = color;
 
-	VGAMAPMASK(15);
-	_fmemset (dest,color,midbytes);
-	dest+=midbytes;
+    VGAMAPMASK(15);
+    _fmemset(dest, color, midbytes);
+    dest += midbytes;
 
-	VGAMAPMASK(rightmask);
-	*dest = color;
+    VGAMAPMASK(rightmask);
+    *dest = color;
 
-	VGAMAPMASK(15);
+    VGAMAPMASK(15);
 }
-
 
 /*
 =================
@@ -714,24 +675,23 @@ void VL_Hlin (unsigned x, unsigned y, unsigned width, unsigned color)
 =================
 */
 
-void VL_Vlin (int x, int y, int height, int color)
+void VL_Vlin(int x, int y, int height, int color)
 {
-	byte	far *dest,mask;
+    byte far *dest, mask;
 
-	mask = pixmasks[x&3];
-	VGAMAPMASK(mask);
+    mask = pixmasks[x & 3];
+    VGAMAPMASK(mask);
 
-	dest = MK_FP(SCREENSEG,bufferofs+ylookup[y]+(x>>2));
+    dest = MK_FP(SCREENSEG, bufferofs + ylookup[y] + (x >> 2));
 
-	while (height--)
-	{
-		*dest = color;
-		dest += linewidth;
-	}
+    while (height--)
+    {
+        *dest = color;
+        dest += linewidth;
+    }
 
-	VGAMAPMASK(15);
+    VGAMAPMASK(15);
 }
-
 
 /*
 =================
@@ -741,54 +701,54 @@ void VL_Vlin (int x, int y, int height, int color)
 =================
 */
 
-void VL_Bar (int x, int y, int width, int height, int color)
+void VL_Bar(int x, int y, int width, int height, int color)
 {
-	byte	far *dest;
-	byte	leftmask,rightmask;
-	int		midbytes,linedelta;
+    byte far* dest;
+    byte      leftmask, rightmask;
+    int       midbytes, linedelta;
 
-	leftmask = leftmasks[x&3];
-	rightmask = rightmasks[(x+width-1)&3];
-	midbytes = ((x+width+3)>>2) - (x>>2) - 2;
-	linedelta = linewidth-(midbytes+1);
+    leftmask  = leftmasks[x & 3];
+    rightmask = rightmasks[(x + width - 1) & 3];
+    midbytes  = ((x + width + 3) >> 2) - (x >> 2) - 2;
+    linedelta = linewidth - (midbytes + 1);
 
-	dest = MK_FP(SCREENSEG,bufferofs+ylookup[y]+(x>>2));
+    dest = MK_FP(SCREENSEG, bufferofs + ylookup[y] + (x >> 2));
 
-	if (midbytes<0)
-	{
-	// all in one byte
-		VGAMAPMASK(leftmask&rightmask);
-		while (height--)
-		{
-			*dest = color;
-			dest += linewidth;
-		}
-		VGAMAPMASK(15);
-		return;
-	}
+    if (midbytes < 0)
+    {
+        // all in one byte
+        VGAMAPMASK(leftmask & rightmask);
+        while (height--)
+        {
+            *dest = color;
+            dest += linewidth;
+        }
+        VGAMAPMASK(15);
+        return;
+    }
 
-	while (height--)
-	{
-		VGAMAPMASK(leftmask);
-		*dest++ = color;
+    while (height--)
+    {
+        VGAMAPMASK(leftmask);
+        *dest++ = color;
 
-		VGAMAPMASK(15);
-		_fmemset (dest,color,midbytes);
-		dest+=midbytes;
+        VGAMAPMASK(15);
+        _fmemset(dest, color, midbytes);
+        dest += midbytes;
 
-		VGAMAPMASK(rightmask);
-		*dest = color;
+        VGAMAPMASK(rightmask);
+        *dest = color;
 
-		dest+=linedelta;
-	}
+        dest += linedelta;
+    }
 
-	VGAMAPMASK(15);
+    VGAMAPMASK(15);
 }
 
 /*
 ============================================================================
 
-							MEMORY OPS
+                            MEMORY OPS
 
 ============================================================================
 */
@@ -801,34 +761,25 @@ void VL_Bar (int x, int y, int width, int height, int color)
 =================
 */
 
-void VL_MemToLatch (byte far *source, int width, int height, unsigned dest)
+void VL_MemToLatch(byte far* source, int width, int height, unsigned dest)
 {
-	unsigned	count;
-	byte	plane,mask;
+    unsigned count;
+    byte     plane, mask;
 
-	count = ((width+3)/4)*height;
-	mask = 1;
-	for (plane = 0; plane<4 ; plane++)
-	{
-		VGAMAPMASK(mask);
-		mask <<= 1;
+    count = ((width + 3) / 4) * height;
+    mask  = 1;
+    for (plane = 0; plane < 4; plane++)
+    {
+        VGAMAPMASK(mask);
+        mask <<= 1;
 
-asm	mov	cx,count
-asm mov ax,SCREENSEG
-asm mov es,ax
-asm	mov	di,[dest]
-asm	lds	si,[source]
-asm	rep movsb
-asm mov	ax,ss
-asm	mov	ds,ax
+        asm mov cx, count asm mov ax, SCREENSEG asm mov es, ax asm mov di, [dest] asm lds si, [source] asm rep movsb asm mov ax, ss asm mov ds, ax
 
-		source+= count;
-	}
+                                                                                                                                                    source += count;
+    }
 }
 
-
 //===========================================================================
-
 
 /*
 =================
@@ -840,26 +791,26 @@ asm	mov	ds,ax
 =================
 */
 
-void VL_MemToScreen (byte far *source, int width, int height, int x, int y)
+void VL_MemToScreen(byte far* source, int width, int height, int x, int y)
 {
-	byte    far *screen,far *dest,mask;
-	int		plane;
+    byte far *screen, far *dest, mask;
+    int plane;
 
-	width>>=2;
-	dest = MK_FP(SCREENSEG,bufferofs+ylookup[y]+(x>>2) );
-	mask = 1 << (x&3);
+    width >>= 2;
+    dest = MK_FP(SCREENSEG, bufferofs + ylookup[y] + (x >> 2));
+    mask = 1 << (x & 3);
 
-	for (plane = 0; plane<4; plane++)
-	{
-		VGAMAPMASK(mask);
-		mask <<= 1;
-		if (mask == 16)
-			mask = 1;
+    for (plane = 0; plane < 4; plane++)
+    {
+        VGAMAPMASK(mask);
+        mask <<= 1;
+        if (mask == 16)
+            mask = 1;
 
-		screen = dest;
-		for (y=0;y<height;y++,screen+=linewidth,source+=width)
-			_fmemcpy (screen,source,width);
-	}
+        screen = dest;
+        for (y = 0; y < height; y++, screen += linewidth, source += width)
+            _fmemcpy(screen, source, width);
+    }
 }
 
 //==========================================================================
@@ -867,74 +818,72 @@ void VL_MemToScreen (byte far *source, int width, int height, int x, int y)
 //------------------------------------------------------------------------
 // VL_MaskMemToScreen()
 //------------------------------------------------------------------------
-void VL_MaskMemToScreen (byte far *source, int width, int height, int x, int y, byte mask)
+void VL_MaskMemToScreen(byte far* source, int width, int height, int x, int y, byte mask)
 {
-	byte    far *screen,far *dest,bmask;
-	int		plane,w,h,mod;
+    byte far *screen, far *dest, bmask;
+    int plane, w, h, mod;
 
-	width>>=2;
-	dest = MK_FP(SCREENSEG,bufferofs+ylookup[y]+(x>>2));
-	bmask = 1 << (x&3);
-	mod = linewidth - width;
+    width >>= 2;
+    dest  = MK_FP(SCREENSEG, bufferofs + ylookup[y] + (x >> 2));
+    bmask = 1 << (x & 3);
+    mod   = linewidth - width;
 
-	for (plane = 0; plane<4; plane++)
-	{
-		VGAMAPMASK(bmask);
+    for (plane = 0; plane < 4; plane++)
+    {
+        VGAMAPMASK(bmask);
 
-		screen = dest;
-		h = height;
-		while (h--)
-		{
-			w = width;
-			while (w--)
-			{
-				if (*source != mask)
-					*screen = *source;
-				source++;
-				screen++;
-			}
-			screen += mod;
-		}
+        screen = dest;
+        h      = height;
+        while (h--)
+        {
+            w = width;
+            while (w--)
+            {
+                if (*source != mask)
+                    *screen = *source;
+                source++;
+                screen++;
+            }
+            screen += mod;
+        }
 
-		bmask <<= 1;
-		if (bmask == 16)
-		{
-			bmask = 1;
-			dest++;
-		}
-	}
+        bmask <<= 1;
+        if (bmask == 16)
+        {
+            bmask = 1;
+            dest++;
+        }
+    }
 }
-
 
 //------------------------------------------------------------------------
 // VL_ScreenToMem()
 //------------------------------------------------------------------------
-void VL_ScreenToMem(byte far *dest, int width, int height, int x, int y)
+void VL_ScreenToMem(byte far* dest, int width, int height, int x, int y)
 {
-	byte    far *screen,far *source,mask;
-	int		plane;
+    byte far *screen, far *source, mask;
+    int plane;
 
-	width>>=2;
-	source = MK_FP(SCREENSEG,bufferofs+ylookup[y]+(x>>2) );
-	mask = 0;
+    width >>= 2;
+    source = MK_FP(SCREENSEG, bufferofs + ylookup[y] + (x >> 2));
+    mask   = 0;
 
-	for (plane = 0; plane<4; plane++)
-	{
-		VGAREADMAP(mask);
+    for (plane = 0; plane < 4; plane++)
+    {
+        VGAREADMAP(mask);
 
-		screen = source;
-		for (y=0;y<height;y++,screen+=linewidth,dest+=width)
-			_fmemcpy (dest,screen,width);
+        screen = source;
+        for (y = 0; y < height; y++, screen += linewidth, dest += width)
+            _fmemcpy(dest, screen, width);
 
-		mask++;
-		if (mask == 4)
-		{
-			mask = 0;
-			source++;
-		}
-	}
+        mask++;
+        if (mask == 4)
+        {
+            mask = 0;
+            source++;
+        }
+    }
 }
-
 
 //==========================================================================
 
@@ -946,41 +895,28 @@ void VL_ScreenToMem(byte far *dest, int width, int height, int x, int y)
 =================
 */
 
-void VL_LatchToScreen (unsigned source, int width, int height, int x, int y)
+void VL_LatchToScreen(unsigned source, int width, int height, int x, int y)
 {
-	VGAWRITEMODE(1);
-	VGAMAPMASK(15);
+    VGAWRITEMODE(1);
+    VGAMAPMASK(15);
 
-asm	mov	di,[y]				// dest = bufferofs+ylookup[y]+(x>>2)
-asm	shl	di,1
-asm	mov	di,[WORD PTR ylookup+di]
-asm	add	di,[bufferofs]
-asm	mov	ax,[x]
-asm	shr	ax,2
-asm	add	di,ax
+    asm mov       di, [y] // dest = bufferofs+ylookup[y]+(x>>2)
+        asm shl   di,
+        1 asm mov di, [WORD PTR ylookup + di] asm add di, [bufferofs] asm mov ax, [x] asm shr ax, 2 asm add di, ax
 
-asm	mov	si,[source]
-asm	mov	ax,[width]
-asm	mov	bx,[linewidth]
-asm	sub	bx,ax
-asm	mov	dx,[height]
-asm	mov	cx,SCREENSEG
-asm	mov	ds,cx
-asm	mov	es,cx
+        asm mov          si,
+        [source] asm mov ax, [width] asm mov bx, [linewidth] asm sub bx, ax asm mov dx, [height] asm mov cx, SCREENSEG asm mov ds, cx asm mov es, cx
 
-drawline:
-asm	mov	cx,ax
-asm	rep movsb
-asm	add	di,bx
-asm	dec	dx
-asm	jnz	drawline
+                                                                                                                                                      drawline : asm mov                  cx,
+                                                                                                                                                                 ax asm rep movsb asm add di,
+                                                                                                                                                                 bx asm dec dx asm jnz drawline
 
-asm	mov	ax,ss
-asm	mov	ds,ax
+                                                                                                                                                                 asm mov    ax,
+                                                                                                                                                                 ss asm mov ds,
+                                                                                                                                                                 ax
 
-	VGAWRITEMODE(0);
+                                                                                                                                                                     VGAWRITEMODE(0);
 }
-
 
 //===========================================================================
 
@@ -1023,18 +959,15 @@ asm	mov	ds,ax
 	VGAWRITEMODE(0);
 }
 
-
 #endif
 
 /*
 =============================================================================
 
-						STRING OUTPUT ROUTINES
+                        STRING OUTPUT ROUTINES
 
 =============================================================================
 */
-
-
 
 #if 0	
 /*
@@ -1149,7 +1082,6 @@ asm	mov	ds,ax
 
 #endif
 
-
 #if 0
 
 /*
@@ -1167,10 +1099,3 @@ void VL_SizeTile8String (char *str, int *width, int *height)
 }
 
 #endif
-
-
-
-
-
-
-

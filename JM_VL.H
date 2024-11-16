@@ -12,13 +12,9 @@
 //     Copyright (c) 1993 - JAM Productions Inc, All rights reserved.
 //==========================================================================
 
-
-
 //---------------------------------------------------------------------
 // VGA Routines
 //---------------------------------------------------------------------
-void JM_VGALinearFill(unsigned start,unsigned length, char fill);
-
-
+void JM_VGALinearFill(unsigned start, unsigned length, char fill);
 
 #endif

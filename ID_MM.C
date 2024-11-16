@@ -3,8 +3,8 @@
 /*
 =============================================================================
 
-		   ID software memory manager
-		   --------------------------
+           ID software memory manager
+           --------------------------
 
 Primary coder: John Carmack
 
@@ -29,91 +29,99 @@ EMS / XMS unmanaged routines
 #include <dos.h>
 #pragma hdrstop
 
-#pragma warn -pro
-#pragma warn -use
+#pragma warn - pro
+#pragma warn - use
 
 /*
 =============================================================================
 
-							LOCAL INFO
+                            LOCAL INFO
 
 =============================================================================
 */
 
-//#define LOCKBIT			0x80	// if set in attributes, block cannot be moved
-#define PURGEBITS			3		// 0-3 level, 0= unpurgable, 3= purge first
-#define PURGEMASK			0xfffc
-#define BASEATTRIBUTES	0		// unlocked, non purgable
+// #define LOCKBIT			0x80	// if set in attributes, block cannot be moved
+#define PURGEBITS 3 // 0-3 level, 0= unpurgable, 3= purge first
+#define PURGEMASK 0xfffc
+#define BASEATTRIBUTES 0 // unlocked, non purgable
 
-#define MAXUMBS			10
-
+#define MAXUMBS 10
 
 //#define GETNEWBLOCK {if(!(mmnew=mmfree))Quit("MM_GETNEWBLOCK: No free blocks!")\
 //	;mmfree=mmfree->next;}
 
-//#define GETNEWBLOCK {if(!mmfree)MML_ClearBlock();mmnew=mmfree;mmfree=mmfree->next;}
+// #define GETNEWBLOCK {if(!mmfree)MML_ClearBlock();mmnew=mmfree;mmfree=mmfree->next;}
 
 #if IN_DEVELOPMENT
-	#define FREEBLOCK(x) {*x->useptr=NULL;x->next=mmfree;mmfree=x;blockcount--;}
+#define FREEBLOCK(x)         \
+    {                        \
+        *x->useptr = NULL;   \
+        x->next    = mmfree; \
+        mmfree     = x;      \
+        blockcount--;        \
+    }
 #else
-	#define FREEBLOCK(x) {*x->useptr=NULL;x->next=mmfree;mmfree=x;}
+#define FREEBLOCK(x)         \
+    {                        \
+        *x->useptr = NULL;   \
+        x->next    = mmfree; \
+        mmfree     = x;      \
+    }
 #endif
 
 /*
 =============================================================================
 
-						 GLOBAL VARIABLES
+                         GLOBAL VARIABLES
 
 =============================================================================
 */
 
-//unsigned __SEGS_AVAILABLE__;
+// unsigned __SEGS_AVAILABLE__;
 
 #if IN_DEVELOPMENT
 unsigned long __PUR_MEM_AVAIL__;
 unsigned long __FREE_MEM_AVAIL__;
 #endif
 
-int errorfile=-1;						// jdebug
+int errorfile = -1; // jdebug
 
-mminfotype	mminfo;
-memptr		bufferseg;
-boolean		mmerror;
+mminfotype mminfo;
+memptr     bufferseg;
+boolean    mmerror;
 #if IN_DEVELOPMENT
-boolean 		clearblock_error=false;			// mdebug
+boolean clearblock_error = false; // mdebug
 #endif
 
-void		(* beforesort) (void);
-void		(* aftersort) (void);
+void (*beforesort)(void);
+void (*aftersort)(void);
 
 /*
 =============================================================================
 
-						 LOCAL VARIABLES
+                         LOCAL VARIABLES
 
 =============================================================================
 */
 
-boolean		mmstarted;
+boolean mmstarted;
 
-void far	*farheap;
-void		*nearheap;
+void far* farheap;
+void*     nearheap;
 
-mmblocktype	far mmblocks[MAXBLOCKS]
-			,far *mmhead,far *mmfree,far *mmrover,far *mmnew;
+mmblocktype far mmblocks[MAXBLOCKS], far *mmhead, far *mmfree, far *mmrover, far *mmnew;
 
-boolean		bombonerror;
+boolean bombonerror;
 
-//unsigned	totalEMSpages,freeEMSpages,EMSpageframe,EMSpagesmapped,EMShandle;
+// unsigned	totalEMSpages,freeEMSpages,EMSpageframe,EMSpagesmapped,EMShandle;
 
-void		(* XMSaddr) (void);		// far pointer to XMS driver
+void (*XMSaddr)(void); // far pointer to XMS driver
 
 #if IN_DEVELOPMENT
 unsigned blockcount = 0;
 #endif
 
-
-//unsigned	numUMBs,UMBbase[MAXUMBS];		// jdebug
+// unsigned	numUMBs,UMBbase[MAXUMBS];		// jdebug
 
 //==========================================================================
 
@@ -121,17 +129,17 @@ unsigned blockcount = 0;
 // local prototypes
 //
 
-boolean		MML_CheckForEMS (void);
-void 		MML_ShutdownEMS (void);
-void 		MM_MapEMS (void);
-boolean 	MML_CheckForXMS (void);
-void 		MML_ShutdownXMS (void);
-void		MML_UseSpace (unsigned segstart, unsigned seglength);
-void 		MML_ClearBlock (void);
+boolean MML_CheckForEMS(void);
+void    MML_ShutdownEMS(void);
+void    MM_MapEMS(void);
+boolean MML_CheckForXMS(void);
+void    MML_ShutdownXMS(void);
+void    MML_UseSpace(unsigned segstart, unsigned seglength);
+void    MML_ClearBlock(void);
 
 //==========================================================================
 
-void PrintAllocated(long amount);		// mdebug
+void PrintAllocated(long amount); // mdebug
 
 /*
 ======================
@@ -160,10 +168,7 @@ good:
 	return true;
 }
 
-#endif 
-
-
-
+#endif
 
 #if 0	
 /*
@@ -219,9 +224,7 @@ asm	{
 done:;
 }
 
-
 #endif
-
 
 #if 0
 
@@ -250,7 +253,6 @@ asm	call	[DWORD PTR XMSaddr]
 
 #endif
 
-
 //==========================================================================
 
 /*
@@ -265,52 +267,52 @@ asm	call	[DWORD PTR XMSaddr]
 ======================
 */
 
-void MML_UseSpace (unsigned segstart, unsigned seglength)
+void MML_UseSpace(unsigned segstart, unsigned seglength)
 {
-	mmblocktype far *scan,far *last;
-	unsigned	oldend;
-	long		extra;
+    mmblocktype far *scan, far *last;
+    unsigned oldend;
+    long     extra;
 
-	scan = last = mmhead;
-	mmrover = mmhead;		// reset rover to start of memory
+    scan = last = mmhead;
+    mmrover     = mmhead; // reset rover to start of memory
 
-//
-// search for the block that contains the range of segments
-//
-	while (scan->start+scan->length < segstart)
-	{
-		last = scan;
-		scan = scan->next;
-	}
+    //
+    // search for the block that contains the range of segments
+    //
+    while (scan->start + scan->length < segstart)
+    {
+        last = scan;
+        scan = scan->next;
+    }
 
-//
-// take the given range out of the block
-//
-	oldend = scan->start + scan->length;
-	extra = oldend - (segstart+seglength);
-	if (extra < 0)
-		MM_ERROR(MML_USESPACE_TWO_BLOCKS);
+    //
+    // take the given range out of the block
+    //
+    oldend = scan->start + scan->length;
+    extra  = oldend - (segstart + seglength);
+    if (extra < 0)
+        MM_ERROR(MML_USESPACE_TWO_BLOCKS);
 
-	if (segstart == scan->start)
-	{
-		last->next = scan->next;			// unlink block
-		FREEBLOCK(scan);
-		scan = last;
-	}
-	else
-		scan->length = segstart-scan->start;	// shorten block
+    if (segstart == scan->start)
+    {
+        last->next = scan->next; // unlink block
+        FREEBLOCK(scan);
+        scan = last;
+    }
+    else
+        scan->length = segstart - scan->start; // shorten block
 
-	if (extra > 0)
-	{
-		GETNEWBLOCK;
-		mmnew->useptr = NULL;
+    if (extra > 0)
+    {
+        GETNEWBLOCK;
+        mmnew->useptr = NULL;
 
-		mmnew->next = scan->next;
-		scan->next = mmnew;
-		mmnew->start = segstart+seglength;
-		mmnew->length = extra;
-		mmnew->attributes = LOCKBIT;
-	}
+        mmnew->next       = scan->next;
+        scan->next        = mmnew;
+        mmnew->start      = segstart + seglength;
+        mmnew->length     = extra;
+        mmnew->attributes = LOCKBIT;
+    }
 }
 
 //==========================================================================
@@ -331,14 +333,14 @@ void MML_UseSpace (unsigned segstart, unsigned seglength)
 
 #if IN_DEVELOPMENT
 
-char far cb_text[]="\n\n"
-						 " YOU'VE JUST FOUND THE 90:02 ERROR!\n"
-						 "\n"
-						 " TAKE NOTE OF WHAT -JUST- HAPPEND BEFORE\n"
-						 " THE ERROR AND -WHERE- YOU ARE.\n"
-						 "\n"
-						 " REPORT ALL INFO TO JAM PRODUCTIONS\n"
-						 " VIA THE BETA CONFERENCE. THANKS!        PRESS A KEY\n\n";
+char far cb_text[] = "\n\n"
+                     " YOU'VE JUST FOUND THE 90:02 ERROR!\n"
+                     "\n"
+                     " TAKE NOTE OF WHAT -JUST- HAPPEND BEFORE\n"
+                     " THE ERROR AND -WHERE- YOU ARE.\n"
+                     "\n"
+                     " REPORT ALL INFO TO JAM PRODUCTIONS\n"
+                     " VIA THE BETA CONFERENCE. THANKS!        PRESS A KEY\n\n";
 #endif
 
 //
@@ -355,10 +357,10 @@ char far cb_text[]="\n\n"
 //-----------------------------------------------------------------------
 boolean OpenErrorFile(void)
 {
-	if (errorfile == -1)
-		errorfile = open(ERROR_LOG, O_APPEND | O_CREAT | O_TEXT,S_IWRITE);
+    if (errorfile == -1)
+        errorfile = open(ERROR_LOG, O_APPEND | O_CREAT | O_TEXT, S_IWRITE);
 
-   return(errorfile != -1);
+    return (errorfile != -1);
 }
 
 //-----------------------------------------------------------------------
@@ -366,117 +368,120 @@ boolean OpenErrorFile(void)
 //-----------------------------------------------------------------------
 void CloseErrorFile(void)
 {
-	if (errorfile != -1)
-   {
-		close(errorfile);
-   	errorfile = -1;
-   }
+    if (errorfile != -1)
+    {
+        close(errorfile);
+        errorfile = -1;
+    }
 }
 
 //-----------------------------------------------------------------------
 // ErrorOut - Outputs a text message to the ErrorLog and Echos to mono monitor
 //-----------------------------------------------------------------------
-void ErrorOut(char *msg, ...)
+void ErrorOut(char* msg, ...)
 {
-	char buffer[100],*ptr;
-//	va_list ap;
+    char buffer[100], *ptr;
+    //	va_list ap;
 
-	va_list(ap);
+    va_list(ap);
 
-	va_start(ap,msg);
+    va_start(ap, msg);
 
-	vsprintf(buffer,msg,ap);
+    vsprintf(buffer, msg, ap);
 
-   OpenErrorFile();
+    OpenErrorFile();
 
-	if (errorfile != -1)
-		write(errorfile,buffer,strlen(buffer));
+    if (errorfile != -1)
+        write(errorfile, buffer, strlen(buffer));
 
-	CloseErrorFile();
+    CloseErrorFile();
 
-	fmprint(buffer);
+    fmprint(buffer);
 }
 
 #endif
 
-void MML_ClearBlock (void)
+void MML_ClearBlock(void)
 {
-	mmblocktype far *scan,far *last;
+    mmblocktype far *scan, far *last;
 
 #if IN_DEVELOPMENT
-	mprintf("\nMML_ClearBlock()\n");	// jdebug
+    mprintf("\nMML_ClearBlock()\n"); // jdebug
 
 // jdebug begin
 #if !BETA_TEST
-   while(Keyboard[sc_L]);
-	while(!Keyboard[sc_L]);
+    while (Keyboard[sc_L])
+        ;
+    while (!Keyboard[sc_L])
+        ;
 #endif
 // jdebug end
 #endif
 
-	scan = mmhead->next;
+    scan = mmhead->next;
 
 #if IN_DEVELOPMENT
-	ErrorOut("mmhead->next %X:%X\n",FP_SEG(scan),FP_OFF(scan));			// jdebug
+    ErrorOut("mmhead->next %X:%X\n", FP_SEG(scan), FP_OFF(scan)); // jdebug
 #endif
 
-	while (scan)
-	{
+    while (scan)
+    {
 #if IN_DEVELOPMENT
-		ErrorOut("scan %X:%X\n",FP_SEG(scan),FP_OFF(scan));			// jdebug
+        ErrorOut("scan %X:%X\n", FP_SEG(scan), FP_OFF(scan)); // jdebug
 #endif
 
-		if (!(scan->attributes&LOCKBIT) && (scan->attributes&PURGEBITS) )
-		{
+        if (!(scan->attributes & LOCKBIT) && (scan->attributes & PURGEBITS))
+        {
 #if IN_DEVELOPMENT
-			mprintf(" AVAIL BLOCK FOUND!\n");		// jdebug
+            mprintf(" AVAIL BLOCK FOUND!\n"); // jdebug
 #endif
-			MM_FreePtr(scan->useptr);
-			return;
-		}
+            MM_FreePtr(scan->useptr);
+            return;
+        }
 // jdebug begin
 #if IN_DEVELOPMENT
-		else
-		{
-			if  (scan->attributes & LOCKBIT)
-				ErrorOut(" LOCKED\n");
+        else
+        {
+            if (scan->attributes & LOCKBIT)
+                ErrorOut(" LOCKED\n");
 
-			switch (scan->attributes&PURGEBITS)
-			{
-				case 0:
-					ErrorOut(" UNPURGEABLE\n");
-				break;
+            switch (scan->attributes & PURGEBITS)
+            {
+            case 0:
+                ErrorOut(" UNPURGEABLE\n");
+                break;
 
-				default:
-					ErrorOut(" PURGEABLE\n");
-				break;
-			}
-		}
+            default:
+                ErrorOut(" PURGEABLE\n");
+                break;
+            }
+        }
 #endif
-// jdebug end
+        // jdebug end
 
-		scan = scan->next;
-	}
+        scan = scan->next;
+    }
 
 #if IN_DEVELOPMENT
 
-//
-// mdebug
-//
+    //
+    // mdebug
+    //
 
-	if (screenfaded)
-		VW_FadeIn();
-	bufferofs=displayofs;
-	CenterWindow(32,14);
-	fontnumber = 2;
-	fontcolor = 0x9A;
-	US_Print(cb_text);
-//	clearblock_error=true;
-	VW_UpdateScreen();
-	LastScan=0;
-	while (!LastScan);
+    if (screenfaded)
+        VW_FadeIn();
+    bufferofs = displayofs;
+    CenterWindow(32, 14);
+    fontnumber = 2;
+    fontcolor  = 0x9A;
+    US_Print(cb_text);
+    //	clearblock_error=true;
+    VW_UpdateScreen();
+    LastScan = 0;
+    while (!LastScan)
+        ;
 #else
-	MM_ERROR(MML_CLEARBLOCK_NO_PURGE_BLKS);		// mdebug -- uncomment me!
+    MM_ERROR(MML_CLEARBLOCK_NO_PURGE_BLKS); // mdebug -- uncomment me!
 #endif
 }
 
@@ -493,7 +498,6 @@ void MML_ClearBlock (void)
 ===================
 */
 
-
 //==========================================================================
 
 /*
@@ -506,14 +510,14 @@ void MML_ClearBlock (void)
 ====================
 */
 
-void MM_Shutdown (void)
+void MM_Shutdown(void)
 {
-  if (!mmstarted)
-	return;
+    if (!mmstarted)
+        return;
 
-  farfree (farheap);
-  free (nearheap);
-//  MML_ShutdownXMS ();
+    farfree(farheap);
+    free(nearheap);
+    //  MML_ShutdownXMS ();
 }
 
 //==========================================================================
@@ -530,143 +534,141 @@ void MM_Shutdown (void)
 
 #if IN_DEVELOPMENT
 
-char far gp_text[]=" WRITE DOWN THE FOLLOWING INFO, TOO:\n"
-						 "\n"
-						 " MM_GETPTR SIZE: ";
+char far gp_text[] = " WRITE DOWN THE FOLLOWING INFO, TOO:\n"
+                     "\n"
+                     " MM_GETPTR SIZE: ";
 
-char far *gp_fartext=NULL;			// mdebug
+char far* gp_fartext = NULL; // mdebug
 
-char far *jr_fartext = NULL;				// jim/mdebug
+char far* jr_fartext = NULL; // jim/mdebug
 
 #endif
 
-void MM_GetPtr (memptr *baseptr,unsigned long size)
+void MM_GetPtr(memptr* baseptr, unsigned long size)
 {
-	mmblocktype far *scan,far *lastscan,far *endscan
-				,far *purge,far *next;
-	int			search;
-	unsigned	needed,startseg;
+    mmblocktype far *scan, far *lastscan, far *endscan, far *purge, far *next;
+    int      search;
+    unsigned needed, startseg;
 
-	needed = (size+15)/16;		// convert size from bytes to paragraphs
+    needed = (size + 15) / 16; // convert size from bytes to paragraphs
 
-	GETNEWBLOCK;				// fill in start and next after a spot is found
+    GETNEWBLOCK; // fill in start and next after a spot is found
 
 #if IN_DEVELOPMENT
 
-//
-// mdebug
-//
+    //
+    // mdebug
+    //
 
-	if (clearblock_error)
-	{
-		US_Print(gp_text);
-		US_PrintUnsigned(size);
-		US_Print("\n\n");
-		if (gp_fartext)
-			US_Print(gp_fartext);
-		if (jr_fartext)
-			US_Print(jr_fartext);
-		LastScan=0;
-		while (!LastScan);
-		clearblock_error=false;
-		gp_fartext=false;
-		Quit(0);
-	}
+    if (clearblock_error)
+    {
+        US_Print(gp_text);
+        US_PrintUnsigned(size);
+        US_Print("\n\n");
+        if (gp_fartext)
+            US_Print(gp_fartext);
+        if (jr_fartext)
+            US_Print(jr_fartext);
+        LastScan = 0;
+        while (!LastScan)
+            ;
+        clearblock_error = false;
+        gp_fartext       = false;
+        Quit(0);
+    }
 
 #endif
 
-	mmnew->length = needed;
-	mmnew->useptr = baseptr;
-	mmnew->attributes = BASEATTRIBUTES;
+    mmnew->length     = needed;
+    mmnew->useptr     = baseptr;
+    mmnew->attributes = BASEATTRIBUTES;
 
-	for (search = 0; search<3; search++)
-	{
-	//
-	// first search:	try to allocate right after the rover, then on up
-	// second search: 	search from the head pointer up to the rover
-	// third search:	compress memory, then scan from start
-		if (search == 1 && mmrover == mmhead)
-			search++;
+    for (search = 0; search < 3; search++)
+    {
+        //
+        // first search:	try to allocate right after the rover, then on up
+        // second search: 	search from the head pointer up to the rover
+        // third search:	compress memory, then scan from start
+        if (search == 1 && mmrover == mmhead)
+            search++;
 
-		switch (search)
-		{
-		case 0:
-			lastscan = mmrover;
-			scan = mmrover->next;
-			endscan = NULL;
-			break;
-		case 1:
-			lastscan = mmhead;
-			scan = mmhead->next;
-			endscan = mmrover;
-			break;
-		case 2:
-			MM_SortMem ();
-			lastscan = mmhead;
-			scan = mmhead->next;
-			endscan = NULL;
-			break;
-		}
+        switch (search)
+        {
+        case 0:
+            lastscan = mmrover;
+            scan     = mmrover->next;
+            endscan  = NULL;
+            break;
+        case 1:
+            lastscan = mmhead;
+            scan     = mmhead->next;
+            endscan  = mmrover;
+            break;
+        case 2:
+            MM_SortMem();
+            lastscan = mmhead;
+            scan     = mmhead->next;
+            endscan  = NULL;
+            break;
+        }
 
-		startseg = lastscan->start + lastscan->length;
+        startseg = lastscan->start + lastscan->length;
 
-		while (scan != endscan)
-		{
-			if (scan->start - startseg >= needed)
-			{
-			//
-			// got enough space between the end of lastscan and
-			// the start of scan, so throw out anything in the middle
-			// and allocate the new block
-			//
-				purge = lastscan->next;
-				lastscan->next = mmnew;
-				mmnew->start = *(unsigned *)baseptr = startseg;
-				mmnew->next = scan;
-				while ( purge != scan)
-				{	// free the purgable block
-					next = purge->next;
-					FREEBLOCK(purge);
-					purge = next;		// purge another if not at scan
-				}
-				mmrover = mmnew;
+        while (scan != endscan)
+        {
+            if (scan->start - startseg >= needed)
+            {
+                //
+                // got enough space between the end of lastscan and
+                // the start of scan, so throw out anything in the middle
+                // and allocate the new block
+                //
+                purge          = lastscan->next;
+                lastscan->next = mmnew;
+                mmnew->start = *(unsigned*)baseptr = startseg;
+                mmnew->next                        = scan;
+                while (purge != scan)
+                { // free the purgable block
+                    next = purge->next;
+                    FREEBLOCK(purge);
+                    purge = next; // purge another if not at scan
+                }
+                mmrover = mmnew;
 //				__SEGS_AVAILABLE__ -= needed;
 #if IN_DEVELOPMENT && 0
-				PrintAllocated(needed);		// mdebug
+                PrintAllocated(needed); // mdebug
 #endif
-				return;	// good allocation!
-			}
+                return; // good allocation!
+            }
 
-			//
-			// if this block is purge level zero or locked, skip past it
-			//
-			if ( (scan->attributes & LOCKBIT)
-				|| !(scan->attributes & PURGEBITS) )
-			{
-				lastscan = scan;
-				startseg = lastscan->start + lastscan->length;
-			}
+            //
+            // if this block is purge level zero or locked, skip past it
+            //
+            if ((scan->attributes & LOCKBIT) || !(scan->attributes & PURGEBITS))
+            {
+                lastscan = scan;
+                startseg = lastscan->start + lastscan->length;
+            }
 
+            scan = scan->next; // look at next line
+        }
+    }
 
-			scan=scan->next;		// look at next line
-		}
-	}
+    FREEBLOCK(mmnew);
 
-	FREEBLOCK(mmnew);
+    if (bombonerror)
+    {
 
-	if (bombonerror)
-	{
+        extern char configname[];
 
-extern char configname[];
+        //	mprintf("\n\nOUT OF MEMORY:\n");
+        //	mprintf("blocks needed: %d   (%ld)\n",needed,needed<<4);
 
-//	mprintf("\n\nOUT OF MEMORY:\n");
-//	mprintf("blocks needed: %d   (%ld)\n",needed,needed<<4);
-
-		unlink(configname);
-		MM_ERROR(MM_GETPTR_OUT_OF_MEMORY);
-	}
-	else
-		mmerror = true;
+        unlink(configname);
+        MM_ERROR(MM_GETPTR_OUT_OF_MEMORY);
+    }
+    else
+        mmerror = true;
 }
 
 //==========================================================================
@@ -681,36 +683,36 @@ extern char configname[];
 ====================
 */
 
-void MM_FreePtr (memptr *baseptr)
+void MM_FreePtr(memptr* baseptr)
 {
-	long value;		// mdebug
+    long value; // mdebug
 
-	mmblocktype far *scan,far *last;
+    mmblocktype far *scan, far *last;
 
-	last = mmhead;
-	scan = last->next;
+    last = mmhead;
+    scan = last->next;
 
-	if (baseptr == mmrover->useptr)	// removed the last allocated block
-		mmrover = mmhead;
+    if (baseptr == mmrover->useptr) // removed the last allocated block
+        mmrover = mmhead;
 
-	while (scan->useptr != baseptr && scan)
-	{
-		last = scan;
-		scan = scan->next;
-	}
+    while (scan->useptr != baseptr && scan)
+    {
+        last = scan;
+        scan = scan->next;
+    }
 
-	if (!scan)
-		MM_ERROR(MM_FREEPTR_BLOCK_NOT_FOUND);
+    if (!scan)
+        MM_ERROR(MM_FREEPTR_BLOCK_NOT_FOUND);
 
 #if IN_DEVELOPMENT && 0
-	value = scan->length;		// mdebug
-	PrintAllocated(-value);		// mdebug
+    value = scan->length;   // mdebug
+    PrintAllocated(-value); // mdebug
 #endif
 
-	last->next = scan->next;
-//	__SEGS_AVAILABLE__ += scan->length;
+    last->next = scan->next;
+    //	__SEGS_AVAILABLE__ += scan->length;
 
-	FREEBLOCK(scan);
+    FREEBLOCK(scan);
 }
 //==========================================================================
 
@@ -724,28 +726,28 @@ void MM_FreePtr (memptr *baseptr)
 =====================
 */
 
-void MM_SetPurge (memptr *baseptr, int purge)
+void MM_SetPurge(memptr* baseptr, int purge)
 {
-	mmblocktype far *start;
+    mmblocktype far* start;
 
-	start = mmrover;
+    start = mmrover;
 
-	do
-	{
-		if (mmrover->useptr == baseptr)
-			break;
+    do
+    {
+        if (mmrover->useptr == baseptr)
+            break;
 
-		mmrover = mmrover->next;
+        mmrover = mmrover->next;
 
-		if (!mmrover)
-			mmrover = mmhead;
-		else if (mmrover == start)
-			MM_ERROR(MM_SETPURGE_BLOCK_NOT_FOUND);
+        if (!mmrover)
+            mmrover = mmhead;
+        else if (mmrover == start)
+            MM_ERROR(MM_SETPURGE_BLOCK_NOT_FOUND);
 
-	} while (1);
+    } while (1);
 
-	mmrover->attributes &= ~PURGEBITS;
-	mmrover->attributes |= purge;
+    mmrover->attributes &= ~PURGEBITS;
+    mmrover->attributes |= purge;
 }
 
 //==========================================================================
@@ -760,28 +762,28 @@ void MM_SetPurge (memptr *baseptr, int purge)
 =====================
 */
 
-void MM_SetLock (memptr *baseptr, boolean locked)
+void MM_SetLock(memptr* baseptr, boolean locked)
 {
-	mmblocktype far *start;
+    mmblocktype far* start;
 
-	start = mmrover;
+    start = mmrover;
 
-	do
-	{
-		if (mmrover->useptr == baseptr)
-			break;
+    do
+    {
+        if (mmrover->useptr == baseptr)
+            break;
 
-		mmrover = mmrover->next;
+        mmrover = mmrover->next;
 
-		if (!mmrover)
-			mmrover = mmhead;
-		else if (mmrover == start)
-			MM_ERROR(MM_SETLOCK_BLOCK_NOT_FOUND);
+        if (!mmrover)
+            mmrover = mmhead;
+        else if (mmrover == start)
+            MM_ERROR(MM_SETLOCK_BLOCK_NOT_FOUND);
 
-	} while (1);
+    } while (1);
 
-	mmrover->attributes &= ~LOCKBIT;
-	mmrover->attributes |= locked*LOCKBIT;
+    mmrover->attributes &= ~LOCKBIT;
+    mmrover->attributes |= locked * LOCKBIT;
 }
 
 //==========================================================================
@@ -796,101 +798,99 @@ void MM_SetLock (memptr *baseptr, boolean locked)
 =====================
 */
 
-void MM_SortMem (void)
+void MM_SortMem(void)
 {
-	mmblocktype far *scan,far *last,far *next;
-	unsigned	start,length,source,dest;
-	int			playing;
+    mmblocktype far *scan, far *last, far *next;
+    unsigned start, length, source, dest;
+    int      playing;
 
-	//
-	// lock down a currently playing sound
-	//
-	playing = SD_SoundPlaying ();
-	if (playing)
-	{
-		switch (SoundMode)
-		{
-		case sdm_PC:
-			playing += STARTPCSOUNDS;
-			break;
-		case sdm_AdLib:
-			playing += STARTADLIBSOUNDS;
-			break;
-		}
-		MM_SetLock(&(memptr)audiosegs[playing],true);
-	}
+    //
+    // lock down a currently playing sound
+    //
+    playing = SD_SoundPlaying();
+    if (playing)
+    {
+        switch (SoundMode)
+        {
+        case sdm_PC:
+            playing += STARTPCSOUNDS;
+            break;
+        case sdm_AdLib:
+            playing += STARTADLIBSOUNDS;
+            break;
+        }
+        MM_SetLock(&(memptr)audiosegs[playing], true);
+    }
 
+    SD_StopSound();
 
-	SD_StopSound();
+    if (beforesort)
+        beforesort();
 
-	if (beforesort)
-		beforesort();
+    scan = mmhead;
 
-	scan = mmhead;
+    last = NULL; // shut up compiler warning
 
-	last = NULL;		// shut up compiler warning
+    while (scan)
+    {
+        if (scan->attributes & LOCKBIT)
+        {
+            //
+            // block is locked, so try to pile later blocks right after it
+            //
+            start = scan->start + scan->length;
+        }
+        else
+        {
+            if (scan->attributes & PURGEBITS)
+            {
+                //
+                // throw out the purgable block
+                //
+                next = scan->next;
+                FREEBLOCK(scan);
+                last->next = next;
+                scan       = next;
+                continue;
+            }
+            else
+            {
+                //
+                // push the non purgable block on top of the last moved block
+                //
+                if (scan->start != start)
+                {
+                    length = scan->length;
+                    source = scan->start;
+                    dest   = start;
+                    while (length > 0xf00)
+                    {
+                        movedata(source, 0, dest, 0, 0xf00 * 16);
+                        length -= 0xf00;
+                        source += 0xf00;
+                        dest += 0xf00;
+                    }
+                    movedata(source, 0, dest, 0, length * 16);
 
-	while (scan)
-	{
-		if (scan->attributes & LOCKBIT)
-		{
-		//
-		// block is locked, so try to pile later blocks right after it
-		//
-			start = scan->start + scan->length;
-		}
-		else
-		{
-			if (scan->attributes & PURGEBITS)
-			{
-			//
-			// throw out the purgable block
-			//
-				next = scan->next;
-				FREEBLOCK(scan);
-				last->next = next;
-				scan = next;
-				continue;
-			}
-			else
-			{
-			//
-			// push the non purgable block on top of the last moved block
-			//
-				if (scan->start != start)
-				{
-					length = scan->length;
-					source = scan->start;
-					dest = start;
-					while (length > 0xf00)
-					{
-						movedata(source,0,dest,0,0xf00*16);
-						length -= 0xf00;
-						source += 0xf00;
-						dest += 0xf00;
-					}
-					movedata(source,0,dest,0,length*16);
+                    scan->start              = start;
+                    *(unsigned*)scan->useptr = start;
+                }
+                start = scan->start + scan->length;
+            }
+        }
 
-					scan->start = start;
-					*(unsigned *)scan->useptr = start;
-				}
-				start = scan->start + scan->length;
-			}
-		}
+        last = scan;
+        scan = scan->next; // go to next block
+    }
 
-		last = scan;
-		scan = scan->next;		// go to next block
-	}
+    mmrover = mmhead;
 
-	mmrover = mmhead;
+    if (aftersort)
+        aftersort();
 
-	if (aftersort)
-		aftersort();
-
-	if (playing)
-		MM_SetLock(&(memptr)audiosegs[playing],false);
+    if (playing)
+        MM_SetLock(&(memptr)audiosegs[playing], false);
 }
-
 
 //==========================================================================
 
@@ -944,8 +944,7 @@ void MM_ShowMemory (void)
 	bufferofs = temp;
 }
 
-
-#endif 
+#endif
 
 //==========================================================================
 
@@ -1015,9 +1014,7 @@ void MM_DumpData (void)
 
 #endif
 
-
 //==========================================================================
-
 
 /*
 ======================
@@ -1029,25 +1026,24 @@ void MM_DumpData (void)
 ======================
 */
 
-long MM_UnusedMemory (void)
+long MM_UnusedMemory(void)
 {
-	unsigned free;
-	mmblocktype far *scan;
+    unsigned         free;
+    mmblocktype far* scan;
 
-	free = 0;
-	scan = mmhead;
+    free = 0;
+    scan = mmhead;
 
-	while (scan->next)
-	{
-		free += scan->next->start - (scan->start + scan->length);
-		scan = scan->next;
-	}
+    while (scan->next)
+    {
+        free += scan->next->start - (scan->start + scan->length);
+        scan = scan->next;
+    }
 
-	return free*16l;
+    return free * 16l;
 }
 
 //==========================================================================
-
 
 /*
 ======================
@@ -1059,23 +1055,23 @@ long MM_UnusedMemory (void)
 ======================
 */
 
-long MM_TotalFree (void)
+long MM_TotalFree(void)
 {
-	unsigned free;
-	mmblocktype far *scan;
+    unsigned         free;
+    mmblocktype far* scan;
 
-	free = 0;
-	scan = mmhead;
+    free = 0;
+    scan = mmhead;
 
-	while (scan->next)
-	{
-		if ((scan->attributes&PURGEBITS) && !(scan->attributes&LOCKBIT))
-			free += scan->length;
-		free += scan->next->start - (scan->start + scan->length);
-		scan = scan->next;
-	}
+    while (scan->next)
+    {
+        if ((scan->attributes & PURGEBITS) && !(scan->attributes & LOCKBIT))
+            free += scan->length;
+        free += scan->next->start - (scan->start + scan->length);
+        scan = scan->next;
+    }
 
-	return free*16l;
+    return free * 16l;
 }
 
 /*
@@ -1088,32 +1084,32 @@ long MM_TotalFree (void)
 ======================
 */
 
-long MM_LargestAvail (void)
+long MM_LargestAvail(void)
 {
-	unsigned largest,ammount;
-	mmblocktype far *scan;
+    unsigned         largest, ammount;
+    mmblocktype far* scan;
 
-	largest = 0;
-	scan = mmhead;
+    largest = 0;
+    scan    = mmhead;
 
-	while (scan->next)
-	{
-		if ((scan->attributes&PURGEBITS) && !(scan->attributes&LOCKBIT))
-      {
-			ammount = scan->length;
-	      if (largest < ammount)
-   	   	largest = ammount;
-      }
+    while (scan->next)
+    {
+        if ((scan->attributes & PURGEBITS) && !(scan->attributes & LOCKBIT))
+        {
+            ammount = scan->length;
+            if (largest < ammount)
+                largest = ammount;
+        }
 
-		ammount = scan->next->start - (scan->start + scan->length);
+        ammount = scan->next->start - (scan->start + scan->length);
 
-      if (largest < ammount)
-      	largest = ammount;
+        if (largest < ammount)
+            largest = ammount;
 
-		scan = scan->next;
-	}
+        scan = scan->next;
+    }
 
-	return largest*16l;
+    return largest * 16l;
 }
 
 //==========================================================================
@@ -1126,9 +1122,7 @@ long MM_LargestAvail (void)
 =====================
 */
 
-void MM_BombOnError (boolean bomb)
+void MM_BombOnError(boolean bomb)
 {
-	bombonerror = bomb;
+    bombonerror = bomb;
 }
-
-

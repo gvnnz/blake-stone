@@ -1,7 +1,6 @@
 #ifndef _MOVIE_H_
 #define _MOVIE_H_
 
-
 #include "JM_VL.H"
 
 //==========================================================================
@@ -10,22 +9,19 @@
 //
 //==========================================================================
 
+typedef struct
+{
+    unsigned code;
+    long     block_num;
+    long     recsize;
+} anim_frame;
 
 typedef struct
 {
-	unsigned code;
-   long block_num;
-   long recsize;
-}anim_frame;
-
-
-typedef struct
-{
-	unsigned short opt;
-   unsigned short offset;
-   unsigned short length;
+    unsigned short opt;
+    unsigned short offset;
+    unsigned short length;
 } anim_chunk;
-
 
 //-------------------------------------------------------------------------
 //   MovieStuff Anim Stucture...
@@ -40,19 +36,17 @@ typedef struct
 //
 typedef struct
 {
-	char FName[13];
-	char rep;
-	char ticdelay;
+    char FName[13];
+    char rep;
+    char ticdelay;
 
-   unsigned long MaxMemBuffer;
+    unsigned long MaxMemBuffer;
 
-	short start_line;
-	short end_line;
-   memptr palette;
+    short  start_line;
+    short  end_line;
+    memptr palette;
 
 } MovieStuff_t;
-
-
 
 //=========================================================================
 //
@@ -60,7 +54,7 @@ typedef struct
 //
 //=========================================================================
 
-extern memptr displaybuffer;
+extern memptr       displaybuffer;
 extern MovieStuff_t Movies[];
 
 //===========================================================================
@@ -69,9 +63,9 @@ extern MovieStuff_t Movies[];
 //
 //===========================================================================
 
-void MOVIE_ShowFrame (char huge *inpic);
-boolean MOVIE_Play(MovieStuff_t *MovieStuff);
-void SetupMovie(MovieStuff_t *MovieStuff);
-void ShutdownMovie(void);
+void    MOVIE_ShowFrame(char huge* inpic);
+boolean MOVIE_Play(MovieStuff_t* MovieStuff);
+void    SetupMovie(MovieStuff_t* MovieStuff);
+void    ShutdownMovie(void);
 
 #endif
