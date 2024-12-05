@@ -1,17 +1,18 @@
-#include "id_heads.h"
-
-#include <io.h>
-
+// #include "id_heads.h"
+// #include "JM_IO.H"
+// #include "JM_LZH.H"
 #include "jm_cio.hpp"
 #include "jm_error.hpp"
-#include "jm_io.h"
-#include "jm_lzh.h"
+#include <cassert>
+#include <cstdint>
 
 //--------------------------------------------------------------------------
 // IO_FarRead()
 //--------------------------------------------------------------------------
-boolean IO_FarRead(int handle, byte far* dest, long length)
+bool IO_FarRead(int handle, std::uint8_t* dest, long length)
 {
+    assert(false);
+#if 0
     unsigned readlen, nread;
 
     while (length)
@@ -27,15 +28,17 @@ boolean IO_FarRead(int handle, byte far* dest, long length)
 
         length -= readlen;
     }
-
+#endif
     return (true);
 }
 
 //--------------------------------------------------------------------------
 // IO_FarWrite()
 //--------------------------------------------------------------------------
-boolean IO_FarWrite(int handle, byte far* source, long length)
+bool IO_FarWrite(int handle, std::uint8_t* source, long length)
 {
+    assert(false);
+#if 0
     unsigned writelen, nwritten;
 
     while (length)
@@ -51,6 +54,7 @@ boolean IO_FarWrite(int handle, byte far* source, long length)
 
         length -= writelen;
     }
+#endif
 
     return (true);
 }
@@ -60,8 +64,10 @@ boolean IO_FarWrite(int handle, byte far* source, long length)
 //--------------------------------------------------------------------------
 // IO_WriteFile()
 //--------------------------------------------------------------------------
-boolean IO_WriteFile(char* filename, void far* ptr, long length)
+bool IO_WriteFile(char* filename, void* ptr, long length)
 {
+    assert(false);
+#if 0
     int  handle;
     long size;
 
@@ -77,6 +83,8 @@ boolean IO_WriteFile(char* filename, void far* ptr, long length)
         return (false);
     }
     close(handle);
+#endif
+
     return (true);
 }
 
@@ -85,11 +93,14 @@ boolean IO_WriteFile(char* filename, void far* ptr, long length)
 //--------------------------------------------------------------------------
 // IO_LoadFile()
 //--------------------------------------------------------------------------
-long IO_LoadFile(char* filename, memptr* dst)
+long IO_LoadFile(char* filename, void* dst)
 {
+    assert(false);
+
     char buffer[5] = {0, 0, 0, 0, 0};
     int  handle;
     long size = 0;
+#if 0
 
     if ((handle = open(filename, O_RDONLY | O_BINARY, S_IREAD)) == -1)
         return (size);
@@ -134,7 +145,7 @@ long IO_LoadFile(char* filename, memptr* dst)
     }
 
     close(handle);
-
+#endif
     return (size);
 }
 
@@ -173,7 +184,9 @@ void IO_CopyFile(char *sFilename, char *dFilename)
 //--------------------------------------------------------------------------
 void IO_CopyHandle(int sHandle, int dHandle, long num_bytes)
 {
-    extern boolean bombonerror;
+    assert(false);
+#if 0
+    extern bool bombonerror;
 
 #define CF_BUFFER_SIZE 8192
 
@@ -211,4 +224,5 @@ void IO_CopyHandle(int sHandle, int dHandle, long num_bytes)
     // Free buffer.
     //
     MM_FreePtr(&src);
+#endif
 }

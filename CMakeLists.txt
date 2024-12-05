@@ -72,8 +72,8 @@ list(APPEND SOURCES
     src/jm_debug.hpp
     src/jm_error.hpp
     src/JM_FREE.C
-    src/JM_IO.C
-    src/JM_IO.H
+    src/jm_io.cpp
+    src/jm_io.hpp
     src/JM_LZH.C
     src/JM_LZH.H
     src/JM_TP.C

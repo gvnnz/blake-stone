@@ -14,7 +14,7 @@
 
 #include "jm_cio.hpp"
 #include "jm_error.hpp"
-#include "jm_io.h"
+#include "jm_io.hpp"
 #include "jm_lzh.h"
 
 /*

@@ -79,7 +79,7 @@
 #include "3D_DEF.H"
 
 #include "jm_error.hpp"
-#include "jm_io.h"
+#include "jm_io.hpp"
 
 #pragma hdrstop
 
