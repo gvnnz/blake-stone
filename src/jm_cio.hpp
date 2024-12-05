@@ -1,5 +1,5 @@
-#ifndef _JM_CIO_H_
-#define _JM_CIO_H_
+#ifndef JM_CIO_HPP
+#define JM_CIO_HPP
 
 //
 // UNIT : JM_CIO.h
@@ -10,11 +10,13 @@
 //
 
 #ifndef _ID_HEADS_H_
+/*
 typedef enum boolean
 {
     false,
     true
 } boolean;
+*/
 #endif
 
 //==========================================================================

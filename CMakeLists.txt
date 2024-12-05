@@ -66,8 +66,8 @@ list(APPEND SOURCES
     src/ID_VL_A.ASM
     src/JABHACK.ASM
     src/JAM_IO.H
-    src/JM_CIO.C
-    src/JM_CIO.H
+    src/jm_cio.cpp
+    src/jm_cio.hpp
     src/JM_DEBUG.C
     src/JM_DEBUG.H
     src/JM_ERROR.H

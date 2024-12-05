@@ -32,7 +32,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "jm_cio.h"
+#include "jm_cio.hpp"
 #include "jm_lzh.h"
 
 //===========================================================================

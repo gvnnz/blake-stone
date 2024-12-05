@@ -1,13 +1,10 @@
-#include <alloc.h>
-#include <ctype.h>
-#include <dos.h>
+#include "jm_cio.hpp"
+#include <cassert>
+#include <cctype>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #include <fcntl.h>
-#include <io.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-#include "jm_cio.h"
 
 //----------------------------------------------------------------------------
 //
@@ -26,8 +23,11 @@
 //---------------------------------------------------------------------------
 char CIO_WritePtr(long outfile, unsigned char data, unsigned PtrType)
 {
+    assert(false);
+
     int returnval = 0;
 
+#if 0
     switch (PtrType & DEST_TYPES)
     {
     case DEST_FILE:
@@ -47,6 +47,7 @@ char CIO_WritePtr(long outfile, unsigned char data, unsigned PtrType)
         *((char far*)*(char far**)outfile)++ = data;
         break;
     }
+#endif
 
     return (returnval);
 }
@@ -63,8 +64,11 @@ char CIO_WritePtr(long outfile, unsigned char data, unsigned PtrType)
 //---------------------------------------------------------------------------
 int CIO_ReadPtr(long infile, unsigned PtrType)
 {
+    assert(false);
+
     int returnval = 0;
 
+#if 0
     switch (PtrType & SRC_TYPES)
     {
     case SRC_FILE:
@@ -90,6 +94,7 @@ int CIO_ReadPtr(long infile, unsigned PtrType)
         returnval = (unsigned char)*((char far*)*(char far**)infile)++;
         break;
     }
+#endif
 
     return (returnval);
 }
