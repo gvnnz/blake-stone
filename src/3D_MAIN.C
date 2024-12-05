@@ -13,7 +13,7 @@
 #include <time.h>
 
 #include "jm_cio.hpp"
-#include "jm_error.h"
+#include "jm_error.hpp"
 #include "jm_io.h"
 #include "jm_lzh.h"
 

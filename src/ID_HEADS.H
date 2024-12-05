@@ -115,7 +115,7 @@ typedef struct
 #include "ID_VL.H"
 
 #include "jm_debug.h"
-#include "jm_error.h"
+#include "jm_error.hpp"
 #include "jm_tp.h"
 
 #include "movie.h"

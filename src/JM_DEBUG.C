@@ -1,7 +1,7 @@
 #include "3D_DEF.H"
 
 #include "jm_debug.h"
-#include "jm_error.h"
+#include "jm_error.hpp"
 
 #pragma hdrstop
 

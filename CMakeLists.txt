@@ -70,7 +70,7 @@ list(APPEND SOURCES
     src/jm_cio.hpp
     src/JM_DEBUG.C
     src/JM_DEBUG.H
-    src/JM_ERROR.H
+    src/jm_error.hpp
     src/JM_FREE.C
     src/JM_IO.C
     src/JM_IO.H
