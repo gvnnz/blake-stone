@@ -106,16 +106,16 @@ void (*aftersort)(void);
 
 bool mmstarted;
 
-void far* farheap;
-void*     nearheap;
+void* farheap;
+void* nearheap;
 
-mmblocktype far mmblocks[MAXBLOCKS], far *mmhead, far *mmfree, far *mmrover, far *mmnew;
+mmblocktype mmblocks[MAXBLOCKS], *mmhead, *mmfree, *mmrover, *mmnew;
 
 bool bombonerror;
 
 // unsigned	totalEMSpages,freeEMSpages,EMSpageframe,EMSpagesmapped,EMShandle;
 
-void (*XMSaddr)(void); // far pointer to XMS driver
+void (*XMSaddr)(void); //  pointer to XMS driver
 
 #if IN_DEVELOPMENT
 unsigned blockcount = 0;
@@ -261,7 +261,7 @@ asm	call	[DWORD PTR XMSaddr]
 = MML_UseSpace
 =
 = Marks a range of paragraphs as usable by the memory manager
-= This is used to mark space for the near heap, far heap, ems page frame,
+= This is used to mark space for the near heap,  heap, ems page frame,
 = and upper memory blocks
 =
 ======================
@@ -269,9 +269,9 @@ asm	call	[DWORD PTR XMSaddr]
 
 void MML_UseSpace(unsigned segstart, unsigned seglength)
 {
-    mmblocktype far *scan, far *last;
-    unsigned oldend;
-    long     extra;
+    mmblocktype *scan, *last;
+    unsigned     oldend;
+    long         extra;
 
     scan = last = mmhead;
     mmrover     = mmhead; // reset rover to start of memory
@@ -333,14 +333,14 @@ void MML_UseSpace(unsigned segstart, unsigned seglength)
 
 #if IN_DEVELOPMENT
 
-char far cb_text[] = "\n\n"
-                     " YOU'VE JUST FOUND THE 90:02 ERROR!\n"
-                     "\n"
-                     " TAKE NOTE OF WHAT -JUST- HAPPEND BEFORE\n"
-                     " THE ERROR AND -WHERE- YOU ARE.\n"
-                     "\n"
-                     " REPORT ALL INFO TO JAM PRODUCTIONS\n"
-                     " VIA THE BETA CONFERENCE. THANKS!        PRESS A KEY\n\n";
+char cb_text[] = "\n\n"
+                 " YOU'VE JUST FOUND THE 90:02 ERROR!\n"
+                 "\n"
+                 " TAKE NOTE OF WHAT -JUST- HAPPEND BEFORE\n"
+                 " THE ERROR AND -WHERE- YOU ARE.\n"
+                 "\n"
+                 " REPORT ALL INFO TO JAM PRODUCTIONS\n"
+                 " VIA THE BETA CONFERENCE. THANKS!        PRESS A KEY\n\n";
 #endif
 
 //
@@ -403,7 +403,7 @@ void ErrorOut(char* msg, ...)
 
 void MML_ClearBlock(void)
 {
-    mmblocktype far *scan, far *last;
+    mmblocktype *scan, *last;
 
 #if IN_DEVELOPMENT
     mprintf("\nMML_ClearBlock()\n"); // jdebug
@@ -534,21 +534,21 @@ void MM_Shutdown(void)
 
 #if IN_DEVELOPMENT
 
-char far gp_text[] = " WRITE DOWN THE FOLLOWING INFO, TOO:\n"
-                     "\n"
-                     " MM_GETPTR SIZE: ";
+char gp_text[] = " WRITE DOWN THE FOLLOWING INFO, TOO:\n"
+                 "\n"
+                 " MM_GETPTR SIZE: ";
 
-char far* gp_fartext = NULL; // mdebug
+char* gp_fartext = NULL; // mdebug
 
-char far* jr_fartext = NULL; // jim/mdebug
+char* jr_fartext = NULL; // jim/mdebug
 
 #endif
 
 void MM_GetPtr(memptr* baseptr, unsigned long size)
 {
-    mmblocktype far *scan, far *lastscan, far *endscan, far *purge, far *next;
-    int      search;
-    unsigned needed, startseg;
+    mmblocktype *scan, *lastscan, *endscan, *purge, *next;
+    int          search;
+    unsigned     needed, startseg;
 
     needed = (size + 15) / 16; // convert size from bytes to paragraphs
 
@@ -687,7 +687,7 @@ void MM_FreePtr(memptr* baseptr)
 {
     long value; // mdebug
 
-    mmblocktype far *scan, far *last;
+    mmblocktype *scan, *last;
 
     last = mmhead;
     scan = last->next;
@@ -728,7 +728,7 @@ void MM_FreePtr(memptr* baseptr)
 
 void MM_SetPurge(memptr* baseptr, int purge)
 {
-    mmblocktype far* start;
+    mmblocktype* start;
 
     start = mmrover;
 
@@ -764,7 +764,7 @@ void MM_SetPurge(memptr* baseptr, int purge)
 
 void MM_SetLock(memptr* baseptr, bool locked)
 {
-    mmblocktype far* start;
+    mmblocktype* start;
 
     start = mmrover;
 
@@ -800,9 +800,9 @@ void MM_SetLock(memptr* baseptr, bool locked)
 
 void MM_SortMem(void)
 {
-    mmblocktype far *scan, far *last, far *next;
-    unsigned start, length, source, dest;
-    int      playing;
+    mmblocktype *scan, *last, *next;
+    unsigned     start, length, source, dest;
+    int          playing;
 
     //
     // lock down a currently playing sound
@@ -906,7 +906,7 @@ void MM_SortMem(void)
 
 void MM_ShowMemory (void)
 {
-	mmblocktype far *scan;
+	mmblocktype  *scan;
 	unsigned color,temp,x,y;
 	long	end,owner;
 	char    scratch[80],str[10];
@@ -960,7 +960,7 @@ void MM_ShowMemory (void)
 
 void MM_DumpData (void)
 {
-	mmblocktype far *scan,far *best;
+	mmblocktype  *scan, *best;
 	long	lowest,oldlowest;
 	unsigned	owner;
 	char	lock,purge;
@@ -1028,8 +1028,8 @@ void MM_DumpData (void)
 
 long MM_UnusedMemory(void)
 {
-    unsigned         free;
-    mmblocktype far* scan;
+    unsigned     free;
+    mmblocktype* scan;
 
     free = 0;
     scan = mmhead;
@@ -1057,8 +1057,8 @@ long MM_UnusedMemory(void)
 
 long MM_TotalFree(void)
 {
-    unsigned         free;
-    mmblocktype far* scan;
+    unsigned     free;
+    mmblocktype* scan;
 
     free = 0;
     scan = mmhead;
@@ -1086,8 +1086,8 @@ long MM_TotalFree(void)
 
 long MM_LargestAvail(void)
 {
-    unsigned         largest, ammount;
-    mmblocktype far* scan;
+    unsigned     largest, ammount;
+    mmblocktype* scan;
 
     largest = 0;
     scan    = mmhead;

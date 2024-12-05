@@ -176,7 +176,7 @@ void ShutdownMovie(void)
 //
 // length		= length of the source image in bytes
 //---------------------------------------------------------------------------
-void JM_DrawBlock(unsigned dest_offset, unsigned byte_offset, char far* source, unsigned length)
+void JM_DrawBlock(unsigned dest_offset, unsigned byte_offset, char* source, unsigned length)
 {
     byte       numplanes;
     byte       mask, plane;
@@ -251,7 +251,7 @@ void MOVIE_ShowFrame(char huge* inpic)
             break;
 
         inpic += sizeof(anim_chunk);
-        JM_DrawBlock(bufferofs, ah->offset, (char far*)inpic, ah->length);
+        JM_DrawBlock(bufferofs, ah->offset, (char*)inpic, ah->length);
         inpic += ah->length;
     }
 }
@@ -279,7 +279,7 @@ bool MOVIE_LoadBuffer()
     {
         chunkstart = tell(Movie_FHandle);
 
-        if (!IO_FarRead(Movie_FHandle, (byte far*)&blk, sizeof(anim_frame)))
+        if (!IO_FarRead(Movie_FHandle, (byte*)&blk, sizeof(anim_frame)))
             AN_ERROR(AN_BAD_ANIM_FILE);
 
         if (blk.code == AN_END_OF_ANIM)
@@ -287,13 +287,13 @@ bool MOVIE_LoadBuffer()
 
         if (free_space >= (blk.recsize + sizeof(anim_frame)))
         {
-            _fmemcpy(frame, (byte far*)&blk, sizeof(anim_frame));
+            _fmemcpy(frame, (byte*)&blk, sizeof(anim_frame));
 
             free_space -= sizeof(anim_frame);
             frame += sizeof(anim_frame);
             PageLen += sizeof(anim_frame);
 
-            if (!IO_FarRead(Movie_FHandle, (byte far*)frame, blk.recsize))
+            if (!IO_FarRead(Movie_FHandle, (byte*)frame, blk.recsize))
                 AN_ERROR(AN_BAD_ANIM_FILE);
 
             free_space -= blk.recsize;
@@ -373,7 +373,7 @@ void MOVIE_HandlePage(MovieStuff_t* MovieStuff)
     case AN_SOUND: // Sound Chunk
     {
         unsigned sound_chunk;
-        sound_chunk = *(unsigned far*)frame;
+        sound_chunk = *(unsigned*)frame;
         SD_PlaySound(sound_chunk);
         BufferPtr += blk.recsize;
     }
@@ -388,7 +388,7 @@ void MOVIE_HandlePage(MovieStuff_t* MovieStuff)
 		case MV_CNVT_CODE('P','M'):				// Play Music
 		{
       	unsigned song_chunk;
-         song_chunk = *(unsigned far *)frame;
+         song_chunk = *(unsigned  *)frame;
          SD_MusicOff();
 
 			if (!audiosegs[STARTMUSIC+musicchunk])
@@ -403,7 +403,7 @@ void MOVIE_HandlePage(MovieStuff_t* MovieStuff)
 			else
 			{
 				MM_SetLock(&((memptr)audiosegs[STARTMUSIC + musicchunk]),true);
-				SD_StartMusic((MusicGroup far *)audiosegs[STARTMUSIC + musicchunk]);
+				SD_StartMusic((MusicGroup  *)audiosegs[STARTMUSIC + musicchunk]);
 			}
 
          BufferPtr+=blk.recsize;
@@ -442,7 +442,7 @@ void MOVIE_HandlePage(MovieStuff_t* MovieStuff)
     case AN_PAUSE: // Pause
     {
         unsigned vbls;
-        vbls = *(unsigned far*)frame;
+        vbls = *(unsigned*)frame;
         IN_UserInput(vbls);
         BufferPtr += blk.recsize;
     }

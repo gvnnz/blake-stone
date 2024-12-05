@@ -178,12 +178,12 @@ typedef struct
 typedef struct
 {
     /* This part needs to be set up by the user */
-    word mood, far *moods[sqMaxMoods];
+    word mood, *moods[sqMaxMoods];
 
     /* The rest is set up by the code */
     Instrument inst;
     bool       percussive;
-    word far*  seq;
+    word*      seq;
     longword   nextevent;
 } ActiveTrack;
 
@@ -220,7 +220,7 @@ extern void SD_SetPosition(int leftvol, int rightvol),
     SD_StopSound(void),
     SD_WaitSoundDone(void),
 
-    SD_StartMusic(MusicGroup far* music),
+    SD_StartMusic(MusicGroup* music),
     SD_MusicOn(void),
     SD_MusicOff(void),
     SD_FadeOutMusic(void),
@@ -237,9 +237,9 @@ extern void SD_SetDigiDevice(SDSMode),
     SD_Poll(void);
 
 #ifdef _MUSE_ // MUSE Goes directly to the lower level routines
-extern void SDL_PCPlaySound(PCSound far* sound),
+extern void SDL_PCPlaySound(PCSound* sound),
     SDL_PCStopSound(void),
-    SDL_ALPlaySound(AdLibSound far* sound),
+    SDL_ALPlaySound(AdLibSound* sound),
     SDL_ALStopSound(void);
 #endif
 

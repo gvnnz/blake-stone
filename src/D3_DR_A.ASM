@@ -13,7 +13,7 @@ DEG360		=	3600
 OP_JLE		=	07eh
 OP_JGE		=	07dh
 
-EXTRN	finetangent:DWORD	; far array, starts at offset 0
+EXTRN	finetangent:DWORD	;  array, starts at offset 0
 
 EXTRN	HitHorizWall:FAR
 EXTRN	HitVertWall:FAR

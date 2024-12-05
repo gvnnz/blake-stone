@@ -44,16 +44,16 @@ bool            use_custom_cursor = false; // JAM
 //	Internal variables
 #define ConfigVersion 1
 
-char far *far          US_ParmStrings[]  = {"TEDLEVEL", "NOWAIT"},
-              far *far US_ParmStrings2[] = {"COMP", "NOCOMP"};
-bool                   US_Started;
+char *US_ParmStrings[]  = {"TEDLEVEL", "NOWAIT"},
+     *US_ParmStrings2[] = {"COMP", "NOCOMP"};
+bool US_Started;
 
 bool Button0, Button1,
     CursorBad;
 int CursorX, CursorY;
 
-void (*USL_MeasureString)(char far*, word*, word*)                       = VW_MeasurePropString,
-                                            (*USL_DrawString)(char far*) = VWB_DrawPropString;
+void (*USL_MeasureString)(char*, word*, word*)                   = VW_MeasurePropString,
+                                        (*USL_DrawString)(char*) = VWB_DrawPropString;
 
 SaveGame Games[MaxSaveGames];
 
@@ -182,10 +182,10 @@ void US_Shutdown(void)
 //		index of the string that matched, or -1 if no matches were found
 //
 ///////////////////////////////////////////////////////////////////////////
-int US_CheckParm(char far* parm, char far* far* strings)
+int US_CheckParm(char* parm, char** strings)
 {
-    char     cp, cs,
-        far *p, far *s;
+    char cp, cs,
+        *p, *s;
     int i;
 
     while (!isalpha(*parm)) // Skip non-alphas
@@ -221,7 +221,7 @@ int US_CheckParm(char far* parm, char far* far* strings)
 //
 ///////////////////////////////////////////////////////////////////////////
 void
-US_SetPrintRoutines(void (*measure)(char far *,word *,word *),void (*print)(char far *))
+US_SetPrintRoutines(void (*measure)(char  *,word *,word *),void (*print)(char  *))
 {
 	USL_MeasureString = measure;
 	USL_DrawString = print;
@@ -235,9 +235,9 @@ US_SetPrintRoutines(void (*measure)(char far *,word *,word *),void (*print)(char
 //		supported.
 //
 ///////////////////////////////////////////////////////////////////////////
-void US_Print(char far* s)
+void US_Print(char* s)
 {
-    char c, far *se;
+    char c, *se;
     word w, h;
 
     while (*s)
@@ -298,7 +298,7 @@ US_PrintSigned(long n)
 //	USL_PrintInCenter() - Prints a string in the center of the given rect
 //
 ///////////////////////////////////////////////////////////////////////////
-void USL_PrintInCenter(char far* s, Rect r)
+void USL_PrintInCenter(char* s, Rect r)
 {
     word w, h,
         rw, rh;
@@ -317,7 +317,7 @@ void USL_PrintInCenter(char far* s, Rect r)
 //	US_PrintCentered() - Prints a string centered in the current window.
 //
 ///////////////////////////////////////////////////////////////////////////
-void US_PrintCentered(char far* s)
+void US_PrintCentered(char* s)
 {
     Rect r;
 
@@ -335,7 +335,7 @@ void US_PrintCentered(char far* s)
 //		advances to the next line. Newlines are not supported.
 //
 ///////////////////////////////////////////////////////////////////////////
-void US_CPrintLine(char far* s)
+void US_CPrintLine(char* s)
 {
     word w, h;
 
@@ -355,9 +355,9 @@ void US_CPrintLine(char far* s)
 //		supported.
 //
 ///////////////////////////////////////////////////////////////////////////
-void US_CPrint(char far* s)
+void US_CPrint(char* s)
 {
-    char c, far *se;
+    char c, *se;
 
     while (*s)
     {
@@ -555,7 +555,7 @@ static void USL_CustomCursor(int x, int y, char* s, word cursor)
 //		returned
 //
 ///////////////////////////////////////////////////////////////////////////
-bool US_LineInput(int x, int y, char far* buf, char far* def, bool escok,
+bool US_LineInput(int x, int y, char* buf, char* def, bool escok,
     int maxchars, int maxwidth)
 {
     bool redraw,

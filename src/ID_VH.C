@@ -41,14 +41,14 @@ void VWL_UpdateScreenBlocks(void);
 
 //==========================================================================
 
-void VW_DrawPropString(char far* string)
+void VW_DrawPropString(char* string)
 {
-    fontstruct far* font;
-    int             width, step, height, i;
-    byte far *source, far *dest, far *origdest;
-    byte ch, mask;
+    fontstruct* font;
+    int         width, step, height, i;
+    byte *      source, *dest, *origdest;
+    byte        ch, mask;
 
-    font   = (fontstruct far*)grsegs[STARTFONT + fontnumber];
+    font   = (fontstruct*)grsegs[STARTFONT + fontnumber];
     height = bufferheight = font->height;
     dest = origdest = MK_FP(SCREENSEG, bufferofs + ylookup[py] + (px >> 2));
     mask            = 1 << (px & 3);
@@ -56,7 +56,7 @@ void VW_DrawPropString(char far* string)
     while ((ch = *string++) != 0)
     {
         width = step = font->width[ch];
-        source       = ((byte far*)font) + font->location[ch];
+        source       = ((byte*)font) + font->location[ch];
         while (width--)
         {
             VGAMAPMASK(mask);
@@ -100,10 +100,10 @@ void VW_DrawPropString(char far* string)
 =================
 */
 
-void VL_MungePic (byte far *source, unsigned width, unsigned height)
+void VL_MungePic (byte  *source, unsigned width, unsigned height)
 {
 	unsigned	x,y,plane,size,pwidth;
-	byte		_seg *temp, far *dest, far *srcline;
+	byte		_seg *temp,  *dest,  *srcline;
 
 	size = width*height;
 
@@ -138,21 +138,21 @@ void VL_MungePic (byte far *source, unsigned width, unsigned height)
 
 #endif
 
-void VWL_MeasureString(char far* string, word* width, word* height, fontstruct _seg* font)
+void VWL_MeasureString(char* string, word* width, word* height, fontstruct _seg* font)
 {
     *height = font->height;
     for (*width = 0; *string; string++)
-        *width += font->width[*((byte far*)string)]; // proportional width
+        *width += font->width[*((byte*)string)]; // proportional width
 }
 
-void VW_MeasurePropString(char far* string, word* width, word* height)
+void VW_MeasurePropString(char* string, word* width, word* height)
 {
     VWL_MeasureString(string, width, height, (fontstruct _seg*)grsegs[STARTFONT + fontnumber]);
 }
 
 #if 0
 
-void	VW_MeasureMPropString  (char far *string, word *width, word *height)
+void	VW_MeasureMPropString  (char  *string, word *width, word *height)
 {
 	VWL_MeasureString(string,width,height,(fontstruct _seg *)grsegs[STARTFONTM+fontnumber]);
 }
@@ -233,7 +233,7 @@ void VWB_DrawTile8(int x, int y, int tile)
 void VWB_DrawTile8M (int x, int y, int tile)
 {
 	if (VW_MarkUpdateBlock (x,y,x+7,y+7))
-		VL_MemToScreen (((byte far *)grsegs[STARTTILE8M])+tile*64,8,8,x,y);
+		VL_MemToScreen (((byte  *)grsegs[STARTTILE8M])+tile*64,8,8,x,y);
 }
 #endif
 
@@ -266,7 +266,7 @@ void VWB_DrawMPic(int x, int y, int chunknum)
         VL_MaskMemToScreen(grsegs[chunknum], width, height, x, y, 255);
 }
 
-void VWB_DrawPropString(char far* string)
+void VWB_DrawPropString(char* string)
 {
     int x;
     x = px;
@@ -349,9 +349,9 @@ unsigned destoff;
 
 void LoadLatchMem(void)
 {
-    int       i, j, p, m, width, height;
-    byte far* src;
-    unsigned  picnum = 0;
+    int      i, j, p, m, width, height;
+    byte*    src;
+    unsigned picnum = 0;
 
     //
     // tile 8s

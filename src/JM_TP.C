@@ -91,13 +91,13 @@
 // See Macro TP_INIT_DISPLAY_STR(num,str_ptr)						- JM_TP.h
 // To init strings and handle range checking....
 
-char far* far piStringTable[PI_MAX_NUM_DISP_STRS];
+char* piStringTable[PI_MAX_NUM_DISP_STRS];
 
 // shape table provides a way for the presenter to access and
 // display any shape.
 //
 
-piShapeInfo far piShapeTable[] = {
+piShapeInfo piShapeTable[] = {
 
     {SPR_GREEN_OOZE1, pis_scaled}, // 0 - Green Ooze
 
@@ -440,7 +440,7 @@ piShapeInfo far piShapeTable[] = {
 
 // anim table holds info about each different animation.
 //
-piAnimInfo far piAnimTable[] =
+piAnimInfo piAnimTable[] =
     {
         {136, 0, 2, 0, 20, pia_shapetable, pid_cycle}, // 0 -	OPEN
         {127, 0, 3, 0, 20, pia_shapetable, pid_cycle}, // 1 -	podeggobj,
@@ -502,8 +502,8 @@ piAnimInfo far piAnimTable[] =
 // this allows a single animation to be displayed in more than
 // one place...
 //
-piAnimInfo far piAnimList[TP_MAX_ANIMS];
-byte           TPscan;
+piAnimInfo piAnimList[TP_MAX_ANIMS];
+byte       TPscan;
 
 // Bunch of general globals!
 //
@@ -521,13 +521,13 @@ static char justify_mode = jm_left;
 
 static unsigned flags;
 
-static short     bgcolor, ltcolor, dkcolor, shcolor, anim_bgcolor = -1;
-static unsigned  xl, yl, xh, yh;
-static unsigned  cur_x, cur_y, last_cur_x, last_cur_y;
-static char far* first_ch;
+static short    bgcolor, ltcolor, dkcolor, shcolor, anim_bgcolor = -1;
+static unsigned xl, yl, xh, yh;
+static unsigned cur_x, cur_y, last_cur_x, last_cur_y;
+static char*    first_ch;
 
-static char far *scan_ch, temp;
-static short     scan_x, numanims, stemp;
+static char *scan_ch, temp;
+static short scan_x, numanims, stemp;
 
 static fontstruct _seg* font;
 
@@ -709,8 +709,8 @@ void TP_WrapText()
     //
     if (scan_x + ch_width(*scan_ch) > xh)
     {
-        short     last_x  = scan_x;
-        char far* last_ch = scan_ch;
+        short last_x  = scan_x;
+        char* last_ch = scan_ch;
 
         while ((scan_ch != first_ch) && (*scan_ch != ' ') && (*scan_ch != TP_RETURN_CHAR))
             scan_x -= ch_width(*scan_ch--);
@@ -830,15 +830,15 @@ tp_newline:;
 //--------------------------------------------------------------------------
 void TP_HandleCodes()
 {
-    ControlInfo          ci;
-    spritetabletype far* spr;
-    piAnimInfo far*      anim;
-    piShapeInfo far*     shape;
-    unsigned             shapenum;
-    short                length;
-    char far*            s;
-    short                old_bgcolor;
-    signed char          c;
+    ControlInfo      ci;
+    spritetabletype* spr;
+    piAnimInfo*      anim;
+    piShapeInfo*     shape;
+    unsigned         shapenum;
+    short            length;
+    char*            s;
+    short            old_bgcolor;
+    signed char      c;
 
     if ((first_ch[-2] == TP_RETURN_CHAR) && (first_ch[-1] == '\n'))
         flags |= fl_startofline;
@@ -854,7 +854,7 @@ void TP_HandleCodes()
         *first_ch       = toupper(*first_ch);
         *(first_ch + 1) = toupper(*(first_ch + 1));
 #endif
-        switch (*((unsigned far*)first_ch)++)
+        switch (*((unsigned*)first_ch)++)
         {
             // CENTER TEXT ------------------------------------------------------
             //
@@ -867,7 +867,7 @@ void TP_HandleCodes()
                 {
                 case TP_CONTROL_CHAR:
                     s++;
-                    switch (*((unsigned far*)s)++)
+                    switch (*((unsigned*)s)++)
                     {
                     case TP_CNVT_CODE('S', 'X'):
                     case TP_CNVT_CODE('R', 'X'):
@@ -1311,7 +1311,7 @@ void TP_HandleCodes()
             //
         case TP_CNVT_CODE('D', 'S'):
         {
-            char far* old_first_ch;
+            char* old_first_ch;
 
             disp_str_num = TP_VALUE(first_ch, 2);
             if (disp_str_num >= PI_MAX_NUM_DISP_STRS)
@@ -1321,7 +1321,7 @@ void TP_HandleCodes()
 
 #pragma warn - pia
 
-            if (first_ch = (char far*)piStringTable[disp_str_num])
+            if (first_ch = (char*)piStringTable[disp_str_num])
             {
                 while (flags & fl_presenting && *first_ch)
                     if (*first_ch == TP_CONTROL_CHAR)
@@ -1604,8 +1604,8 @@ void TP_ResetAnims()
 //--------------------------------------------------------------------------
 void TP_AnimatePage(short numanims)
 {
-    piAnimInfo far*  anim = piAnimList;
-    piShapeInfo far* shape;
+    piAnimInfo*  anim = piAnimList;
+    piShapeInfo* shape;
 
     while (numanims--)
     {
@@ -1750,13 +1750,13 @@ void TP_PurgeAllGfx()
 //--------------------------------------------------------------------------
 // TP_CachePage()
 //--------------------------------------------------------------------------
-void TP_CachePage(char far* script)
+void TP_CachePage(char* script)
 {
-    piAnimInfo far* anim;
-    short           loop;
-    unsigned        shapenum;
-    bool            end_of_page = false;
-    short           numanims    = 0;
+    piAnimInfo* anim;
+    short       loop;
+    unsigned    shapenum;
+    bool        end_of_page = false;
+    short       numanims    = 0;
 
     if (pi->flags & TPF_CACHE_NO_GFX)
         return;
@@ -1775,7 +1775,7 @@ void TP_CachePage(char far* script)
             *script       = toupper(*script);
             *(script + 1) = toupper(*(script + 1));
 #endif
-            switch (*((unsigned far*)script)++)
+            switch (*((unsigned*)script)++)
             {
             case TP_CNVT_CODE('S', 'H'):
                 shapenum = TP_VALUE(script, 3);
@@ -1824,7 +1824,7 @@ void TP_CachePage(char far* script)
 //--------------------------------------------------------------------------
 // TP_VALUE()
 //--------------------------------------------------------------------------
-unsigned TP_VALUE(char far* ptr, char num_nybbles)
+unsigned TP_VALUE(char* ptr, char num_nybbles)
 {
     char     ch, nybble, shift;
     unsigned value = 0;
@@ -1864,7 +1864,7 @@ void TP_JumpCursor()
 //--------------------------------------------------------------------------
 // TP_Print()
 //--------------------------------------------------------------------------
-void TP_Print(char far* str, bool single_char)
+void TP_Print(char* str, bool single_char)
 {
 
     //
@@ -1906,7 +1906,7 @@ void TP_Print(char far* str, bool single_char)
 //--------------------------------------------------------------------------
 // TP_SlowPrint()
 //--------------------------------------------------------------------------
-bool TP_SlowPrint(char far* str, char delay)
+bool TP_SlowPrint(char* str, char delay)
 {
     char  old_color = fontcolor;
     short old_x, old_y;
@@ -1992,14 +1992,14 @@ long TP_LoadScript(char* filename, PresenterInfo* pi, unsigned id_cache)
 
     if (id_cache)
     {
-        char far* p;
+        char* p;
 
         pi->id_cache = id_cache;
         CA_CacheGrChunk(id_cache);
         pi->scriptstart = grsegs[id_cache];
         if (!(p = _fstrstr(grsegs[id_cache], "^XX")))
             TP_ERROR(TP_CANT_FIND_XX_TERMINATOR);
-        size = p - (char far*)MK_FP(grsegs[id_cache], 1);
+        size = p - (char*)MK_FP(grsegs[id_cache], 1);
     }
     else
     {
@@ -2037,7 +2037,7 @@ void TP_FreeScript(PresenterInfo* pi, unsigned id_cache)
 //-------------------------------------------------------------------------
 void TP_InitScript(PresenterInfo* pi)
 {
-    char far* script = pi->script[0];
+    char* script = pi->script[0];
 
     pi->numpages = 1; // Assume at least 1 page
     while (*script)
@@ -2058,7 +2058,7 @@ void TP_InitScript(PresenterInfo* pi)
             *script       = toupper(*script);
             *(script + 1) = toupper(*(script + 1));
 #endif
-            switch (*((unsigned far*)script)++)
+            switch (*((unsigned*)script)++)
             {
             case TP_CNVT_CODE('E', 'P'):
                 if (pi->numpages < TP_MAX_PAGES)
@@ -2162,9 +2162,9 @@ void TP_CacheIn(tpCacheType type, short chunk)
 //-------------------------------------------------------------------------
 // TP_LineCommented()
 //-------------------------------------------------------------------------
-short TP_LineCommented(char far* s)
+short TP_LineCommented(char* s)
 {
-    char far* o = s;
+    char* o = s;
 
     // If a line starts with a semi-colon, the entire line is considered a
     // comment and is ignored!
@@ -2185,7 +2185,7 @@ short TP_LineCommented(char far* s)
 
 int MDS_COMPUTERS_SUCK_SHIT()
 {
-    char far *fptr;
+    char  *fptr;
     void _seg *sptr;
     short offset;
 

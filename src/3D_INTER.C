@@ -76,10 +76,10 @@ bool Breifing(breifing_type BreifingType, unsigned episode)
 =================
 */
 
-void ShPrint(char far* text, char shadow_color, bool single_char)
+void ShPrint(char* text, char shadow_color, bool single_char)
 {
-    unsigned  old_color = fontcolor, old_x = px, old_y = py;
-    char far *str, buf[2] = {0, 0};
+    unsigned old_color = fontcolor, old_x = px, old_y = py;
+    char *   str, buf[2] = {0, 0};
 
     if (single_char)
     {
@@ -114,9 +114,9 @@ void PreloadUpdate(unsigned current, unsigned total)
     VW_UpdateScreen();
 }
 
-char far prep_msg[] = "^ST1^CEGet Ready, Blake!\r^XX";
+char prep_msg[] = "^ST1^CEGet Ready, Blake!\r^XX";
 
-void DisplayPrepingMsg(char far* text)
+void DisplayPrepingMsg(char* text)
 {
 #if GAME_VERSION != SHAREWARE_VERSION
 

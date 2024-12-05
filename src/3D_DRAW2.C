@@ -9,17 +9,17 @@ unsigned CeilingTile = 126, FloorTile = 126;
 
 void (*MapRowPtr)();
 
-int far spanstart[MAXVIEWHEIGHT / 2]; // jtr - far
+int spanstart[MAXVIEWHEIGHT / 2]; // jtr -
 
 fixed stepscale[MAXVIEWHEIGHT / 2];
 fixed basedist[MAXVIEWHEIGHT / 2];
 
-extern char far planepics[8192]; // 4k of ceiling, 4k of floor
+extern char planepics[8192]; // 4k of ceiling, 4k of floor
 
 int halfheight = 0;
 
-byte far*    planeylookup[MAXVIEWHEIGHT / 2];
-unsigned far mirrorofs[MAXVIEWHEIGHT / 2];
+byte*    planeylookup[MAXVIEWHEIGHT / 2];
+unsigned mirrorofs[MAXVIEWHEIGHT / 2];
 
 fixed psin, pcos;
 
@@ -44,8 +44,8 @@ int mr_dest;
 = Height ranges from 0 (infinity) to viewheight/2 (nearest)
 ==============
 */
-extern byte far* lightsource;
-extern byte far* shadingtable;
+extern byte* lightsource;
+extern byte* shadingtable;
 
 void DrawSpans(int x1, int x2, int height)
 {
@@ -54,9 +54,9 @@ void DrawSpans(int x1, int x2, int height)
     int   prestep;
     fixed startxfrac, startyfrac;
 
-    int       x, startx, count, plane, startplane;
-    byte far *toprow, far *dest;
-    long i;
+    int   x, startx, count, plane, startplane;
+    byte *toprow, *dest;
+    long  i;
 
     toprow    = planeylookup[height] + bufferofs;
     mr_rowofs = mirrorofs[height];
@@ -143,14 +143,14 @@ void DrawSpans(int x1, int x2, int height)
 
 void SetPlaneViewSize(void)
 {
-    int       x, y;
-    byte far *dest, far *src;
+    int   x, y;
+    byte *dest, *src;
 
     halfheight = viewheight >> 1;
 
     for (y = 0; y < halfheight; y++)
     {
-        planeylookup[y] = (byte far*)0xa0000000l + (halfheight - 1 - y) * SCREENBWIDE;
+        planeylookup[y] = (byte*)0xa0000000l + (halfheight - 1 - y) * SCREENBWIDE;
         ;
         mirrorofs[y] = (y * 2 + 1) * SCREENBWIDE;
 

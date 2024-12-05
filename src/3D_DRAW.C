@@ -62,9 +62,9 @@ fixed mindist = MINDIST;
 //
 // math tables
 //
-int       pixelangle[MAXVIEWWIDTH];
-long far  finetangent[FINEANGLES / 4];
-fixed far sintable[ANGLES + ANGLES / 4], far *costable = sintable + (ANGLES / 4);
+int   pixelangle[MAXVIEWWIDTH];
+long  finetangent[FINEANGLES / 4];
+fixed sintable[ANGLES + ANGLES / 4], *costable = sintable + (ANGLES / 4);
 
 //
 // refresh variables
@@ -74,8 +74,8 @@ int   viewangle;
 fixed viewsin, viewcos;
 
 #ifndef WOLFDOORS
-char far  thetile[64];
-byte far* mytile;
+char  thetile[64];
+byte* mytile;
 #endif
 
 fixed FixedByFrac(fixed a, fixed b);
@@ -407,13 +407,13 @@ int CalcHeight(void)
 ===================
 */
 
-long             postsource;
-unsigned         postx;
-unsigned         bufx;
-unsigned         postwidth;
-unsigned         postheight;
-byte far*        shadingtable;
-extern byte far* lightsource;
+long         postsource;
+unsigned     postx;
+unsigned     bufx;
+unsigned     postwidth;
+unsigned     postheight;
+byte*        shadingtable;
+extern byte* lightsource;
 
 void ScalePost(void) // VGA version
 {
@@ -489,7 +489,7 @@ void FarScalePost() // just so other files can call
 ====================
 */
 
-unsigned far DoorJamsShade[] =
+unsigned DoorJamsShade[] =
     {
         BIO_JAM_SHADE,     // dr_bio
         SPACE_JAM_2_SHADE, // dr_normal
@@ -504,7 +504,7 @@ unsigned far DoorJamsShade[] =
         SPACE_JAM_SHADE,   // dr_space
 };
 
-unsigned far DoorJams[] =
+unsigned DoorJams[] =
     {
         BIO_JAM,     // dr_bio
         SPACE_JAM_2, // dr_normal
@@ -1356,7 +1356,7 @@ void DrawScaleds(void)
             TransformActor(obj);
 
             if (!obj->viewheight)
-                continue; // too close or far away
+                continue; // too close or  away
 
             if ((obj->flags2 & (FL2_CLOAKED | FL2_DAMAGE_CLOAK)) == (FL2_CLOAKED))
             {
@@ -1845,7 +1845,7 @@ int NextBuffer()
         bufferofs = PAGE1START;
 }
 
-byte far TravelTable[MAPSIZE][MAPSIZE];
+byte TravelTable[MAPSIZE][MAPSIZE];
 
 //--------------------------------------------------------------------------
 // UpdateTravelTable()
@@ -1900,19 +1900,19 @@ void ShowOverhead(short bx, short by, short radius, short zoom, unsigned flags)
 #define UNMAPPED_COLOR 0x52
 #define MAPPED_COLOR 0x55
 
-    extern byte     pixmasks[];
-    extern byte far rndtable[];
+    extern byte pixmasks[];
+    extern byte rndtable[];
 
     byte     color, quad;
     byte     tile, door;
     objtype* ob;
 
-    fixed     dx, dy, psin, pcos, lmx, lmy, baselmx, baselmy, xinc, yinc;
-    short     rx, ry, mx, my;
-    byte far *dstptr, far *basedst, mask, startmask;
-    bool drawplayerok = true;
-    byte rndindex;
-    bool snow = false;
+    fixed dx, dy, psin, pcos, lmx, lmy, baselmx, baselmy, xinc, yinc;
+    short rx, ry, mx, my;
+    byte *dstptr, *basedst, mask, startmask;
+    bool  drawplayerok = true;
+    byte  rndindex;
+    bool  snow = false;
 
     // -zoom == make it snow!
     //

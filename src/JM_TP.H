@@ -70,18 +70,18 @@
 //-------------------------------------------------------------------------
 typedef struct
 {
-    unsigned  flags, gflags;
-    char far* script[TP_MAX_PAGES];
-    memptr    scriptstart;
-    char      numpages, pagenum;
-    unsigned  xl, yl, xh, yh;
-    char      fontnumber;
-    char      bgcolor, ltcolor, dkcolor, shcolor;
-    unsigned  cur_x, cur_y;
-    char      print_delay;
-    byte      highlight_color, fontcolor;
-    short     id_cache;
-    char far* infoline;
+    unsigned flags, gflags;
+    char*    script[TP_MAX_PAGES];
+    memptr   scriptstart;
+    char     numpages, pagenum;
+    unsigned xl, yl, xh, yh;
+    char     fontnumber;
+    char     bgcolor, ltcolor, dkcolor, shcolor;
+    unsigned cur_x, cur_y;
+    char     print_delay;
+    byte     highlight_color, fontcolor;
+    short    id_cache;
+    char*    infoline;
 } PresenterInfo;
 
 typedef enum tpCacheType
@@ -139,11 +139,11 @@ typedef struct
 //-------------------------------------------------------------------------
 // variable externs
 //-------------------------------------------------------------------------
-extern piShapeInfo far piShapeTable[];
-extern piAnimInfo far  piAnimTable[];
-extern piAnimInfo far  piAnimList[TP_MAX_ANIMS];
-extern char far* far   piStringTable[PI_MAX_NUM_DISP_STRS];
-extern byte            TPscan;
+extern piShapeInfo piShapeTable[];
+extern piAnimInfo  piAnimTable[];
+extern piAnimInfo  piAnimList[TP_MAX_ANIMS];
+extern char*       piStringTable[PI_MAX_NUM_DISP_STRS];
+extern byte        TPscan;
 
 //-------------------------------------------------------------------------
 // Function prototypes
@@ -152,20 +152,20 @@ void     TP_Presenter(PresenterInfo* pi);
 void     TP_WrapText(void);
 void     TP_HandleCodes(void);
 short    TP_DrawShape(short x, short y, short shapenum, pisType type);
-unsigned TP_VALUE(char far* ptr, char num_nybbles);
+unsigned TP_VALUE(char* ptr, char num_nybbles);
 long     TP_LoadScript(char* filename, PresenterInfo* pi, unsigned id_cache);
 void     TP_FreeScript(PresenterInfo* pi, unsigned id_cache);
 void     TP_InitScript(PresenterInfo* pi);
 void     TP_AnimatePage(short numanims);
 short    TP_BoxAroundShape(short x1, short y1, unsigned shapenum, pisType shapetype);
 void     TP_JumpCursor(void);
-void     TP_Print(char far* str, bool single_char);
-bool     TP_SlowPrint(char far* str, char delay);
+void     TP_Print(char* str, bool single_char);
+bool     TP_SlowPrint(char* str, char delay);
 void     TP_PurgeAllGfx(void);
-void     TP_CachePage(char far* script);
+void     TP_CachePage(char* script);
 void     TP_CacheIn(tpCacheType type, short chunk);
 void     TP_ResetPagePointers(void);
-short    TP_LineCommented(char far* s);
+short    TP_LineCommented(char* s);
 void     TP_PrintPageNumber(void);
 
 #endif

@@ -26,7 +26,7 @@ _TEXT	segment	public byte 'CODE'
 		public  N_LUMOD@
 
 N_LDIV@:
-		pop     cx                      ;fix up far return
+		pop     cx                      ;fix up  return
 		push    cs
 		push    cx
 LDIV@:
@@ -70,7 +70,7 @@ F_LDIV@:
 	MASM
 
 N_LUDIV@:
-		pop     cx                      ;fix up far return
+		pop     cx                      ;fix up  return
 		push    cs
 		push    cx
 LUDIV@:
@@ -79,7 +79,7 @@ F_LUDIV@:
 	jmp	short common
 
 N_LMOD@:
-		pop     cx                      ;fix up far return
+		pop     cx                      ;fix up  return
 		push    cs
 		push    cx
 LMOD@:
@@ -88,7 +88,7 @@ F_LMOD@:
 	jmp	short	common
 
 N_LUMOD@:
-		pop     cx                      ;fix up far return
+		pop     cx                      ;fix up  return
 		push    cs
 		push    cx
 LUMOD@:

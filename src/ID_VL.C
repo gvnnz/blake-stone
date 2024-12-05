@@ -25,7 +25,7 @@ unsigned bordercolor;
 
 // bool		fastpalette;				// if true, use outsb to set
 
-byte far palette1[256][3], far palette2[256][3];
+byte palette1[256][3], palette2[256][3];
 
 //===========================================================================
 
@@ -337,7 +337,7 @@ void VL_GetColor	(int color, int *red, int *green, int *blue)
 =================
 */
 
-void VL_SetPalette(byte firstreg, unsigned numregs, byte far* palette)
+void VL_SetPalette(byte firstreg, unsigned numregs, byte* palette)
 {
     int i; //,three=3;
 
@@ -384,7 +384,7 @@ void VL_SetPalette(byte firstreg, unsigned numregs, byte far* palette)
 =================
 */
 
-void VL_GetPalette(byte firstreg, unsigned numregs, byte far* palette)
+void VL_GetPalette(byte firstreg, unsigned numregs, byte* palette)
 {
     int i;
 
@@ -410,8 +410,8 @@ void VL_GetPalette(byte firstreg, unsigned numregs, byte far* palette)
 
 void VL_FadeOut(int start, int end, int red, int green, int blue, int steps)
 {
-    int       i, j, orig, delta;
-    byte far *origptr, far *newptr;
+    int   i, j, orig, delta;
+    byte *origptr, *newptr;
 
     VL_GetPalette(0, 256, &palette1[0][0]);
     _fmemcpy(palette2, palette1, 768);
@@ -455,7 +455,7 @@ void VL_FadeOut(int start, int end, int red, int green, int blue, int steps)
 =================
 */
 
-void VL_FadeIn(int start, int end, byte far* palette, int steps)
+void VL_FadeIn(int start, int end, byte* palette, int steps)
 {
     int i, j, delta;
 
@@ -489,11 +489,11 @@ void VL_FadeIn(int start, int end, byte far* palette, int steps)
 //------------------------------------------------------------------------
 // VL_SetPaletteIntensity()
 //------------------------------------------------------------------------
-void VL_SetPaletteIntensity(int start, int end, byte far* palette, char intensity)
+void VL_SetPaletteIntensity(int start, int end, byte* palette, char intensity)
 {
-    short     loop;
-    char      red, green, blue;
-    byte far* cmap = &palette1[0][0] + start * 3;
+    short loop;
+    char  red, green, blue;
+    byte* cmap = &palette1[0][0] + start * 3;
 
     intensity = 63 - intensity;
     for (loop = start; loop <= end; loop++)
@@ -619,7 +619,7 @@ void VL_Plot(int x, int y, int color)
 
     mask = pixmasks[x & 3];
     VGAMAPMASK(mask);
-    *(byte far*)MK_FP(SCREENSEG, bufferofs + (ylookup[y] + (x >> 2))) = color;
+    *(byte*)MK_FP(SCREENSEG, bufferofs + (ylookup[y] + (x >> 2))) = color;
     VGAMAPMASK(15);
 }
 
@@ -633,10 +633,10 @@ void VL_Plot(int x, int y, int color)
 
 void VL_Hlin(unsigned x, unsigned y, unsigned width, unsigned color)
 {
-    unsigned  xbyte;
-    byte far* dest;
-    byte      leftmask, rightmask;
-    int       midbytes;
+    unsigned xbyte;
+    byte*    dest;
+    byte     leftmask, rightmask;
+    int      midbytes;
 
     xbyte     = x >> 2;
     leftmask  = leftmasks[x & 3];
@@ -677,7 +677,7 @@ void VL_Hlin(unsigned x, unsigned y, unsigned width, unsigned color)
 
 void VL_Vlin(int x, int y, int height, int color)
 {
-    byte far *dest, mask;
+    byte *dest, mask;
 
     mask = pixmasks[x & 3];
     VGAMAPMASK(mask);
@@ -703,9 +703,9 @@ void VL_Vlin(int x, int y, int height, int color)
 
 void VL_Bar(int x, int y, int width, int height, int color)
 {
-    byte far* dest;
-    byte      leftmask, rightmask;
-    int       midbytes, linedelta;
+    byte* dest;
+    byte  leftmask, rightmask;
+    int   midbytes, linedelta;
 
     leftmask  = leftmasks[x & 3];
     rightmask = rightmasks[(x + width - 1) & 3];
@@ -761,7 +761,7 @@ void VL_Bar(int x, int y, int width, int height, int color)
 =================
 */
 
-void VL_MemToLatch(byte far* source, int width, int height, unsigned dest)
+void VL_MemToLatch(byte* source, int width, int height, unsigned dest)
 {
     unsigned count;
     byte     plane, mask;
@@ -791,10 +791,10 @@ void VL_MemToLatch(byte far* source, int width, int height, unsigned dest)
 =================
 */
 
-void VL_MemToScreen(byte far* source, int width, int height, int x, int y)
+void VL_MemToScreen(byte* source, int width, int height, int x, int y)
 {
-    byte far *screen, far *dest, mask;
-    int plane;
+    byte *screen, *dest, mask;
+    int   plane;
 
     width >>= 2;
     dest = MK_FP(SCREENSEG, bufferofs + ylookup[y] + (x >> 2));
@@ -818,10 +818,10 @@ void VL_MemToScreen(byte far* source, int width, int height, int x, int y)
 //------------------------------------------------------------------------
 // VL_MaskMemToScreen()
 //------------------------------------------------------------------------
-void VL_MaskMemToScreen(byte far* source, int width, int height, int x, int y, byte mask)
+void VL_MaskMemToScreen(byte* source, int width, int height, int x, int y, byte mask)
 {
-    byte far *screen, far *dest, bmask;
-    int plane, w, h, mod;
+    byte *screen, *dest, bmask;
+    int   plane, w, h, mod;
 
     width >>= 2;
     dest  = MK_FP(SCREENSEG, bufferofs + ylookup[y] + (x >> 2));
@@ -859,10 +859,10 @@ void VL_MaskMemToScreen(byte far* source, int width, int height, int x, int y, b
 //------------------------------------------------------------------------
 // VL_ScreenToMem()
 //------------------------------------------------------------------------
-void VL_ScreenToMem(byte far* dest, int width, int height, int x, int y)
+void VL_ScreenToMem(byte* dest, int width, int height, int x, int y)
 {
-    byte far *screen, far *source, mask;
-    int plane;
+    byte *screen, *source, mask;
+    int   plane;
 
     width >>= 2;
     source = MK_FP(SCREENSEG, bufferofs + ylookup[y] + (x >> 2));
@@ -978,16 +978,16 @@ asm	mov	ds,ax
 ===================
 */
 
-void VL_DrawTile8String (char *str, char far *tile8ptr, int printx, int printy)
+void VL_DrawTile8String (char *str, char  *tile8ptr, int printx, int printy)
 {
 	int		i;
-	unsigned	far *dest,far *screen,far *src;
+	unsigned	 *dest, *screen, *src;
 
 	dest = MK_FP(SCREENSEG,bufferofs+ylookup[printy]+(printx>>2));
 
 	while (*str)
 	{
-		src = (unsigned far *)(tile8ptr + (*str<<6));
+		src = (unsigned  *)(tile8ptr + (*str<<6));
 		// each character is 64 bytes
 
 		VGAMAPMASK(1);

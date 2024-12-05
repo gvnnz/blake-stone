@@ -105,7 +105,7 @@ unsigned player_oldtiley;
 =============================================================================
 */
 
-void writeTokenStr(char far* str);
+void writeTokenStr(char* str);
 
 void ShowOverheadChunk(void);
 void LoadOverheadChunk(short tpNum);
@@ -127,7 +127,7 @@ statetype s_attack = {0, 0, 0, &T_Attack, NULL, NULL};
 
 long playerxmove, playerymove;
 
-atkinf_t far attackinfo[7][14] =
+atkinf_t attackinfo[7][14] =
 
     {
         {{6, 0, 1}, {6, 2, 2}, {6, 0, 3}, {6, -1, 4}}, // Auto charge
@@ -149,7 +149,7 @@ atkinf_t far attackinfo[7][14] =
 #define YD1 0x33
 #define RD1 0x13
 
-char far DimAmmo[2][22] = {{GD0, GD0, GD0, GD0, GD0, GD0, GD0, YD0, YD0, YD0, YD0, YD0, YD0, YD0, RD0, RD0, RD0, RD0, RD0, RD0, RD0, RD0},
+char DimAmmo[2][22] = {{GD0, GD0, GD0, GD0, GD0, GD0, GD0, YD0, YD0, YD0, YD0, YD0, YD0, YD0, RD0, RD0, RD0, RD0, RD0, RD0, RD0, RD0},
     {GD1, GD1, GD1, GD1, GD1, GD1, GD1, YD1, YD1, YD1, YD1, YD1, YD1, YD1, RD1, RD1, RD1, RD1, RD1, RD1, RD1, RD1}};
 
 #define GL0 0x58
@@ -160,7 +160,7 @@ char far DimAmmo[2][22] = {{GD0, GD0, GD0, GD0, GD0, GD0, GD0, YD0, YD0, YD0, YD
 #define YL1 0x36
 #define RL1 0x16
 
-char far LitAmmo[2][22] = {{GL0, GL0, GL0, GL0, GL0, GL0, GL0, YL0, YL0, YL0, YL0, YL0, YL0, YL0, RL0, RL0, RL0, RL0, RL0, RL0, RL0, RL0},
+char LitAmmo[2][22] = {{GL0, GL0, GL0, GL0, GL0, GL0, GL0, YL0, YL0, YL0, YL0, YL0, YL0, YL0, RL0, RL0, RL0, RL0, RL0, RL0, RL0, RL0},
     {GL1, GL1, GL1, GL1, GL1, GL1, GL1, YL1, YL1, YL1, YL1, YL1, YL1, YL1, RL1, RL1, RL1, RL1, RL1, RL1, RL1, RL1}};
 
 #define IA_MAX_LINE 30
@@ -1253,7 +1253,7 @@ void GiveToken(int tokens)
 //		 DISPLAY_TIMED_MSG(msg,pri,type) - For E-Z Timed Msgs (std. display time)
 //     DISPLAY_MSG(msg,pri,type)		 - For E-Z NON-Timed Msgs.
 //--------------------------------------------------------------------------
-bool DisplayInfoMsg(char far* Msg, msg_priorities Priority, short DisplayTime, short MsgType)
+bool DisplayInfoMsg(char* Msg, msg_priorities Priority, short DisplayTime, short MsgType)
 {
     if (Priority >= LastMsgPri)
     {
@@ -1453,16 +1453,16 @@ void DisplayNoMoMsgs(void)
 //
 //--------------------------------------------------------------------------
 
-char far* HandleControlCodes(char far* first_ch);
+char* HandleControlCodes(char* first_ch);
 
 void DrawInfoArea(void)
 {
 #define IA_FONT_HEIGHT 6
 
     //	short length,i;
-    char far* first_ch;
-    char far *scan_ch, temp;
-    unsigned  old_ofs;
+    char*    first_ch;
+    char *   scan_ch, temp;
+    unsigned old_ofs;
 
 #if IN_DEVELOPMENT
     if (gamestate.flags & GS_SHOW_OVERHEAD)
@@ -1541,15 +1541,15 @@ void DrawInfoArea(void)
 //---------------------------------------------------------------------------
 // HandleControlCodes()
 //---------------------------------------------------------------------------
-char far* HandleControlCodes(char far* first_ch)
+char* HandleControlCodes(char* first_ch)
 {
-    spritetabletype far* spr;
-    //	piShapeInfo far *shape_info;
-    piShapeInfo far* shape;
-    piAnimInfo far*  anim;
-    unsigned         shapenum;
-    short            length, width;
-    char far*        s;
+    spritetabletype* spr;
+    //	piShapeInfo  *shape_info;
+    piShapeInfo* shape;
+    piAnimInfo*  anim;
+    unsigned     shapenum;
+    short        length, width;
+    char*        s;
 
     first_ch++;
 
@@ -1558,7 +1558,7 @@ char far* HandleControlCodes(char far* first_ch)
     *(first_ch + 1) = toupper(*(first_ch + 1));
 #endif
 
-    switch (*((unsigned far*)first_ch)++)
+    switch (*((unsigned*)first_ch)++)
     {
 
         // INIT ANIMATION ---------------------------------------------------
@@ -1713,8 +1713,8 @@ short DrawShape(short x, short y, short shapenum, pisType shapetype)
 //--------------------------------------------------------------------------
 void AnimatePage(void)
 {
-    piAnimInfo far*  anim = piAnimList;
-    piShapeInfo far* shape;
+    piAnimInfo*  anim = piAnimList;
+    piShapeInfo* shape;
 
     // Dec Timers
     //
@@ -1768,8 +1768,8 @@ void AnimatePage(void)
 //--------------------------------------------------------------------------
 void AnimatePage(short numanims)
 {
-	piAnimInfo far *anim=piAnimList;
-	piShapeInfo far *shape;
+	piAnimInfo  *anim=piAnimList;
+	piShapeInfo  *shape;
 
 	anim->delay += tics;
 
@@ -1894,7 +1894,7 @@ void ForceUpdateStatusBar(void)
 ===================
 */
 
-unsigned far static_points[] = {
+unsigned static_points[] = {
     100,  // money bag
     500,  // loot
     250,  // gold1
@@ -1904,7 +1904,7 @@ unsigned far static_points[] = {
     5000  // bonus
 };
 
-unsigned far static_health[][3] =
+unsigned static_health[][3] =
     {
         {100, HEALTH2SND, -1},                 // Full Heal
         {30, HEALTH1SND, -1},                  // First Aid
@@ -1916,8 +1916,8 @@ unsigned far static_health[][3] =
         {5, HEALTH1SND, -1},                   // Water puddle
 };
 
-extern char far bonus_msg24[];
-extern char far bonus_msg25[];
+extern char bonus_msg24[];
+extern char bonus_msg25[];
 
 void GetBonus(statobj_t* check)
 {
@@ -2074,7 +2074,7 @@ void GetBonus(statobj_t* check)
     check->itemnumber = bo_nothing;
 }
 
-void writeTokenStr(char far* str)
+void writeTokenStr(char* str)
 {
     char buffer[3], len;
 
@@ -2245,14 +2245,14 @@ bool ClipMove(objtype* ob, long xmove, long ymove)
 
 void Thrust(int angle, long speed)
 {
-    extern byte far TravelTable[MAPSIZE][MAPSIZE];
-    objtype         dumb;
-    long            xmove, ymove;
-    long            slowmax;
-    unsigned offset, far *map[2];
-    short dx, dy;
-    int   dangle;
-    bool  ignore_map1;
+    extern byte TravelTable[MAPSIZE][MAPSIZE];
+    objtype     dumb;
+    long        xmove, ymove;
+    long        slowmax;
+    unsigned    offset, *map[2];
+    short       dx, dy;
+    int         dangle;
+    bool        ignore_map1;
 
     thrustspeed += speed;
     //
@@ -2363,8 +2363,8 @@ bool GAN_HiddenArea;
 //------------------------------------------------------------------------
 char GetAreaNumber(char tilex, char tiley)
 {
-    unsigned offset, far *map, far *ptr[2], loop;
-    byte areanumber;
+    unsigned offset, *map, *ptr[2], loop;
+    byte     areanumber;
 
     GAN_HiddenArea = false;
 
@@ -2413,7 +2413,7 @@ char GetAreaNumber(char tilex, char tiley)
 //------------------------------------------------------------------------
 // ValidAreaTile()
 //------------------------------------------------------------------------
-byte ValidAreaTile(unsigned far* ptr)
+byte ValidAreaTile(unsigned* ptr)
 {
     switch (*ptr)
     {
@@ -2690,7 +2690,7 @@ void Cmd_Use(void)
 
 #define MSG_BUFFER_LEN 150
 
-char far msg[MSG_BUFFER_LEN + 1];
+char msg[MSG_BUFFER_LEN + 1];
 
 memptr InfAreaMsgs[MAX_INF_AREA_MSGS];
 byte   NumAreaMsgs, LastInfArea;
@@ -2700,20 +2700,20 @@ scientist_t InfHintList; // Informant messages
 scientist_t NiceSciList; // Non-informant, non-pissed messages
 scientist_t MeanSciList; // Non-informant, pissed messages
 
-char far     int_interrogate[] = "INTERROGATE:",
-         far int_informant[]   = " ^FC3aINFORMANT^FCa6",
-         far int_rr[]          = "\r\r",
-         far int_xx[]          = "^XX",
-         far int_haveammo[]    = " HEY BLAKE,\r TAKE MY CHARGE PACK!",
-         far int_havetoken[]   = " HEY BLAKE,\r TAKE MY FOOD TOKENS!";
+char int_interrogate[] = "INTERROGATE:",
+     int_informant[]   = " ^FC3aINFORMANT^FCa6",
+     int_rr[]          = "\r\r",
+     int_xx[]          = "^XX",
+     int_haveammo[]    = " HEY BLAKE,\r TAKE MY CHARGE PACK!",
+     int_havetoken[]   = " HEY BLAKE,\r TAKE MY FOOD TOKENS!";
 
 //--------------------------------------------------------------------------
 // Interrogate()
 //--------------------------------------------------------------------------
 bool Interrogate(objtype* ob)
 {
-    bool      rt_value = true;
-    char far* msgptr   = NULL;
+    bool  rt_value = true;
+    char* msgptr   = NULL;
 
     _fstrcpy(msg, int_interrogate);
 
@@ -2826,13 +2826,13 @@ bool Interrogate(objtype* ob)
 
 extern bool pollMouseUsed;
 
-char far if_help[]    = "UP/DN MOVES SELECTOR - ENTER ACTIVATES";
-char far if_noImage[] = "   AREA\n"
-                        "  UNMAPPED\n"
-                        "\n"
-                        "\n"
-                        " PRESS ENTER\n"
-                        " TO TELEPORT";
+char if_help[]    = "UP/DN MOVES SELECTOR - ENTER ACTIVATES";
+char if_noImage[] = "   AREA\n"
+                    "  UNMAPPED\n"
+                    "\n"
+                    "\n"
+                    " PRESS ENTER\n"
+                    " TO TELEPORT";
 
 statsInfoType ov_stats;
 memptr        ov_buffer;
@@ -3114,7 +3114,7 @@ void LoadOverheadChunk(short tpNum)
     {
         ov_noImage = false;
         IO_FarRead(handle, ov_buffer, 4096);
-        IO_FarRead(handle, (char far*)&ov_stats, sizeof(statsInfoType));
+        IO_FarRead(handle, (char*)&ov_stats, sizeof(statsInfoType));
     }
     else
     {
@@ -3155,9 +3155,9 @@ void SaveOverheadChunk(short tpNum)
     // Write chunk ID, SIZE, and IMAGE
     //
     write(handle, chunk, 4);
-    IO_FarWrite(handle, (char far*)&cksize, sizeof(cksize));
+    IO_FarWrite(handle, (char*)&cksize, sizeof(cksize));
     IO_FarWrite(handle, ov_buffer, 4096);
-    IO_FarWrite(handle, (char far*)&ov_stats, sizeof(statsInfoType));
+    IO_FarWrite(handle, (char*)&ov_stats, sizeof(statsInfoType));
 
     // Close file
     //
@@ -3169,8 +3169,8 @@ void SaveOverheadChunk(short tpNum)
 //--------------------------------------------------------------------------
 void DisplayTeleportName(char tpNum, bool locked)
 {
-    char far* s;
-    word      w, h;
+    char* s;
+    word  w, h;
 
     if (locked)
     {
@@ -3222,7 +3222,7 @@ bool show_stats_quick;
 //--------------------------------------------------------------------------
 // ShowStats()
 //--------------------------------------------------------------------------
-short ShowStats(short bx, short by, ss_type type, statsInfoType far* stats)
+short ShowStats(short bx, short by, ss_type type, statsInfoType* stats)
 {
     short floor, total = 0, mission = 0, p1, p2, p3, loop, maxPerFloor;
 
@@ -3408,7 +3408,7 @@ bool PerfectStats()
 //--------------------------------------------------------------------------
 void B_GAliFunc()
 {
-    extern char far B_GAlienDead2[];
+    extern char B_GAlienDead2[];
 
     if (gamestate.episode == 5)
         DisplayInfoMsg(B_GAlienDead2, MP_PINBALL_BONUS, 7 * 60, MT_BONUS);
@@ -3458,42 +3458,42 @@ void B_RollFunc()
 // Pinball Bonus Text
 //--------------------------------------------------------------------------
 
-char far B_GAlienDead2[] = "^FC57    GUARDIAN ALIEN\r"
-                           "      DESTROYED!\r\r"
-                           "^FCA6 FIND AND DESTROY ALL\r"
-                           "PROJECTION GENERATORS!";
+char B_GAlienDead2[] = "^FC57    GUARDIAN ALIEN\r"
+                       "      DESTROYED!\r\r"
+                       "^FCA6 FIND AND DESTROY ALL\r"
+                       "PROJECTION GENERATORS!";
 
-char far B_GAlienDead[] = "^FC57    GUARDIAN ALIEN\r"
-                          "      DESTROYED!\r\r"
-                          "^FCA6   FIND THE EXIT TO\r"
-                          "COMPLETE THIS MISSION";
+char B_GAlienDead[] = "^FC57    GUARDIAN ALIEN\r"
+                      "      DESTROYED!\r\r"
+                      "^FCA6   FIND THE EXIT TO\r"
+                      "COMPLETE THIS MISSION";
 
-char far B_ScoreRolled[] = "^FC57\rROLLED SCORE DISPLAY!\r"
-                           "^FCA6   FULL AMMO BONUS!\r"
-                           "  FULL HEALTH BONUS!\r"
-                           "1,000,000 POINT BONUS!";
+char B_ScoreRolled[] = "^FC57\rROLLED SCORE DISPLAY!\r"
+                       "^FCA6   FULL AMMO BONUS!\r"
+                       "  FULL HEALTH BONUS!\r"
+                       "1,000,000 POINT BONUS!";
 
-char far B_OneMillion[] = "^FC57\r     GREAT SCORE!\r"
-                          "^FCA6   FULL AMMO BONUS!\r"
-                          "  FULL HEALTH BONUS!\r"
-                          "1,000,000 POINT BONUS!";
+char B_OneMillion[] = "^FC57\r     GREAT SCORE!\r"
+                      "^FCA6   FULL AMMO BONUS!\r"
+                      "  FULL HEALTH BONUS!\r"
+                      "1,000,000 POINT BONUS!";
 
-char far B_ExtraMan[] = "^FC57\r\r     GREAT SCORE!\r"
-                        "^FCA6  EXTRA LIFE BONUS!\r";
+char B_ExtraMan[] = "^FC57\r\r     GREAT SCORE!\r"
+                    "^FCA6  EXTRA LIFE BONUS!\r";
 
-char far B_EnemyDestroyed[] = "^FC57\r\r ALL ENEMY DESTROYED!\r"
-                              "^FCA6  50,000 POINT BONUS!\r";
+char B_EnemyDestroyed[] = "^FC57\r\r ALL ENEMY DESTROYED!\r"
+                          "^FCA6  50,000 POINT BONUS!\r";
 
-char far B_TotalPoints[] = "^FC57\r\r ALL POINTS COLLECTED!\r"
+char B_TotalPoints[] = "^FC57\r\r ALL POINTS COLLECTED!\r"
+                       "^FCA6  50,000 POINT BONUS!\r";
+
+char B_InformantsAlive[] = "^FC57\r\r ALL INFORMANTS ALIVE!\r"
                            "^FCA6  50,000 POINT BONUS!\r";
-
-char far B_InformantsAlive[] = "^FC57\r\r ALL INFORMANTS ALIVE!\r"
-                               "^FCA6  50,000 POINT BONUS!\r";
 
 //--------------------------------------------------------------------------
 // Pinball Bonus Table
 //--------------------------------------------------------------------------
-PinballBonusInfo far PinballBonus[] = {
+PinballBonusInfo PinballBonus[] = {
 
     //                                        Special
     //  BonusText           Points   Recur?	Function
@@ -3618,12 +3618,12 @@ void CheckPinballBonus(long points)
 #define TERM_SCREEN_XOFS (TERM_BACK_XOFS + 19)
 #define TERM_SCREEN_YOFS (TERM_BACK_YOFS + 14)
 
-static unsigned far     tcursor_x = TERM_SCREEN_XOFS,
-                    far tcursor_y = TERM_SCREEN_YOFS;
+static unsigned tcursor_x = TERM_SCREEN_XOFS,
+                tcursor_y = TERM_SCREEN_YOFS;
 
 char TERM_sound_on = 1;
 
-char far* Commands[TC_LAST];
+char* Commands[TC_LAST];
 
 memptr TermMessages = NULL;
 memptr TermCommands = NULL;
@@ -3648,7 +3648,7 @@ memptr TermCommands = NULL;
 //---------------------------------------------------------------------------
 void LoadTerminalCommands(void)
 {
-    char far*     Message;
+    char*         Message;
     unsigned char pos;
 
     //	IO_LoadFile("TERM_CMD.TXT",&TermCommands);
@@ -3684,7 +3684,7 @@ PresenterInfo Terminal_PI;
 //---------------------------------------------------------------------------
 // TerminalPrint()
 //---------------------------------------------------------------------------
-void TerminalPrint(char far* msg, bool FastPrint)
+void TerminalPrint(char* msg, bool FastPrint)
 {
     Terminal_PI.print_delay = !FastPrint;
     Terminal_PI.script[0]   = msg;
@@ -3701,7 +3701,7 @@ void TerminalPrint(char far* msg, bool FastPrint)
 //          @ - Square Box (IE. Cursor)
 //---------------------------------------------------------------------------
 
-void TerminalPrint(char far* msg, bool FastPrint)
+void TerminalPrint(char* msg, bool FastPrint)
 {
 #define TERM_PRINT_DELAY 1
     fontstruct _seg* font;
@@ -3722,7 +3722,7 @@ void TerminalPrint(char far* msg, bool FastPrint)
             //  Handle Control Codes
             //
 
-            switch (*((unsigned far*)msg)++)
+            switch (*((unsigned*)msg)++)
             {
             // FONT COLOR
             //
@@ -3845,7 +3845,7 @@ void TerminalPrint(char far* msg, bool FastPrint)
 //---------------------------------------------------------------------------
 void CacheTerminalPrint(short MsgNum, bool FastPrint)
 {
-    char far* Message;
+    char* Message;
 
     Message = TermMessages;
 
@@ -3870,7 +3870,7 @@ void CacheTerminalPrint(short MsgNum, bool FastPrint)
     TerminalPrint(Message, FastPrint);
 }
 
-char far TERM_MSG[] = "^ST1^CEEnter commands and press ENTER.\r^CEPress ESC to exit terminal.^XX";
+char TERM_MSG[] = "^ST1^CEEnter commands and press ENTER.\r^CEPress ESC to exit terminal.^XX";
 
 //---------------------------------------------------------------------------
 // ActivateTerminal()
@@ -4156,10 +4156,10 @@ void FloorCheat(unsigned RadarFlags)
     }
 #define FC_NORM_COLOR() FC_EMBED_COLOR("^FC57")
 
-    unsigned  x, y, pos;
-    objtype*  actor;
-    char far* pbuffer;
-    memptr    buffer;
+    unsigned x, y, pos;
+    objtype* actor;
+    char*    pbuffer;
+    memptr   buffer;
 
     MM_GetPtr(&buffer, 512);
 
@@ -4472,8 +4472,8 @@ void GunAttack(objtype* ob)
 
 void T_Attack(objtype* ob)
 {
-    atkinf_t far* cur;
-    int           x, wp_start;
+    atkinf_t* cur;
+    int       x, wp_start;
 
     if (noShots)
     {

@@ -5,7 +5,7 @@
 #define __ID_CA__
 
 #define SAVENEARHEAP 0x400 // space to leave in data segment
-#define SAVEFARHEAP 0      // space to leave in far heap
+#define SAVEFARHEAP 0      // space to leave in  heap
 
 #define BUFFERSIZE 0x1000 // miscelanious, allways available buffer
 
@@ -75,7 +75,7 @@ unsigned long __FREE_MEM_AVAIL__;
 extern void (*beforesort)(void);
 extern void (*aftersort)(void);
 
-extern char far* gp_fartext;
+extern char* gp_fartext;
 
 //==========================================================================
 
@@ -123,10 +123,10 @@ void MML_UseSpace(unsigned segstart, unsigned seglength);
 
 typedef struct mmblockstruct
 {
-    unsigned                  start, length;
-    unsigned                  attributes;
-    memptr*                   useptr; // pointer to the segment start
-    struct mmblockstruct far* next;
+    unsigned              start, length;
+    unsigned              attributes;
+    memptr*               useptr; // pointer to the segment start
+    struct mmblockstruct* next;
 } mmblocktype;
 
 #endif

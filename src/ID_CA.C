@@ -44,8 +44,8 @@ maptype _seg*  mapheaderseg[NUMMAPS];
 byte _seg*     audiosegs[NUMSNDCHUNKS];
 void _seg*     grsegs[NUMCHUNKS];
 
-byte far grneeded[NUMCHUNKS];
-byte     ca_levelbit, ca_levelnum;
+byte grneeded[NUMCHUNKS];
+byte ca_levelbit, ca_levelnum;
 
 int profilehandle, debughandle;
 
@@ -59,14 +59,14 @@ char audioname[13] = "AUDIO.";
 =============================================================================
 */
 
-extern long far CGAhead;
-extern long far EGAhead;
-extern byte     CGAdict;
-extern byte     EGAdict;
-extern byte far maphead;
-extern byte     mapdict;
-extern byte far audiohead;
-extern byte     audiodict;
+extern long CGAhead;
+extern long EGAhead;
+extern byte CGAdict;
+extern byte EGAdict;
+extern byte maphead;
+extern byte mapdict;
+extern byte audiohead;
+extern byte audiodict;
 
 char extension[5], // Need a string, not constant to change cache files
     gheadname[10] = GREXT "HEAD.",
@@ -102,11 +102,11 @@ long chunkcomplen, chunkexplen;
 
 SDMode oldsoundmode;
 
-void CAL_CarmackExpand(unsigned far* source, unsigned far* dest,
+void CAL_CarmackExpand(unsigned* source, unsigned* dest,
     unsigned length);
 
 #ifdef THREEBYTEGRSTARTS
-// #define	GRFILEPOS(c) (*(long far *)(((byte far *)grstarts)+(c)*3)&0xffffff)
+// #define	GRFILEPOS(c) (*(long  *)(((byte  *)grstarts)+(c)*3)&0xffffff)
 long GRFILEPOS(int c)
 {
     long value;
@@ -114,7 +114,7 @@ long GRFILEPOS(int c)
 
     offset = c * 3;
 
-    value = *(long far*)(((byte far*)grstarts) + offset);
+    value = *(long*)(((byte*)grstarts) + offset);
 
     value &= 0x00ffffffl;
 
@@ -273,12 +273,12 @@ void CAL_GetGrChunkLength(int chunk)
 =
 = CA_FarRead
 =
-= Read from a file to a far pointer
+= Read from a file to a  pointer
 =
 ==========================
 */
 
-bool CA_FarRead (int handle, byte far *dest, long length)
+bool CA_FarRead (int handle, byte  *dest, long length)
 {
 	unsigned readlen;
 
@@ -321,12 +321,12 @@ done:
 =
 = CA_FarWrite
 =
-= Write from a file to a far pointer
+= Write from a file to a  pointer
 =
 ==========================
 */
 
-bool CA_FarWrite (int handle, byte far *source, long length)
+bool CA_FarWrite (int handle, byte  *source, long length)
 {
 	unsigned writelen;
 
@@ -403,7 +403,7 @@ bool CA_ReadFile (char *filename, memptr *ptr)
 ==========================
 */
 
-bool CA_WriteFile (char *filename, void far *ptr, long length)
+bool CA_WriteFile (char *filename, void  *ptr, long length)
 {
 	int handle;
 	long size;
@@ -505,7 +505,7 @@ void CAL_OptimizeNodes(huffnode* table)
 */
 
 void CAL_HuffExpand(byte huge* source, byte huge* dest,
-    long length, huffnode far* hufftable, bool screenhack)
+    long length, huffnode* hufftable, bool screenhack)
 {
     //  unsigned bit,byte,node,code;
     unsigned  sourceseg, sourceoff, destseg, destoff, endoff;
@@ -686,10 +686,10 @@ void CAL_HuffExpand(byte huge* source, byte huge* dest,
 
 #ifdef CARMACIZED
 
-void CAL_CarmackExpand(unsigned far* source, unsigned far* dest, unsigned length)
+void CAL_CarmackExpand(unsigned* source, unsigned* dest, unsigned length)
 {
-    unsigned      ch, chhigh, count, offset;
-    unsigned far *copyptr, far *inptr, far *outptr;
+    unsigned  ch, chhigh, count, offset;
+    unsigned *copyptr, *inptr, *outptr;
 
     length /= 2;
 
@@ -705,13 +705,13 @@ void CAL_CarmackExpand(unsigned far* source, unsigned far* dest, unsigned length
             count = ch & 0xff;
             if (!count)
             { // have to insert a word containing the tag byte
-                ch |= *((unsigned char far*)inptr)++;
+                ch |= *((unsigned char*)inptr)++;
                 *outptr++ = ch;
                 length--;
             }
             else
             {
-                offset  = *((unsigned char far*)inptr)++;
+                offset  = *((unsigned char*)inptr)++;
                 copyptr = outptr - offset;
                 length -= count;
                 while (count--)
@@ -723,7 +723,7 @@ void CAL_CarmackExpand(unsigned far* source, unsigned far* dest, unsigned length
             count = ch & 0xff;
             if (!count)
             { // have to insert a word containing the tag byte
-                ch |= *((unsigned char far*)inptr)++;
+                ch |= *((unsigned char*)inptr)++;
                 *outptr++ = ch;
                 length--;
             }
@@ -951,9 +951,9 @@ void CA_CacheAudioChunk(int chunk)
 {
     long pos, compressed;
 #ifdef AUDIOHEADERLINKED
-    long      expanded;
-    memptr    bigbufferseg;
-    byte far* source;
+    long   expanded;
+    memptr bigbufferseg;
+    byte*  source;
 #endif
 
     if (audiosegs[chunk])
@@ -1010,7 +1010,7 @@ void CA_CacheAudioChunk(int chunk)
         source = bigbufferseg;
     }
 
-    expanded = *(long far*)source;
+    expanded = *(long*)source;
     source += 4; // skip over length
     MM_GetPtr(&(memptr)audiosegs[chunk], expanded);
     if (mmerror)
@@ -1091,7 +1091,7 @@ cachein:
 ======================
 */
 
-void CAL_ExpandGrChunk(int chunk, byte far* source)
+void CAL_ExpandGrChunk(int chunk, byte* source)
 {
     long expanded;
 
@@ -1122,7 +1122,7 @@ void CAL_ExpandGrChunk(int chunk, byte far* source)
         //
         // everything else has an explicit size longword
         //
-        expanded = *(long far*)source;
+        expanded = *(long*)source;
         source += 4; // skip over length
     }
 
@@ -1148,10 +1148,10 @@ void CAL_ExpandGrChunk(int chunk, byte far* source)
 
 void CA_CacheGrChunk(int chunk)
 {
-    long      pos, compressed;
-    memptr    bigbufferseg;
-    byte far* source;
-    int       next;
+    long   pos, compressed;
+    memptr bigbufferseg;
+    byte*  source;
+    int    next;
 
     grneeded[chunk] |= ca_levelbit; // make sure it doesn't get removed
     if (grsegs[chunk])
@@ -1209,10 +1209,10 @@ void CA_CacheGrChunk(int chunk)
 
 void CA_CacheScreen(int chunk)
 {
-    long      pos, compressed, expanded;
-    memptr    bigbufferseg;
-    byte far* source;
-    int       next;
+    long   pos, compressed, expanded;
+    memptr bigbufferseg;
+    byte*  source;
+    int    next;
 
     //
     // load the chunk into a buffer
@@ -1230,7 +1230,7 @@ void CA_CacheScreen(int chunk)
     CA_FarRead(grhandle, bigbufferseg, compressed);
     source = bigbufferseg;
 
-    expanded = *(long far*)source;
+    expanded = *(long*)source;
     source += 4; // skip over length
 
     //
@@ -1256,11 +1256,11 @@ void CA_CacheScreen(int chunk)
 
 void CA_CacheMap(int mapnum)
 {
-    long          pos, compressed;
-    int           plane;
-    memptr *      dest, bigbufferseg;
-    unsigned      size;
-    unsigned far* source;
+    long      pos, compressed;
+    int       plane;
+    memptr *  dest, bigbufferseg;
+    unsigned  size;
+    unsigned* source;
 #ifdef CARMACIZED
     memptr buffer2seg;
     long   expanded;
@@ -1294,7 +1294,7 @@ void CA_CacheMap(int mapnum)
             source = bigbufferseg;
         }
 
-        CA_FarRead(maphandle, (byte far*)source, compressed);
+        CA_FarRead(maphandle, (byte*)source, compressed);
 #ifdef CARMACIZED
         //
         // unhuffman, then unRLEW
@@ -1305,8 +1305,8 @@ void CA_CacheMap(int mapnum)
         expanded = *source;
         source++;
         MM_GetPtr(&buffer2seg, expanded);
-        CAL_CarmackExpand(source, (unsigned far*)buffer2seg, expanded);
-        CA_RLEWexpand(((unsigned far*)buffer2seg) + 1, *dest, size,
+        CAL_CarmackExpand(source, (unsigned*)buffer2seg, expanded);
+        CA_RLEWexpand(((unsigned*)buffer2seg) + 1, *dest, size,
             ((mapfiletype _seg*)tinf)->RLEWtag);
         MM_FreePtr(&buffer2seg);
 
@@ -1493,11 +1493,11 @@ void CA_SetAllPurge (void)
 
 void CA_CacheMarks(void)
 {
-    int       i, next, numcache;
-    long      pos, endpos, nextpos, nextendpos, compressed;
-    long      bufferstart, bufferend; // file position of general buffer
-    byte far* source;
-    memptr    bigbufferseg;
+    int    i, next, numcache;
+    long   pos, endpos, nextpos, nextendpos, compressed;
+    long   bufferstart, bufferend; // file position of general buffer
+    byte*  source;
+    memptr bigbufferseg;
 
     numcache = 0;
     //

@@ -786,7 +786,7 @@ moveok:
 
 extern statetype s_terrot_die1;
 
-char far dki_msg[] =
+char dki_msg[] =
     "^FC39  YOU JUST SHOT AN\r"
     "	    INFORMANT!\r"
     "^FC79 ONLY SHOOT BIO-TECHS\r"
@@ -794,7 +794,7 @@ char far dki_msg[] =
     "^FC19	    DO NOT SHOOT\r"
     "	    INFORMANTS!!\r";
 
-unsigned far actor_points[] = {
+unsigned actor_points[] = {
     1025,  // rent-a-cop
     1050,  // turret
     500,   // general scientist

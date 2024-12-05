@@ -52,7 +52,7 @@ int stepbytwo;
 ==============
 */
 
-void far BadScale (void)
+void  BadScale (void)
 {
 	SCALE_ERROR(BADSCALE_ERROR);
 }
@@ -68,8 +68,8 @@ void far BadScale (void)
 
 void SetupScaling(int maxscaleheight)
 {
-    int       i, x, y;
-    byte far* dest;
+    int   i, x, y;
+    byte* dest;
 
     maxscaleheight /= 2; // one scaler every two pixels
 
@@ -104,7 +104,7 @@ void SetupScaling(int maxscaleheight)
 #if 0
 unsigned BuildCompScale (int height, memptr *finalspot)
 {
-	byte		far *code;
+	byte		 *code;
 
 	int			i;
 	long		fix,step;
@@ -162,7 +162,7 @@ unsigned BuildCompScale (int height, memptr *finalspot)
 			*code++ = 0x26;
 			*code++ = 0x88;
 			*code++ = 0x85;
-			*((unsigned far *)code)++ = startpix*SCREENBWIDE;
+			*((unsigned  *)code)++ = startpix*SCREENBWIDE;
 		}
 
 	}
@@ -192,7 +192,7 @@ unsigned dc_dest;
 
 #define SFRACUNIT 0x10000
 
-extern unsigned far* linecmds;
+extern unsigned* linecmds;
 
 extern bool useBounceOffset;
 
@@ -208,15 +208,15 @@ fixed bounceOffset = 0;
 
 void ScaleMaskedLSPost(int height, unsigned buf)
 {
-    int           length;
-    unsigned      end;
-    unsigned      start;
-    long          sprtopoffset;
-    long          topscreen;
-    long          bottomscreen;
-    longword      screenstep;
-    long          dc_yl, dc_yh;
-    unsigned far* srcpost;
+    int       length;
+    unsigned  end;
+    unsigned  start;
+    long      sprtopoffset;
+    long      topscreen;
+    long      bottomscreen;
+    longword  screenstep;
+    long      dc_yl, dc_yh;
+    unsigned* srcpost;
 
     fixed bounce;
 
@@ -313,15 +313,15 @@ void ScaleMaskedWideLSPost(int height, unsigned buf, unsigned xx, unsigned pwidt
 */
 void ScaleMaskedPost(int height, unsigned buf)
 {
-    int           length;
-    unsigned      end;
-    unsigned      start;
-    long          sprtopoffset;
-    long          topscreen;
-    long          bottomscreen;
-    longword      screenstep;
-    long          dc_yl, dc_yh;
-    unsigned far* srcpost;
+    int       length;
+    unsigned  end;
+    unsigned  start;
+    long      sprtopoffset;
+    long      topscreen;
+    long      bottomscreen;
+    longword  screenstep;
+    long      dc_yl, dc_yh;
+    unsigned* srcpost;
 
     fixed bounce;
 
@@ -419,8 +419,8 @@ void ScaleMaskedWidePost(int height, unsigned buf, unsigned xx, unsigned pwidth)
 =
 =======================
 */
-extern byte far* shadingtable;
-extern byte far* lightsource;
+extern byte* shadingtable;
+extern byte* lightsource;
 
 void ScaleLSShape(int xcenter, int shapenum, unsigned height, char lighting)
 {
@@ -941,7 +941,7 @@ unsigned	wordmasks[8][8] = {
 
 #endif
 
-int           slinex, slinewidth;
-unsigned far* linecmds;
-long          linescale;
-unsigned      maskword;
+int       slinex, slinewidth;
+unsigned* linecmds;
+long      linescale;
+unsigned  maskword;

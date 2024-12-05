@@ -56,8 +56,8 @@ extern maptype _seg*  mapheaderseg[NUMMAPS];
 extern byte _seg*     audiosegs[NUMSNDCHUNKS];
 extern void _seg*     grsegs[NUMCHUNKS];
 
-extern byte far grneeded[NUMCHUNKS];
-extern byte     ca_levelbit, ca_levelnum;
+extern byte grneeded[NUMCHUNKS];
+extern byte ca_levelbit, ca_levelnum;
 
 extern char* titleptr[8];
 
@@ -103,11 +103,11 @@ void CAL_ShiftSprite(unsigned segment, unsigned source, unsigned dest,
 
 void CA_OpenDebug(void);
 void CA_CloseDebug(void);
-bool CA_FarRead(int handle, byte far* dest, long length);
-bool CA_FarWrite(int handle, byte far* source, long length);
+bool CA_FarRead(int handle, byte* dest, long length);
+bool CA_FarWrite(int handle, byte* source, long length);
 bool CA_ReadFile(char* filename, memptr* ptr);
 bool CA_LoadFile(char* filename, memptr* ptr);
-bool CA_WriteFile(char* filename, void far* ptr, long length);
+bool CA_WriteFile(char* filename, void* ptr, long length);
 
 long CA_RLEWCompress(unsigned huge* source, long length, unsigned huge* dest,
     unsigned rlewtag);
@@ -141,7 +141,7 @@ void CAL_SetupAudioFile(void);
 void CAL_SetupGrFile(void);
 void CAL_SetupMapFile(void);
 void CAL_HuffExpand(byte huge* source, byte huge* dest,
-    long length, huffnode far* hufftable, bool screenhack);
+    long length, huffnode* hufftable, bool screenhack);
 
 void CloseGrFile(void);
 void OpenGrFile(void);

@@ -15,13 +15,13 @@
 // End game message
 //
 
-char far EndGameStr[] = {"    End current game?\n"
-                         " Are you sure (Y or N)?"};
+char EndGameStr[] = {"    End current game?\n"
+                     " Are you sure (Y or N)?"};
 
 #define ENDGAMESTR (EndGameStr)
 
-char far QuitToDosStr[] = {"      Quit to DOS?\n"
-                           " Are you sure (Y or N)?"};
+char QuitToDosStr[] = {"      Quit to DOS?\n"
+                       " Are you sure (Y or N)?"};
 
 // #define FREEFONT(fontnum)	{MM_SetPurge (&(memptr)grsegs[fontnum],3);}
 #define FREEFONT(fontnum)                                \
@@ -64,19 +64,19 @@ extern bool refresh_screen;
 //===========================================================================
 
 CP_iteminfo
-    far     MainItems   = {MENU_X, MENU_Y, 12, MM_READ_THIS, 0, 9, {77, 1, 154, 9, 1}},
-        far GopItems    = {MENU_X, MENU_Y + 30, 4, 0, 0, 9, {77, 1, 154, 9, 1}},
-        far SndItems    = {SM_X, SM_Y, 12, 0, 0, 7, {87, -1, 144, 7, 1}},
-        far LSItems     = {LSM_X, LSM_Y, 10, 0, 0, 8, {86, -1, 144, 8, 1}},
-        far CtlItems    = {CTL_X, CTL_Y, 7, -1, 0, 9, {87, 1, 174, 9, 1}},
-        far CusItems    = {CST_X, CST_Y + 7, 6, -1, 0, 15, {54, -1, 203, 7, 1}},
-        far NewEitems   = {NE_X, NE_Y, 11, 0, 0, 16, {43, -2, 119, 16, 1}},
-        far NewItems    = {NM_X, NM_Y, 4, 1, 0, 16, {60, -2, 105, 16, 1}},
-        far SwitchItems = {MENU_X, MENU_Y + 25, 4, 0, 0, 9, {87, -1, 132, 7, 1}};
+    MainItems   = {MENU_X, MENU_Y, 12, MM_READ_THIS, 0, 9, {77, 1, 154, 9, 1}},
+    GopItems    = {MENU_X, MENU_Y + 30, 4, 0, 0, 9, {77, 1, 154, 9, 1}},
+    SndItems    = {SM_X, SM_Y, 12, 0, 0, 7, {87, -1, 144, 7, 1}},
+    LSItems     = {LSM_X, LSM_Y, 10, 0, 0, 8, {86, -1, 144, 8, 1}},
+    CtlItems    = {CTL_X, CTL_Y, 7, -1, 0, 9, {87, 1, 174, 9, 1}},
+    CusItems    = {CST_X, CST_Y + 7, 6, -1, 0, 15, {54, -1, 203, 7, 1}},
+    NewEitems   = {NE_X, NE_Y, 11, 0, 0, 16, {43, -2, 119, 16, 1}},
+    NewItems    = {NM_X, NM_Y, 4, 1, 0, 16, {60, -2, 105, 16, 1}},
+    SwitchItems = {MENU_X, MENU_Y + 25, 4, 0, 0, 9, {87, -1, 132, 7, 1}};
 
 #pragma warn - sus
 
-CP_itemtype far MainMenu[] =
+CP_itemtype MainMenu[] =
     {
         {AT_ENABLED, "NEW MISSION", CP_NewGame, COAL_FONT},
         {AT_READIT, "ORDERING INFO", CP_OrderingInfo},
@@ -91,50 +91,50 @@ CP_itemtype far MainMenu[] =
         {AT_ENABLED, "BACK TO DEMO", CP_ExitOptions},
         {AT_ENABLED, "LOGOFF", 0}},
 
-                far GopMenu[] =
-                    {
-                        {AT_ENABLED, "SOUND", CP_Sound},
-                        {AT_ENABLED, "CONTROLS", CP_Control},
-                        {AT_ENABLED, "CHANGE VIEW", CP_ChangeView},
-                        {AT_ENABLED, "SWITCHES", CP_Switches},
+            GopMenu[] =
+                {
+                    {AT_ENABLED, "SOUND", CP_Sound},
+                    {AT_ENABLED, "CONTROLS", CP_Control},
+                    {AT_ENABLED, "CHANGE VIEW", CP_ChangeView},
+                    {AT_ENABLED, "SWITCHES", CP_Switches},
 },
 
-                far SndMenu[] =
-                    {
-                        {AT_ENABLED, "NONE", 0},
-                        {AT_ENABLED, "PC SPEAKER", 0},
-                        {AT_ENABLED, "ADLIB/SOUND BLASTER", 0},
-                        {AT_DISABLED, "", 0},
-                        {AT_DISABLED, "", 0},
-                        {AT_ENABLED, "NONE", 0},
-                        {AT_ENABLED, "DISNEY SOUND SOURCE", 0},
-                        {AT_ENABLED, "SOUND BLASTER", 0},
-                        {AT_DISABLED, "", 0},
-                        {AT_DISABLED, "", 0},
-                        {AT_ENABLED, "NONE", 0},
-                        {AT_ENABLED, "ADLIB/SOUND BLASTER", 0}},
+            SndMenu[] =
+                {
+                    {AT_ENABLED, "NONE", 0},
+                    {AT_ENABLED, "PC SPEAKER", 0},
+                    {AT_ENABLED, "ADLIB/SOUND BLASTER", 0},
+                    {AT_DISABLED, "", 0},
+                    {AT_DISABLED, "", 0},
+                    {AT_ENABLED, "NONE", 0},
+                    {AT_ENABLED, "DISNEY SOUND SOURCE", 0},
+                    {AT_ENABLED, "SOUND BLASTER", 0},
+                    {AT_DISABLED, "", 0},
+                    {AT_DISABLED, "", 0},
+                    {AT_ENABLED, "NONE", 0},
+                    {AT_ENABLED, "ADLIB/SOUND BLASTER", 0}},
 
-                far CtlMenu[] =
-                    {
-                        {AT_DISABLED, "MOUSE ENABLED", 0},
-                        {AT_DISABLED, "JOYSTICK ENABLED", 0},
-                        {AT_DISABLED, "USE JOYSTICK PORT 2", 0},
-                        {AT_DISABLED, "GRAVIS GAMEPAD ENABLED", 0},
-                        {AT_DISABLED, "CALIBRATE JOYSTICK", 0},
-                        {AT_DISABLED, "MOUSE SENSITIVITY", MouseSensitivity},
-                        {AT_ENABLED, "CUSTOMIZE CONTROLS", CustomControls}},
+            CtlMenu[] =
+                {
+                    {AT_DISABLED, "MOUSE ENABLED", 0},
+                    {AT_DISABLED, "JOYSTICK ENABLED", 0},
+                    {AT_DISABLED, "USE JOYSTICK PORT 2", 0},
+                    {AT_DISABLED, "GRAVIS GAMEPAD ENABLED", 0},
+                    {AT_DISABLED, "CALIBRATE JOYSTICK", 0},
+                    {AT_DISABLED, "MOUSE SENSITIVITY", MouseSensitivity},
+                    {AT_ENABLED, "CUSTOMIZE CONTROLS", CustomControls}},
 
-                far SwitchMenu[] =
-                    {
-                        {AT_ENABLED, "LIGHTING", 0},
-                        {AT_ENABLED, "REBA ATTACK INFO", 0},
-                        {AT_ENABLED, "SHOW CEILINGS", 0},
-                        {AT_ENABLED, "SHOW FLOORS", 0}},
+            SwitchMenu[] =
+                {
+                    {AT_ENABLED, "LIGHTING", 0},
+                    {AT_ENABLED, "REBA ATTACK INFO", 0},
+                    {AT_ENABLED, "SHOW CEILINGS", 0},
+                    {AT_ENABLED, "SHOW FLOORS", 0}},
 
 #pragma warn + sus
 
 #if 0
-far NewEmenu[]=
+ NewEmenu[]=
 {
  {AT_ENABLED,"MISSION 1:\n"
 				 "STAR INSTITUTE",0},
@@ -156,42 +156,42 @@ far NewEmenu[]=
 },
 #endif
 
-                far NewMenu[] =
-                    {
-                        {AT_ENABLED, "LEVEL 1:\n"
-                                     "NOVICE AGENT",
-                            0},
-                        {AT_ENABLED, "LEVEL 2:\n"
-                                     "SKILLED AGENT",
-                            0},
-                        {AT_ENABLED, "LEVEL 3:\n"
-                                     "EXPERT AGENT",
-                            0},
-                        {AT_ENABLED, "LEVEL 4:\n"
-                                     "VETERAN AGENT",
-                            0}},
+            NewMenu[] =
+                {
+                    {AT_ENABLED, "LEVEL 1:\n"
+                                 "NOVICE AGENT",
+                        0},
+                    {AT_ENABLED, "LEVEL 2:\n"
+                                 "SKILLED AGENT",
+                        0},
+                    {AT_ENABLED, "LEVEL 3:\n"
+                                 "EXPERT AGENT",
+                        0},
+                    {AT_ENABLED, "LEVEL 4:\n"
+                                 "VETERAN AGENT",
+                        0}},
 
-                far LSMenu[] =
-                    {
-                        {AT_ENABLED, "", 0},
-                        {AT_ENABLED, "", 0},
-                        {AT_ENABLED, "", 0},
-                        {AT_ENABLED, "", 0},
-                        {AT_ENABLED, "", 0},
-                        {AT_ENABLED, "", 0},
-                        {AT_ENABLED, "", 0},
-                        {AT_ENABLED, "", 0},
-                        {AT_ENABLED, "", 0},
-                        {AT_ENABLED, "", 0}},
+            LSMenu[] =
+                {
+                    {AT_ENABLED, "", 0},
+                    {AT_ENABLED, "", 0},
+                    {AT_ENABLED, "", 0},
+                    {AT_ENABLED, "", 0},
+                    {AT_ENABLED, "", 0},
+                    {AT_ENABLED, "", 0},
+                    {AT_ENABLED, "", 0},
+                    {AT_ENABLED, "", 0},
+                    {AT_ENABLED, "", 0},
+                    {AT_ENABLED, "", 0}},
 
-                far CusMenu[] =
-                    {
-                        {AT_ENABLED, "", 0},
-                        {0, "", 0},
-                        {AT_ENABLED, "", 0},
-                        {0, "", 0},
-                        {AT_ENABLED, "", 0},
-                        {AT_ENABLED, "", 0}};
+            CusMenu[] =
+                {
+                    {AT_ENABLED, "", 0},
+                    {0, "", 0},
+                    {AT_ENABLED, "", 0},
+                    {0, "", 0},
+                    {AT_ENABLED, "", 0},
+                    {AT_ENABLED, "", 0}};
 
 int color_hlite[] =
     {
@@ -211,8 +211,8 @@ int color_norml[] =
 
 int EpisodeSelect[6] = {1};
 
-int      SaveGamesAvail[10], StartGame, SoundStatus = 1, pickquick;
-char far SaveGameNames[10][GAME_DESCRIPTION_LEN + 1], far SaveName[13] = "SAVEGAM?.";
+int  SaveGamesAvail[10], StartGame, SoundStatus = 1, pickquick;
+char SaveGameNames[10][GAME_DESCRIPTION_LEN + 1], SaveName[13] = "SAVEGAM?.";
 
 ////////////////////////////////////////////////////////////////////
 //
@@ -223,7 +223,7 @@ char far SaveGameNames[10][GAME_DESCRIPTION_LEN + 1], far SaveName[13] = "SAVEGA
 #ifndef CACHE_KEY_DATA
 
 static byte
-    far *far ScanNames[] = // Scan code names with single chars
+    *ScanNames[] = // Scan code names with single chars
     {
         "?", "?", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "+", "?", "?",
         "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "[", "]", "|", "?", "A", "S",
@@ -233,23 +233,23 @@ static byte
         "\x13", "?", "?", "?", "?", "?", "?", "?", "?", "?", "?", "?", "?", "?", "?", "?",
         "?", "?", "?", "?", "?", "?", "?", "?", "?", "?", "?", "?", "?", "?", "?", "?",
         "?", "?", "?", "?", "?", "?", "?", "?", "?", "?", "?", "?", "?", "?", "?", "?"}, // DEBUG - consolidate these
-    far ExtScanCodes[] =                                                                 // Scan codes with >1 char names
+    ExtScanCodes[] =                                                                     // Scan codes with >1 char names
     {
         1, 0xe, 0xf, 0x1d, 0x2a, 0x39, 0x3a, 0x3b, 0x3c, 0x3d, 0x3e,
         0x3f, 0x40, 0x41, 0x42, 0x43, 0x44, 0x57, 0x59, 0x46, 0x1c, 0x36,
         0x37, 0x38, 0x47, 0x49, 0x4f, 0x51, 0x52, 0x53, 0x45, 0x48,
         0x50, 0x4b, 0x4d, 0x00},
-             far *far ExtScanNames[] = // Names corresponding to ExtScanCodes
-             {
-                 "ESC", "BKSP", "TAB", "CTRL", "LSHFT", "SPACE", "CAPSLK", "F1", "F2", "F3", "F4",
-                 "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12", "SCRLK", "ENTER", "RSHFT",
-                 "PRTSC", "ALT", "HOME", "PGUP", "END", "PGDN", "INS", "DEL", "NUMLK", "UP",
-                 "DOWN", "LEFT", "RIGHT", ""};
+    *ExtScanNames[] = // Names corresponding to ExtScanCodes
+    {
+        "ESC", "BKSP", "TAB", "CTRL", "LSHFT", "SPACE", "CAPSLK", "F1", "F2", "F3", "F4",
+        "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12", "SCRLK", "ENTER", "RSHFT",
+        "PRTSC", "ALT", "HOME", "PGUP", "END", "PGDN", "INS", "DEL", "NUMLK", "UP",
+        "DOWN", "LEFT", "RIGHT", ""};
 
 #else
 
-byte far *ScanNames, far *ExtScanNames;
-ScanCode far* ExtScanCodes;
+byte *    ScanNames, *ExtScanNames;
+ScanCode* ExtScanCodes;
 
 #endif
 
@@ -315,9 +315,9 @@ void HelpPresenter(char* fname, bool continue_keys, unsigned id_cache, bool star
     pi.fontnumber = 4;
 
     if (continue_keys)
-        pi.infoline = (char far*)" UP / DN - PAGES       ENTER - CONTINUES         ESC - EXITS";
+        pi.infoline = (char*)" UP / DN - PAGES       ENTER - CONTINUES         ESC - EXITS";
     else
-        pi.infoline = (char far*)"           UP / DN - PAGES            ESC - EXITS";
+        pi.infoline = (char*)"           UP / DN - PAGES            ESC - EXITS";
 
     if (startmusic)
         StartCPMusic(TEXTSONG);
@@ -1404,7 +1404,7 @@ void DrawAllSoundLights(int which)
         }
 }
 
-char far LOADSAVE_GAME_MSG[2][25] = {"^ST1^CELoading Game\r^XX",
+char LOADSAVE_GAME_MSG[2][25] = {"^ST1^CELoading Game\r^XX",
     "^ST1^CESaving Game\r^XX"};
 
 extern char LS_current, LS_total;
@@ -2080,7 +2080,7 @@ void DefineKeyMove(void)
 //--------------------------------------------------------------------------
 bool TestForValidKey(ScanCode Scan)
 {
-    char far* pos;
+    char* pos;
 
 #pragma warn - pia
 
@@ -2912,7 +2912,7 @@ void ControlPanelAlloc(void)
 //
 // NOTE: Font MUST already be loaded
 //---------------------------------------------------------------------------
-void ShadowPrint(char far* strng, int x, int y)
+void ShadowPrint(char* strng, int x, int y)
 {
     int old_bc, old_fc;
 
@@ -2934,7 +2934,7 @@ void ShadowPrint(char far* strng, int x, int y)
 //---------------------------------------------------------------------------
 // HandleMenu() - Handle moving gun around a menu
 //---------------------------------------------------------------------------
-int HandleMenu(CP_iteminfo far* item_i, CP_itemtype far* items, void (*routine)(int w))
+int HandleMenu(CP_iteminfo* item_i, CP_itemtype* items, void (*routine)(int w))
 {
 #define box_on item_i->cursor.on
     char        key;
@@ -3183,7 +3183,7 @@ int HandleMenu(CP_iteminfo far* item_i, CP_itemtype far* items, void (*routine)(
 //---------------------------------------------------------------------------
 // EraseGun() - ERASE GUN & DE-HIGHLIGHT STRING
 //---------------------------------------------------------------------------
-void EraseGun(CP_iteminfo far* item_i, CP_itemtype far* items, int x, int y, int which)
+void EraseGun(CP_iteminfo* item_i, CP_itemtype* items, int x, int y, int which)
 {
     VWB_Bar(item_i->cursor.x, y + item_i->cursor.y_ofs, item_i->cursor.width, item_i->cursor.height, TERM_BACK_COLOR);
     SetTextColor(items + which, 0);
@@ -3198,7 +3198,7 @@ void EraseGun(CP_iteminfo far* item_i, CP_itemtype far* items, int x, int y, int
 //---------------------------------------------------------------------------
 // DrawGun() - DRAW GUN AT NEW POSITION
 //---------------------------------------------------------------------------
-void DrawGun(CP_iteminfo far* item_i, CP_itemtype far* items, int x, int* y, int which, int basey, void (*routine)(int w))
+void DrawGun(CP_iteminfo* item_i, CP_itemtype* items, int x, int* y, int which, int basey, void (*routine)(int w))
 {
     *y = basey + which * item_i->y_spacing;
 
@@ -3241,7 +3241,7 @@ void TicDelay(int count)
 //       This also calculates the Y position of the current items in the
 //			CP_itemtype structures.
 //---------------------------------------------------------------------------
-void DrawMenu(CP_iteminfo far* item_i, CP_itemtype far* items)
+void DrawMenu(CP_iteminfo* item_i, CP_itemtype* items)
 {
     int i, which = item_i->curpos;
 
@@ -3261,7 +3261,7 @@ void DrawMenu(CP_iteminfo far* item_i, CP_itemtype far* items)
 //---------------------------------------------------------------------------
 // SetTextColor() - SET TEXT COLOR (HIGHLIGHT OR NO)
 //---------------------------------------------------------------------------
-void SetTextColor(CP_itemtype far* items, int hlight)
+void SetTextColor(CP_itemtype* items, int hlight)
 {
     if (hlight)
     {
@@ -3401,7 +3401,7 @@ void ReadAnyControl(ControlInfo* ci)
 // DRAW DIALOG AND CONFIRM YES OR NO TO QUESTION
 //
 ////////////////////////////////////////////////////////////////////
-int Confirm(char far* string)
+int Confirm(char* string)
 {
     int xit = 0, i, x, y, tick = 0, time, whichsnd[2] = {ESCPRESSEDSND, SHOOTSND};
 
@@ -3462,7 +3462,7 @@ int Confirm(char far* string)
 //---------------------------------------------------------------------------
 // Message() - PRINT A MESSAGE IN A WINDOW
 //---------------------------------------------------------------------------
-void Message(char far* string)
+void Message(char* string)
 {
     int              h = 0, w = 0, mw = 0, i, x, y, time;
     fontstruct _seg* font;
@@ -3516,7 +3516,7 @@ void Message(char far* string)
 //--------------------------------------------------------------------------
 // TerminateStr - Searches for an "^XX" and replaces with a 0 (NULL)
 //--------------------------------------------------------------------------
-void TerminateStr(char far* pos)
+void TerminateStr(char* pos)
 {
     pos = _fstrstr(pos, "^XX");
 
@@ -3533,7 +3533,7 @@ void TerminateStr(char far* pos)
 //---------------------------------------------------------------------------
 void CacheMessage(unsigned MessageNum)
 {
-    char far* string;
+    char* string;
 
     CA_CacheGrChunk(MessageNum);
     string = MK_FP(grsegs[MessageNum], 0);
@@ -3557,16 +3557,16 @@ void CacheMessage(unsigned MessageNum)
 //---------------------------------------------------------------------------
 unsigned long CacheCompData(unsigned ItemNum, memptr* dest_loc)
 {
-    char far *compdata, far *dest_ptr;
-    CompHeader_t far* CompHeader;
-    unsigned long     data_len;
+    char *        compdata, *dest_ptr;
+    CompHeader_t* CompHeader;
+    unsigned long data_len;
 
     // Load compressed data
 
     CA_CacheGrChunk(ItemNum);
     compdata = MK_FP(grsegs[ItemNum], 0);
     MM_SetLock(&grsegs[ItemNum], true);
-    CompHeader = (CompHeader_t far*)compdata;
+    CompHeader = (CompHeader_t*)compdata;
     data_len   = CompHeader->OriginalLen;
 
     compdata += sizeof(CompHeader_t);
@@ -3605,10 +3605,10 @@ unsigned long CacheCompData(unsigned ItemNum, memptr* dest_loc)
 //-------------------------------------------------------------------------
 bool CheckForSpecialCode(unsigned ItemNum)
 {
-    memptr    code;
-    bool      return_val = false;
-    char      i;
-    char far* code_ptr;
+    memptr code;
+    bool   return_val = false;
+    char   i;
+    char*  code_ptr;
 
     // Allocate, Cache & Decomp into ram
 
@@ -3657,7 +3657,7 @@ void StartCPMusic(int song)
     else
     {
         MM_SetLock(&((memptr)audiosegs[STARTMUSIC + chunk]), true);
-        SD_StartMusic((MusicGroup far*)audiosegs[STARTMUSIC + chunk]);
+        SD_StartMusic((MusicGroup*)audiosegs[STARTMUSIC + chunk]);
     }
 }
 
@@ -3677,16 +3677,16 @@ void FreeMusic(void)
 //	IN_GetScanName() - 	Returns a string containing the name of the
 //								specified scan code
 //---------------------------------------------------------------------------
-byte far* IN_GetScanName(ScanCode scan)
+byte* IN_GetScanName(ScanCode scan)
 {
-    byte far*     p;
-    ScanCode far* s;
+    byte*     p;
+    ScanCode* s;
 
     for (s = ExtScanCodes, p = ExtScanNames; *s; p += 7, s++)
         if (*s == scan)
-            return ((byte far*)p);
+            return ((byte*)p);
 
-    return ((byte far*)(ScanNames + (scan << 1)));
+    return ((byte*)(ScanNames + (scan << 1)));
 }
 
 #else
@@ -3695,10 +3695,10 @@ byte far* IN_GetScanName(ScanCode scan)
 //	IN_GetScanName() - 	Returns a string containing the name of the
 //								specified scan code
 //---------------------------------------------------------------------------
-byte far* IN_GetScanName(ScanCode scan)
+byte* IN_GetScanName(ScanCode scan)
 {
-    byte far* far* p;
-    ScanCode far*  s;
+    byte**    p;
+    ScanCode* s;
 
     for (s = ExtScanCodes, p = ExtScanNames; *s; p++, s++)
         if (*s == scan)
@@ -3737,7 +3737,7 @@ void CheckPause(void)
 //-------------------------------------------------------------------------
 // DrawMenuGun() - DRAW GUN CURSOR AT CORRECT POSITION IN MENU
 //-------------------------------------------------------------------------
-void DrawMenuGun(CP_iteminfo far* iteminfo)
+void DrawMenuGun(CP_iteminfo* iteminfo)
 {
     int x, y;
 
@@ -3767,7 +3767,7 @@ void ShowPromo()
     // Load and start music
     //
     CA_CacheAudioChunk(STARTMUSIC + PROMO_MUSIC);
-    SD_StartMusic((MusicGroup far*)audiosegs[STARTMUSIC + PROMO_MUSIC]);
+    SD_StartMusic((MusicGroup*)audiosegs[STARTMUSIC + PROMO_MUSIC]);
 
     // Show promo screen 1
     //

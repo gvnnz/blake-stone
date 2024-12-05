@@ -52,27 +52,27 @@ void SDL_SetupDigi(void);
 
 #if FREE_DATA
 
-char far JM_FREE_DATA_START[1] = {0};
+char JM_FREE_DATA_START[1] = {0};
 
 #endif
 
 #if TECH_SUPPORT_VERSION
-char far EnterBetaCode[] = "\n  TECH SUPPORT VERSION!\n\n  NO DISTRIBUTING!";
+char EnterBetaCode[] = "\n  TECH SUPPORT VERSION!\n\n  NO DISTRIBUTING!";
 #elif BETA_TEST
-char far EnterBetaCode[] = "      !BETA VERSION!\n    DO NOT DISTRIBUTE\n UNDER PENALTY OF DEATH\n\n   ENTER BETA CODE";
+char EnterBetaCode[] = "      !BETA VERSION!\n    DO NOT DISTRIBUTE\n UNDER PENALTY OF DEATH\n\n   ENTER BETA CODE";
 #endif
 
-char far* far JHParmStrings[] = {"no386", "is386", nil};
+char* JHParmStrings[] = {"no386", "is386", nil};
 
-char far show_text1[] = "\n     SYSTEM INFO\n";
-char far show_text2[] = "=======================\n\n";
-char far show_text3[] = "-- Memory avail after game is loaded --\n\n";
-char far show_text4[] = "            ** Insufficient memory to run the game **";
-char far show_text5[] = "---- Extra Devices ----\n\n";
+char show_text1[] = "\n     SYSTEM INFO\n";
+char show_text2[] = "=======================\n\n";
+char show_text3[] = "-- Memory avail after game is loaded --\n\n";
+char show_text4[] = "            ** Insufficient memory to run the game **";
+char show_text5[] = "---- Extra Devices ----\n\n";
 
-static char far* far ParmStrings[] = {"HIDDENCARD", ""};
+static char* ParmStrings[] = {"HIDDENCARD", ""};
 
-static byte far wolfdigimap[] =
+static byte wolfdigimap[] =
     {
         // These first sounds are in the upload version
 
@@ -160,7 +160,7 @@ static byte far wolfdigimap[] =
 
 #if 0
 
-static  byte far wolfdigimap[] =
+static  byte  wolfdigimap[] =
 {
 			// These first sounds are in the upload version
 
@@ -249,23 +249,23 @@ static  byte far wolfdigimap[] =
 
 #endif
 
-char far cinfo_text[] = "\n"
-                        "Planet Strike\n"
-                        "Copyright (c) 1993 - JAM Productions, Inc.\n"
-                        "All rights reserved.\n";
+char cinfo_text[] = "\n"
+                    "Planet Strike\n"
+                    "Copyright (c) 1993 - JAM Productions, Inc.\n"
+                    "All rights reserved.\n";
 
 #if BETA_TEST
-char far dver_text[] = "Download the latest version pal!";
+char dver_text[] = "Download the latest version pal!";
 #endif
 
 #if FREE_DATA
 
-char far JM_FREE_DATA_END[1] = {0};
+char JM_FREE_DATA_END[1] = {0};
 
 #endif
 
-extern byte far colormap[];
-byte far*       lightsource;
+extern byte colormap[];
+byte*       lightsource;
 
 //=========================================================================
 //
@@ -313,11 +313,11 @@ void CA_Startup(void)
 
 // #if !IN_DEVELOPMENT
 
-extern bool          IN_Started;
-extern char far* far IN_ParmStrings[];
-extern bool          INL_StartJoy(word joy);
-extern bool          INL_StartMouse(void);
-extern void          INL_StartKbd(void);
+extern bool  IN_Started;
+extern char* IN_ParmStrings[];
+extern bool  INL_StartJoy(word joy);
+extern bool  INL_StartMouse(void);
+extern void  INL_StartKbd(void);
 
 ///////////////////////////////////////////////////////////////////////////
 //
@@ -406,17 +406,17 @@ void IN_Startup(void)
 ===================
 */
 
-extern bool            mmstarted, bombonerror;
-extern mmblocktype far mmblocks[], far *mmhead, far *mmfree,
-    far *mmnew, far *mmrover;
-extern void far* farheap;
-extern void*     nearheap;
+extern bool        mmstarted, bombonerror;
+extern mmblocktype mmblocks[], *mmhead, *mmfree,
+    *mmnew, *mmrover;
+extern void* farheap;
+extern void* nearheap;
 
 void MM_Startup(void)
 {
     int           i;
     unsigned long length;
-    void far*     start;
+    void*         start;
     unsigned      segstart, seglength, endfree;
 
     if (mmstarted)
@@ -448,7 +448,7 @@ void MM_Startup(void)
     // get all available near conventional memory segments
     //
     length = coreleft();
-    start  = (void far*)(nearheap = malloc(length));
+    start  = (void*)(nearheap = malloc(length));
 
     length -= 16 - (FP_OFF(start) & 15);
     length -= SAVENEARHEAP;
@@ -458,7 +458,7 @@ void MM_Startup(void)
     mminfo.nearheap = length;
 
     //
-    // get all available far conventional memory segments
+    // get all available  conventional memory segments
     //
     length = farcoreleft();
     start = farheap = farmalloc(length);
@@ -668,8 +668,8 @@ void PML_StartupMainMem(void)
 //	PM_Startup() - Start up the Page Mgr
 //
 
-extern bool          PMStarted;
-extern char far* far PM_ParmStrings[];
+extern bool  PMStarted;
+extern char* PM_ParmStrings[];
 
 void PM_Startup(void)
 {
@@ -721,10 +721,10 @@ void PM_Startup(void)
 //
 ///////////////////////////////////////////////////////////////////////////
 
-extern bool          US_Started;
-extern char far* far US_ParmStrings[];
-extern char far* far US_ParmStrings2[];
-extern int           USL_HardError(word errval, int ax, int bp, int si);
+extern bool  US_Started;
+extern char* US_ParmStrings[];
+extern char* US_ParmStrings2[];
+extern int   USL_HardError(word errval, int ax, int bp, int si);
 
 void US_Startup(void)
 {
@@ -944,11 +944,11 @@ const float radtoint = (float)FINEANGLES / 2 / PI;
 
 void BuildTables(void)
 {
-    int       i;
-    float     angle, anglestep;
-    double    tang;
-    fixed     value;
-    byte far* temp;
+    int    i;
+    float  angle, anglestep;
+    double tang;
+    fixed  value;
+    byte*  temp;
 
     //
     // calculate fine tangents
@@ -984,7 +984,7 @@ void BuildTables(void)
     // Fix ColorMap
     MM_GetPtr(&(memptr)temp, 16896);
     _fmemcpy(temp, colormap, 16896);
-    lightsource = (byte far*)(((long)colormap + 255) & ~0xff);
+    lightsource = (byte*)(((long)colormap + 255) & ~0xff);
     _fmemcpy(lightsource, temp, 16384);
 }
 
@@ -1025,7 +1025,7 @@ void SetupWalls(void)
 
 void InitDigiMap(void)
 {
-    char far* map;
+    char* map;
 
     for (map = wolfdigimap; *map != LASTSOUND; map += 2)
         DigiMap[map[0]] = map[1];
@@ -1058,7 +1058,7 @@ void CAL_SetupAudioFile(void)
 
     length = filelength(handle);
     MM_GetPtr(&(memptr)audiostarts, length);
-    CA_FarRead(handle, (byte far*)audiostarts, length);
+    CA_FarRead(handle, (byte*)audiostarts, length);
     close(handle);
 #else
     audiohuffman = (huffnode*)&audiodict;
@@ -1373,8 +1373,8 @@ void ReadConfig(void)
 
 void Patch386(void)
 {
-    extern void far jabhack2(void);
-    extern int far  CheckIs386(void);
+    extern void jabhack2(void);
+    extern int  CheckIs386(void);
 
     int i;
 
@@ -1444,8 +1444,8 @@ asm	retf
 
 #define CHECK_FOR_EPISODES
 
-extern CP_itemtype far NewEmenu[];
-extern int             EpisodeSelect[];
+extern CP_itemtype NewEmenu[];
+extern int         EpisodeSelect[];
 
 //-------------------------------------------------------------------------
 // CheckForEpisodes() - CHECK FOR VERSION/EXTESION
@@ -1588,8 +1588,8 @@ void CheckForEpisodes(void)
 }
 #endif
 
-extern char far* far MainStrs[];
-extern char far      bc_buffer[];
+extern char* MainStrs[];
+extern char  bc_buffer[];
 
 //------------------------------------------------------------------------
 // PreDemo()
@@ -1709,7 +1709,7 @@ void PreDemo()
         // Load and start music
         //
         CA_CacheAudioChunk(STARTMUSIC + APOGFNFM_MUS);
-        SD_StartMusic((MusicGroup far*)audiosegs[STARTMUSIC + APOGFNFM_MUS]);
+        SD_StartMusic((MusicGroup*)audiosegs[STARTMUSIC + APOGFNFM_MUS]);
 
         // Cache and set palette.  AND  Fade it in!
         //
@@ -1749,7 +1749,7 @@ void PreDemo()
         // Load and start music
         //
         CA_CacheAudioChunk(STARTMUSIC + TITLE_LOOP_MUSIC);
-        SD_StartMusic((MusicGroup far*)audiosegs[STARTMUSIC + TITLE_LOOP_MUSIC]);
+        SD_StartMusic((MusicGroup*)audiosegs[STARTMUSIC + TITLE_LOOP_MUSIC]);
 
         // Show JAM logo
         //
@@ -1778,7 +1778,7 @@ void PreDemo()
                     DebugOk = 1;
 
                     CA_CacheAudioChunk(STARTMUSIC + TITLE_LOOP_MUSIC);
-                    SD_StartMusic((MusicGroup far*)audiosegs[STARTMUSIC + TITLE_LOOP_MUSIC]);
+                    SD_StartMusic((MusicGroup*)audiosegs[STARTMUSIC + TITLE_LOOP_MUSIC]);
                 }
             }
         }
@@ -1982,8 +1982,8 @@ unsigned scan_atoi(char* s)
     return (atoi(s)); // Then converts to integer...
 }
 
-extern char far* far MainStrs[];
-extern short         starting_episode, starting_level, starting_difficulty;
+extern char* MainStrs[];
+extern short starting_episode, starting_level, starting_difficulty;
 
 //-------------------------------------------------------------------------
 // freed_main()
@@ -2146,9 +2146,9 @@ long ChecksumFile(char* file, long checksum)
 {
 #define JUMPSIZE 8
 
-    int       handle;
-    long      size, readlen, i;
-    char far* p;
+    int   handle;
+    long  size, readlen, i;
+    char* p;
 
     MM_GetPtr(&cfc_buffer, CFC_BUFFERSIZE);
     p = cfc_buffer;
@@ -2222,7 +2222,7 @@ void ShowChecksums()
 //-------------------------------------------------------------------------
 void InvalidLevels()
 {
-    char far* chunkptr;
+    char* chunkptr;
 
     CA_CacheGrChunk(BADLEVELSTEXT);
     chunkptr                     = grsegs[BADLEVELSTEXT];
@@ -2246,7 +2246,7 @@ void InvalidLevels()
 //-------------------------------------------------------------------------
 void BadChecksum()
 {
-    char far* chunkptr;
+    char* chunkptr;
 
     CA_CacheGrChunk(BADCHECKSUMTEXT);
     chunkptr                     = grsegs[BADCHECKSUMTEXT];

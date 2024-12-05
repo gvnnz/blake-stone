@@ -49,11 +49,11 @@ word XMSPagesUsed,
     EMSPagesUsed,
     MainPagesUsed,
     PMNumBlocks;
-long                PMFrameCount;
-PageListStruct far *PMPages,
-    _seg *          PMSegPages;
+long            PMFrameCount;
+PageListStruct *PMPages,
+    _seg *      PMSegPages;
 
-char far* far PM_ParmStrings[] = {"nomain", "noems", "noxms", nil};
+char* PM_ParmStrings[] = {"nomain", "noems", "noxms", nil};
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -241,7 +241,7 @@ error:
 //	PML_XMSCopy() - Copies a main/EMS page to or from XMS
 //		Will round an odd-length request up to the next even value
 //
-void PML_XMSCopy(bool toxms, byte far* addr, word xmspage, word length)
+void PML_XMSCopy(bool toxms, byte* addr, word xmspage, word length)
 {
     longword xoffset;
     struct
@@ -279,7 +279,7 @@ void PML_XMSCopy(bool toxms, byte far* addr, word xmspage, word length)
 //	PML_CopyToXMS() - Copies the specified number of bytes from the real mode
 //		segment address to the specified XMS page
 //
-void PML_CopyToXMS(byte far* source, int targetpage, word length)
+void PML_CopyToXMS(byte* source, int targetpage, word length)
 {
     PML_XMSCopy(true, source, targetpage, length);
 }
@@ -288,7 +288,7 @@ void PML_CopyToXMS(byte far* source, int targetpage, word length)
 //	PML_CopyFromXMS() - Copies the specified number of bytes from an XMS
 //		page to the specified real mode address
 //
-void PML_CopyFromXMS(byte far* target, int sourcepage, word length)
+void PML_CopyFromXMS(byte* target, int sourcepage, word length)
 {
     PML_XMSCopy(false, target, sourcepage, length);
 }
@@ -344,16 +344,16 @@ void PM_SetMainMemPurge(int level)
 //
 
 #if IN_DEVELOPMENT
-// char far cmm_fartext[]="PM_CHECKMAINMEM():";
+// char  cmm_fartext[]="PM_CHECKMAINMEM():";
 #endif
 
 void PM_CheckMainMem(void)
 {
-    bool                allocfailed;
-    int                 i, n;
-    memptr*             p;
-    PMBlockAttr*        used;
-    PageListStruct far* page;
+    bool            allocfailed;
+    int             i, n;
+    memptr*         p;
+    PMBlockAttr*    used;
+    PageListStruct* page;
 
     if (!MainPresent)
         return;
@@ -417,7 +417,7 @@ void PM_CheckMainMem(void)
 }
 
 #if IN_DEVELOPMENT
-char far smm_fartext[] = "PM_STARTUPMAINMEM():";
+char smm_fartext[] = "PM_STARTUPMAINMEM():";
 #endif
 
 #if DUAL_SWAP_FILES
@@ -499,7 +499,7 @@ void PML_ShutdownMainMem(void)
 //	PML_ReadFromFile() - Reads some data in from the page file
 //
 
-void PML_ReadFromFile(byte far* buf, long offset, word length)
+void PML_ReadFromFile(byte* buf, long offset, word length)
 {
 #ifdef FLASH_LOAD
     asm mov dx, STATUS_REGISTER_1 asm in al, dx asm mov dx, ATR_INDEX asm mov al, ATR_OVERSCAN asm out dx, al asm mov al, 10 // bright green
@@ -530,12 +530,12 @@ void PML_ReadFromFile(byte far* buf, long offset, word length)
 //
 void PML_OpenPageFile(char* filename)
 {
-    int                 i;
-    long                size;
-    void _seg*          buf;
-    longword far*       offsetptr;
-    word far*           lengthptr;
-    PageListStruct far* page;
+    int             i;
+    long            size;
+    void _seg*      buf;
+    longword*       offsetptr;
+    word*           lengthptr;
+    PageListStruct* page;
 
     PageFile = open(filename, O_RDONLY + O_BINARY);
 
@@ -552,16 +552,16 @@ void PML_OpenPageFile(char* filename)
     PMNumBlocks = ChunksInFile;
     MM_GetPtr(&(memptr)PMSegPages, sizeof(PageListStruct) * PMNumBlocks);
     MM_SetLock(&(memptr)PMSegPages, true);
-    PMPages = (PageListStruct far*)PMSegPages;
+    PMPages = (PageListStruct*)PMSegPages;
     _fmemset(PMPages, 0, sizeof(PageListStruct) * PMNumBlocks);
 
     // Read in the chunk offsets
 
     size = sizeof(longword) * ChunksInFile;
     MM_GetPtr(&buf, size);
-    if (!CA_FarRead(PageFile, (byte far*)buf, size))
+    if (!CA_FarRead(PageFile, (byte*)buf, size))
         PM_ERROR(PML_OPENPAGEFILE_OFF);
-    offsetptr = (longword far*)buf;
+    offsetptr = (longword*)buf;
     for (i = 0, page = PMPages; i < ChunksInFile; i++, page++)
         page->offset = *offsetptr++;
     MM_FreePtr(&buf);
@@ -570,9 +570,9 @@ void PML_OpenPageFile(char* filename)
 
     size = sizeof(word) * ChunksInFile;
     MM_GetPtr(&buf, size);
-    if (!CA_FarRead(PageFile, (byte far*)buf, size))
+    if (!CA_FarRead(PageFile, (byte*)buf, size))
         PM_ERROR(PML_OPENPAGEFILE_LEN);
-    lengthptr = (word far*)buf;
+    lengthptr = (word*)buf;
     for (i = 0, page = PMPages; i < ChunksInFile; i++, page++)
         page->length = *lengthptr++;
     MM_FreePtr(&buf);
@@ -675,7 +675,7 @@ PML_GetEMSAddress(int page, PMLockType lock)
 memptr
 PM_GetPageAddress(int pagenum)
 {
-    PageListStruct far* page;
+    PageListStruct* page;
 
     page = &PMPages[pagenum];
     if (page->mainPage != -1)
@@ -692,9 +692,9 @@ PM_GetPageAddress(int pagenum)
 //
 int PML_GiveLRUPage(bool mainonly)
 {
-    int                 i, lru;
-    long                last;
-    PageListStruct far* page;
+    int             i, lru;
+    long            last;
+    PageListStruct* page;
 
     for (i = 0, page = PMPages, lru = -1, last = MAXLONG; i < ChunksInFile; i++, page++)
     {
@@ -718,9 +718,9 @@ int PML_GiveLRUPage(bool mainonly)
 //
 int PML_GiveLRUXMSPage(void)
 {
-    int                 i, lru;
-    long                last;
-    PageListStruct far* page;
+    int             i, lru;
+    long            last;
+    PageListStruct* page;
 
     for (i = 0, page = PMPages, lru = -1, last = MAXLONG; i < ChunksInFile; i++, page++)
     {
@@ -740,8 +740,8 @@ int PML_GiveLRUXMSPage(void)
 //
 void PML_PutPageInXMS(int pagenum)
 {
-    int                 usexms;
-    PageListStruct far* page;
+    int             usexms;
+    PageListStruct* page;
 
     if (!XMSPresent)
         return;
@@ -770,8 +770,8 @@ void PML_PutPageInXMS(int pagenum)
 memptr
 PML_TransferPageSpace(int orig, int new)
 {
-    memptr              addr;
-    PageListStruct far *origpage, far *newpage;
+    memptr          addr;
+    PageListStruct *origpage, *newpage;
 
     if (orig == new)
         PM_ERROR(PML_TRANSFERPAGE_IDENT);
@@ -810,18 +810,17 @@ PML_TransferPageSpace(int orig, int new)
 //
 //	PML_GetAPageBuffer() - A page buffer is needed. Either get it from the
 //		main/EMS free pool, or use PML_GiveLRUPage() to find which page to
-//		steal the buffer from. Returns a far pointer to the page buffer, and
+//		steal the buffer from. Returns a  pointer to the page buffer, and
 //		sets the fields inside the given page structure appropriately.
 //		If mainonly is true, free EMS will be ignored, and only main pages
 //		will be looked at by PML_GiveLRUPage().
 //
-byte far*
-PML_GetAPageBuffer(int pagenum, bool mainonly)
+byte* PML_GetAPageBuffer(int pagenum, bool mainonly)
 {
-    byte far*           addr = nil;
-    int                 i, n;
-    PMBlockAttr*        used;
-    PageListStruct far* page;
+    byte*           addr = nil;
+    int             i, n;
+    PMBlockAttr*    used;
+    PageListStruct* page;
 
     page = &PMPages[pagenum];
     if ((EMSPagesUsed < EMSPagesAvail) && !mainonly)
@@ -870,9 +869,9 @@ PML_GetAPageBuffer(int pagenum, bool mainonly)
 memptr
 PML_GetPageFromXMS(int pagenum, bool mainonly)
 {
-    byte far*           checkaddr;
-    memptr              addr = nil;
-    PageListStruct far* page;
+    byte*           checkaddr;
+    memptr          addr = nil;
+    PageListStruct* page;
 
     page = &PMPages[pagenum];
     if (XMSPresent && (page->xmsPage != -1))
@@ -896,8 +895,8 @@ PML_GetPageFromXMS(int pagenum, bool mainonly)
 //
 void PML_LoadPage(int pagenum, bool mainonly)
 {
-    byte far*           addr;
-    PageListStruct far* page;
+    byte*           addr;
+    PageListStruct* page;
 
     addr = PML_GetAPageBuffer(pagenum, mainonly);
     page = &PMPages[pagenum];
@@ -990,8 +989,8 @@ void PM_Preload(void (*update)(word current, word total))
         mainfree, maintotal,
         emsfree, emstotal,
         xmsfree, xmstotal;
-    memptr              addr;
-    PageListStruct far* p;
+    memptr          addr;
+    PageListStruct* p;
 
     mainfree = (MainPagesAvail - MainPagesUsed) + (EMSPagesAvail - EMSPagesUsed);
     xmsfree  = (XMSPagesAvail - XMSPagesUsed);
@@ -1075,8 +1074,8 @@ void PM_Preload(void (*update)(word current, word total))
             if (p->length > PMPageSize)
                 PM_ERROR(PM_PRELOAD_TOO_LONG);
 
-            PML_ReadFromFile((byte far*)addr, p->offset, p->length);
-            PML_CopyToXMS((byte far*)addr, p->xmsPage, p->length);
+            PML_ReadFromFile((byte*)addr, p->offset, p->length);
+            PML_CopyToXMS((byte*)addr, p->xmsPage, p->length);
 
             page++;
             current++;
@@ -1085,7 +1084,7 @@ void PM_Preload(void (*update)(word current, word total))
         }
 
         p = &PMPages[oogypage];
-        PML_ReadFromFile((byte far*)addr, p->offset, p->length);
+        PML_ReadFromFile((byte*)addr, p->offset, p->length);
     }
 
     update(total, total);
@@ -1148,8 +1147,8 @@ void PM_NextFrame(void)
 //
 void PM_Reset(void)
 {
-    int                 i;
-    PageListStruct far* page;
+    int             i;
+    PageListStruct* page;
 
     XMSPagesAvail = XMSAvail / PMPageSizeKB;
 

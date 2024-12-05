@@ -119,7 +119,7 @@ long IO_LoadFile(char* filename, void* dst)
             MM_GetPtr(dst, head.OriginalLen);
             if (mmerror)
                 return (0);
-            LZH_Decompress((void far*)handle, *dst, size, head.CompressLen, SRC_FILE | DEST_MEM);
+            LZH_Decompress((void *)handle, *dst, size, head.CompressLen, SRC_FILE | DEST_MEM);
             LZH_Shutdown();
             break;
 

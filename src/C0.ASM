@@ -109,7 +109,7 @@ STARTX          PROC    NEAR
 ;               DOS version number
 ;               Program Segment Prefix address
 ;               Environment address
-;               Top of far heap
+;               Top of  heap
 
 IFDEF   __TINY__
 				mov     dx, cs          ; DX = GROUP Segment address
@@ -311,7 +311,7 @@ InitFailed      label   near
                 jmp     near ptr _abort
 
 ;       Return to DOS the amount of memory in excess
-;       Set far heap base and pointer
+;       Set  heap base and pointer
 
 ExcessOfMemory  label   near
                 mov     bx, di
@@ -616,7 +616,7 @@ PFAR            EQU     1
 NOTUSED         EQU     0ffh
 
 SE              STRUC
-calltype        db      ?                       ; 0=near,1=far,ff=not used
+calltype        db      ?                       ; 0=near,1=,ff=not used
 priority        db      ?                       ; 0=highest,ff=lowest
 addrlow         dw      ?
 addrhigh        dw      ?
@@ -649,7 +649,7 @@ StartExit       proc near
 @@EndOfTable:   cmp     dx,di                   ;did we exhaust the table?
                 je      @@Done                  ;yes, quit
                 mov     bx,dx                   ;bx = highest priority item
-                cmp     es:[bx.calltype],PNEAR  ;is it near or far?
+                cmp     es:[bx.calltype],PNEAR  ;is it near or ?
                 mov     es:[bx.calltype],NOTUSED;wipe the call type
                 push    es                      ;save es
                 je      @@NearCall

@@ -61,7 +61,7 @@ void DrawCreditsPage(void);
 void unfreed_main(void);
 void ShowPromo(void);
 
-char far* far MainStrs[] = {
+char* MainStrs[] = {
     "q", "nowait", "l", "e",
     "version", "system",
     "dval", "tics", "mem", "powerball", "music", "d",
@@ -74,7 +74,7 @@ char destPath[MAX_DEST_PATH_LEN + 1];
 char tempPath[MAX_DEST_PATH_LEN + 15];
 
 #if BETA_TEST
-char far bc_buffer[] = BETA_CODE;
+char bc_buffer[] = BETA_CODE;
 #endif
 
 void InitPlaytemp(void);
@@ -276,8 +276,8 @@ void NewGame(int difficulty, int episode)
 
 bool LevelInPlaytemp(char levelnum);
 
-#define WriteIt(c, p, s) cksize += WriteInfo(c, (char far*)p, s, handle)
-#define ReadIt(d, p, s) ReadInfo(d, (char far*)p, s, handle)
+#define WriteIt(c, p, s) cksize += WriteInfo(c, (char*)p, s, handle)
+#define ReadIt(d, p, s) ReadInfo(d, (char*)p, s, handle)
 
 #define LZH_WORK_BUFFER_SIZE 8192
 
@@ -302,7 +302,7 @@ void InitPlaytemp()
 //--------------------------------------------------------------------------
 // DoChecksum()
 //--------------------------------------------------------------------------
-long DoChecksum(byte far* source, unsigned size, long checksum)
+long DoChecksum(byte* source, unsigned size, long checksum)
 {
     unsigned i;
 
@@ -359,7 +359,7 @@ char LS_current = -1, LS_total = -1;
 //--------------------------------------------------------------------------
 // ReadInfo()
 //--------------------------------------------------------------------------
-void ReadInfo(bool decompress, char far* dst, unsigned size, int file)
+void ReadInfo(bool decompress, char* dst, unsigned size, int file)
 {
     unsigned csize, dsize;
 
@@ -367,7 +367,7 @@ void ReadInfo(bool decompress, char far* dst, unsigned size, int file)
 
     if (decompress)
     {
-        IO_FarRead(file, (char far*)&csize, sizeof(csize));
+        IO_FarRead(file, (char*)&csize, sizeof(csize));
         IO_FarRead(file, lzh_work_buffer, csize);
         checksum = DoChecksum(lzh_work_buffer, csize, checksum);
         dsize    = LZH_Decompress(lzh_work_buffer, dst, size, csize, SRC_MEM | DEST_MEM);
@@ -384,7 +384,7 @@ void ReadInfo(bool decompress, char far* dst, unsigned size, int file)
 //--------------------------------------------------------------------------
 // WriteInfo()
 //--------------------------------------------------------------------------
-unsigned WriteInfo(bool compress, char far* src, unsigned size, int file)
+unsigned WriteInfo(bool compress, char* src, unsigned size, int file)
 {
     unsigned csize;
 
@@ -395,7 +395,7 @@ unsigned WriteInfo(bool compress, char far* src, unsigned size, int file)
         csize = LZH_Compress(src, lzh_work_buffer, size, SRC_MEM | DEST_MEM);
         if (csize > LZH_WORK_BUFFER_SIZE)
             MAIN_ERROR(WRITEINFO_BIGGER_BUF);
-        IO_FarWrite(file, (char far*)&csize, sizeof(csize));
+        IO_FarWrite(file, (char*)&csize, sizeof(csize));
         IO_FarWrite(file, lzh_work_buffer, csize);
         checksum = DoChecksum(lzh_work_buffer, csize, checksum);
         csize += sizeof(csize);
@@ -426,7 +426,7 @@ bool LoadLevel(short levelnum)
     int        handle, picnum;
     memptr     temp;
     unsigned   count;
-    char far*  ptr;
+    char*      ptr;
     char       chunk[5] = "LVxx";
 
     extern int nsd_table[];
@@ -555,7 +555,7 @@ bool LoadLevel(short levelnum)
     // Read and evaluate checksum
     //
     PreloadUpdate(LS_current++, LS_total);
-    IO_FarRead(handle, (void far*)&oldchecksum, sizeof(oldchecksum));
+    IO_FarRead(handle, (void*)&oldchecksum, sizeof(oldchecksum));
 
     if (oldchecksum != checksum)
     {
@@ -618,7 +618,7 @@ bool SaveLevel(short levelnum)
     bool         rt_value = false;
     memptr       temp;
     unsigned     count;
-    char far*    ptr;
+    char*        ptr;
     char         oldmapon;
 
     WindowY = 181;
@@ -765,19 +765,19 @@ long DeleteChunk(int handle, char* chunk)
 
 #pragma warn + pia
 
-char far SavegameInfoText[] = "\n\r"
-                              "\n\r"
-                              "-------------------------------------\n\r"
-                              "    Blake Stone: Aliens Of Gold\n\r"
-                              "Copyright 1993, JAM Productions, Inc.\n\r"
-                              "\n\r"
-                              "SAVEGAME file is from version: "__VERSION__
-                              "\n\r"
-                              " Compile Date :"__DATE__
-                              " : "__TIME__
-                              "\n\r"
-                              "-------------------------------------\n\r"
-                              "\x1a";
+char SavegameInfoText[] = "\n\r"
+                          "\n\r"
+                          "-------------------------------------\n\r"
+                          "    Blake Stone: Aliens Of Gold\n\r"
+                          "Copyright 1993, JAM Productions, Inc.\n\r"
+                          "\n\r"
+                          "SAVEGAME file is from version: "__VERSION__
+                          "\n\r"
+                          " Compile Date :"__DATE__
+                          " : "__TIME__
+                          "\n\r"
+                          "-------------------------------------\n\r"
+                          "\x1a";
 
 //--------------------------------------------------------------------------
 // LoadTheGame()
@@ -898,7 +898,7 @@ cleanup:;
 //--------------------------------------------------------------------------
 // SaveTheGame()
 //--------------------------------------------------------------------------
-bool SaveTheGame(int handle, char far* description)
+bool SaveTheGame(int handle, char* description)
 {
     struct ffblk  finfo;
     unsigned long cksize, offset;
@@ -1011,7 +1011,7 @@ bool LevelInPlaytemp(char levelnum)
 //--------------------------------------------------------------------------
 // CheckDiskSpace()
 //--------------------------------------------------------------------------
-bool CheckDiskSpace(long needed, char far* text, cds_io_type io_type)
+bool CheckDiskSpace(long needed, char* text, cds_io_type io_type)
 {
     struct ffblk      finfo;
     struct diskfree_t dfree;
@@ -1174,7 +1174,7 @@ void CycleColors()
 
             if (!changes)
             {
-                VL_GetPalette(CRNG_LOW, CRNG_SIZE, (byte far*)cbuffer);
+                VL_GetPalette(CRNG_LOW, CRNG_SIZE, (byte*)cbuffer);
                 changes = true;
             }
 
@@ -1193,7 +1193,7 @@ void CycleColors()
     }
 
     if (changes)
-        VL_SetPalette(CRNG_LOW, CRNG_SIZE, (byte far*)cbuffer);
+        VL_SetPalette(CRNG_LOW, CRNG_SIZE, (byte*)cbuffer);
     else
         VW_WaitVBL(1);
 }
@@ -1322,7 +1322,7 @@ bool DoMovie(movie_t movie, memptr palette)
 =================
 */
 
-bool MS_CheckParm(char far* check)
+bool MS_CheckParm(char* check)
 {
     int   i;
     char* parm;
@@ -1435,11 +1435,11 @@ void NewViewSize(int width)
 
 void Quit(char* error, ...)
 {
-    unsigned  finscreen;
-    memptr    diz;
-    char far* screen;
-    unsigned  unit, err;
-    va_list   ap;
+    unsigned finscreen;
+    memptr   diz;
+    char*    screen;
+    unsigned unit, err;
+    va_list  ap;
 
     va_start(ap, error);
 
@@ -1452,7 +1452,7 @@ void Quit(char* error, ...)
 #if GAME_VERSION != SHAREWARE_VERSION
         if (gamestate.flags & GS_BAD_DIZ_FILE)
         {
-            char far* end;
+            char* end;
 
             CA_CacheGrChunk(DIZ_ERR_TEXT);
             diz  = grsegs[DIZ_ERR_TEXT];
@@ -1514,7 +1514,7 @@ void Quit(char* error, ...)
 #if 0
 	if (!error || !(*error))
 	{
-		unsigned far *clear = MK_FP(0xb800,23*80*2);
+		unsigned  *clear = MK_FP(0xb800,23*80*2);
 		unsigned len = 0;
 
 		clrscr();
@@ -1578,7 +1578,7 @@ void DemoLoop(void)
                 // Load and start music
                 //
                 CA_CacheAudioChunk(STARTMUSIC + TITLE_LOOP_MUSIC);
-                SD_StartMusic((MusicGroup far*)audiosegs[STARTMUSIC + TITLE_LOOP_MUSIC]);
+                SD_StartMusic((MusicGroup*)audiosegs[STARTMUSIC + TITLE_LOOP_MUSIC]);
             }
 
 //
@@ -1667,7 +1667,7 @@ void DemoLoop(void)
                     // Load and start music
                     //
                     CA_CacheAudioChunk(STARTMUSIC + TITLE_LOOP_MUSIC);
-                    SD_StartMusic((MusicGroup far*)audiosegs[STARTMUSIC + TITLE_LOOP_MUSIC]);
+                    SD_StartMusic((MusicGroup*)audiosegs[STARTMUSIC + TITLE_LOOP_MUSIC]);
                 }
             }
 #endif
@@ -1817,7 +1817,7 @@ unsigned UseFunc(char huge* first, char huge* next)
 //-------------------------------------------------------------------------
 // fprint()
 //-------------------------------------------------------------------------
-void fprint(char far* text)
+void fprint(char* text)
 {
     while (*text)
         printf("%c", *text++);
@@ -1863,7 +1863,7 @@ void InitDestPath(void)
 //-------------------------------------------------------------------------
 // MakeDestPath()
 //-------------------------------------------------------------------------
-void MakeDestPath(char far* file)
+void MakeDestPath(char* file)
 {
     _fstrcpy(tempPath, destPath);
     _fstrcat(tempPath, file);
