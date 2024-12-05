@@ -28,12 +28,12 @@ objtype*      DeadGuys[MAXACTORS];
 unsigned char NumDeadGuys;
 #endif
 
-boolean       madenoise; // true when shooting or screaming
+bool          madenoise; // true when shooting or screaming
 unsigned char alerted = 0, alerted_areanum;
 
 exit_t playstate;
 
-boolean PowerBall = false;
+bool PowerBall = false;
 
 #if TECH_SUPPORT_VERSION
 int bordertime, DebugOk = true, InstantWin = 0, InstantQuit = 0;
@@ -55,8 +55,8 @@ objtype objlist[MAXACTORS], *new, *player, *lastobj,
 unsigned farmapylookup[MAPSIZE];
 byte*    nearmapylookup[MAPSIZE];
 
-boolean singlestep = false, godmode; //,noclip;
-int     extravbls  = 0;
+bool singlestep = false, godmode; //,noclip;
+int  extravbls  = 0;
 
 byte     tilemap[MAPSIZE][MAPSIZE]; // wall values only
 byte     spotvis[MAPSIZE][MAPSIZE];
@@ -66,7 +66,7 @@ objtype* actorat[MAPSIZE][MAPSIZE];
 // replacing refresh manager
 //
 unsigned mapwidth, mapheight, tics, realtics;
-boolean  compatability, usedummy = false, nevermark = false;
+bool     compatability, usedummy = false, nevermark = false;
 byte*    updateptr;
 unsigned mapwidthtable[64];
 unsigned uwidthtable[UPDATEHIGH];
@@ -76,19 +76,19 @@ byte     update[UPDATESIZE];
 //
 // control info
 //
-boolean mouseenabled, joystickenabled, joypadenabled, joystickprogressive;
-int     joystickport;
-int     dirscan[4] = {sc_UpArrow, sc_RightArrow, sc_DownArrow, sc_LeftArrow};
-int     buttonscan[NUMBUTTONS] =
+bool mouseenabled, joystickenabled, joypadenabled, joystickprogressive;
+int  joystickport;
+int  dirscan[4] = {sc_UpArrow, sc_RightArrow, sc_DownArrow, sc_LeftArrow};
+int  buttonscan[NUMBUTTONS] =
     {sc_Control, sc_Alt, sc_RShift, sc_Space, sc_1, sc_2, sc_3, sc_4, sc_5, sc_6, sc_7};
 int buttonmouse[4] = {bt_attack, bt_strafe, bt_use, bt_nobutton};
 int buttonjoy[4]   = {bt_attack, bt_strafe, bt_use, bt_run};
 
 int viewsize;
 
-boolean buttonheld[NUMBUTTONS];
+bool buttonheld[NUMBUTTONS];
 
-boolean   demorecord, demoplayback;
+bool      demorecord, demoplayback;
 char far *demoptr, far *lastdemoptr;
 memptr demobuffer;
 
@@ -99,8 +99,8 @@ byte lightson;
 //
 // curent user input
 //
-int     controlx, controly; // range from -100 to 100 per tic
-boolean buttonstate[NUMBUTTONS];
+int  controlx, controly; // range from -100 to 100 per tic
+bool buttonstate[NUMBUTTONS];
 
 //===========================================================================
 
@@ -109,9 +109,9 @@ void InitObjList(void);
 void RemoveObj(objtype* gone);
 void PollControls(void);
 void StopMusic(void);
-void StartMusic(boolean preload);
+void StartMusic(bool preload);
 void PlayLoop(void);
-void SpaceEntryExit(boolean entry);
+void SpaceEntryExit(bool entry);
 void FinishPaletteShifts(void);
 void ShowQuickInstructions(void);
 void CleanDrawPlayBorder(void);
@@ -292,7 +292,7 @@ void PollKeyboardMove(void)
 ===================
 */
 
-boolean pollMouseUsed = false;
+bool pollMouseUsed = false;
 
 void PollMouseMove(void)
 {
@@ -538,10 +538,10 @@ void CenterWindow(word w, word h)
 =====================
 */
 
-extern boolean PP_step, sqActive;
-extern int     pickquick;
+extern bool PP_step, sqActive;
+extern int  pickquick;
 
-boolean refresh_screen;
+bool refresh_screen;
 #if (GAME_VERSION != SHAREWARE_VERSION) || GEORGE_CHEAT
 byte jam_buff_cmp[] = {sc_J, sc_A, sc_M};
 byte jam_buff[sizeof(jam_buff_cmp)];
@@ -551,14 +551,14 @@ char far PAUSED_MSG[] = "^ST1^CEGame Paused\r^CEPress any key to resume.^XX";
 
 void CheckKeys(void)
 {
-    boolean        one_eighty = false;
-    int            i;
-    byte           scan;
-    unsigned       temp;
-    static boolean Plus_KeyReleased;
-    static boolean Minus_KeyReleased;
-    static boolean I_KeyReleased;
-    static boolean S_KeyReleased;
+    bool        one_eighty = false;
+    int         i;
+    byte        scan;
+    unsigned    temp;
+    static bool Plus_KeyReleased;
+    static bool Minus_KeyReleased;
+    static bool I_KeyReleased;
+    static bool S_KeyReleased;
 
 #if IN_DEVELOPMENT || BETA_TEST
 //	if (DebugOk && (Keyboard[sc_P] || PP_step))
@@ -824,7 +824,7 @@ void CheckKeys(void)
         US_ControlPanel(scan);
         if (refresh_screen)
         {
-            boolean old = loadedgame;
+            bool old = loadedgame;
 
             loadedgame = false;
             DrawPlayScreen(false);
@@ -950,7 +950,7 @@ void CheckKeys(void)
 //-------------------------------------------------------------------------
 void CheckMusicToggle(void)
 {
-    static boolean M_KeyReleased;
+    static bool M_KeyReleased;
 
     if (Keyboard[sc_M])
     {
@@ -998,7 +998,7 @@ char far Computing[] = {"Computing..."};
 //
 //--------------------------------------------------------------------------
 
-void ChangeSwapFiles(boolean display)
+void ChangeSwapFiles(bool display)
 {
     ClearMemory();
 
@@ -1290,7 +1290,7 @@ void StopMusic(void)
 // StartMusic()
 //		o preload = true, music is cached but not started
 //-------------------------------------------------------------------------
-void StartMusic(boolean preload)
+void StartMusic(bool preload)
 {
     musicnames musicchunk;
 
@@ -1340,8 +1340,8 @@ void StartMusic(boolean preload)
 byte far redshifts[NUMREDSHIFTS][768];
 byte far whiteshifts[NUMREDSHIFTS][768];
 
-int     damagecount, bonuscount;
-boolean palshifted;
+int  damagecount, bonuscount;
+bool palshifted;
 
 extern byte far vgapal;
 
@@ -1676,11 +1676,11 @@ think:
 ===================
 */
 
-extern boolean ShowQuickMsg;
+extern bool ShowQuickMsg;
 
 void PlayLoop(void)
 {
-    boolean  reset_areas = false;
+    bool     reset_areas = false;
     int      give;
     objtype* obj;
 

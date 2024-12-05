@@ -577,7 +577,7 @@ void ExplodeStatics(int tilex, int tiley)
     statobj_t *statobj, *spot;
     objtype*   obj;
     int        y_diff, x_diff;
-    boolean    remove;
+    bool       remove;
 
     for (spot = &statobjlist[0]; spot != laststatobj; spot++)
         if (spot->shapenum != -1)
@@ -659,7 +659,7 @@ unsigned doorposition[MAXDOORS]; // leading edge of door 0=closed
 
 byte far areaconnect[NUMAREAS][NUMAREAS];
 
-boolean areabyplayer[NUMAREAS];
+bool areabyplayer[NUMAREAS];
 
 /*
 ==============
@@ -723,7 +723,7 @@ void InitDoorList(void)
 ===============
 */
 
-void SpawnDoor(int tilex, int tiley, boolean vertical, keytype lock, door_t type)
+void SpawnDoor(int tilex, int tiley, bool vertical, keytype lock, door_t type)
 {
     int           areanumber;
     unsigned far* map[2];
@@ -980,8 +980,8 @@ char far od_operating[]    = "\r\r    OPERATING DOOR.\r^XX";
 
 void OperateDoor(int door)
 {
-    int     lock;
-    boolean OperateMsg, oneway = false;
+    int  lock;
+    bool OperateMsg, oneway = false;
 
     //
     // Check for wrong way on a ONEWAY door.
@@ -1919,7 +1919,7 @@ void CacheConcessionMsg()
 //--------------------------------------------------------------------------
 // ReuseMsg()
 //--------------------------------------------------------------------------
-boolean ReuseMsg(mCacheInfo* ci, short count, short struct_size)
+bool ReuseMsg(mCacheInfo* ci, short count, short struct_size)
 {
     char*       scan_ch = (char*)ci;
     mCacheInfo* scan    = (mCacheInfo*)(scan_ch - struct_size);
@@ -1961,7 +1961,7 @@ void OperateConcession(unsigned concession)
 {
     con_mCacheInfo* ci;
     char far*       msgptr;
-    boolean         ok = false;
+    bool            ok = false;
 
     ci = &ConHintList.cmInfo[concession - 1];
 

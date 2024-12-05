@@ -278,7 +278,7 @@ void CAL_GetGrChunkLength(int chunk)
 ==========================
 */
 
-boolean CA_FarRead (int handle, byte far *dest, long length)
+bool CA_FarRead (int handle, byte far *dest, long length)
 {
 	unsigned readlen;
 
@@ -326,7 +326,7 @@ done:
 ==========================
 */
 
-boolean CA_FarWrite (int handle, byte far *source, long length)
+bool CA_FarWrite (int handle, byte far *source, long length)
 {
 	unsigned writelen;
 
@@ -374,7 +374,7 @@ done:
 ==========================
 */
 
-boolean CA_ReadFile (char *filename, memptr *ptr)
+bool CA_ReadFile (char *filename, memptr *ptr)
 {
 	int handle;
 	long size;
@@ -403,7 +403,7 @@ boolean CA_ReadFile (char *filename, memptr *ptr)
 ==========================
 */
 
-boolean CA_WriteFile (char *filename, void far *ptr, long length)
+bool CA_WriteFile (char *filename, void far *ptr, long length)
 {
 	int handle;
 	long size;
@@ -435,7 +435,7 @@ boolean CA_WriteFile (char *filename, void far *ptr, long length)
 ==========================
 */
 
-boolean CA_LoadFile (char *filename, memptr *ptr)
+bool CA_LoadFile (char *filename, memptr *ptr)
 {
 	int handle;
 	long size;
@@ -505,7 +505,7 @@ void CAL_OptimizeNodes(huffnode* table)
 */
 
 void CAL_HuffExpand(byte huge* source, byte huge* dest,
-    long length, huffnode far* hufftable, boolean screenhack)
+    long length, huffnode far* hufftable, bool screenhack)
 {
     //  unsigned bit,byte,node,code;
     unsigned  sourceseg, sourceoff, destseg, destoff, endoff;

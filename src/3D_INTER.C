@@ -48,7 +48,7 @@ void ClearSplitVWB(void)
 ==================
 */
 
-boolean Breifing(breifing_type BreifingType, unsigned episode)
+bool Breifing(breifing_type BreifingType, unsigned episode)
 {
 #ifndef ID_CACHE_BRIEFS
     char chars[3] = {'L', 'W', 'I'};
@@ -76,7 +76,7 @@ boolean Breifing(breifing_type BreifingType, unsigned episode)
 =================
 */
 
-void ShPrint(char far* text, char shadow_color, boolean single_char)
+void ShPrint(char far* text, char shadow_color, bool single_char)
 {
     unsigned  old_color = fontcolor, old_x = px, old_y = py;
     char far *str, buf[2] = {0, 0};

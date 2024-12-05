@@ -10,19 +10,19 @@
 #pragma hdrstop
 
 //	Main Mem specific variables
-boolean     MainPresent, PageManagerInstalled = false;
+bool        MainPresent, PageManagerInstalled = false;
 memptr      MainMemPages[PMMaxMainMem];
 PMBlockAttr MainMemUsed[PMMaxMainMem];
 int         MainPagesAvail;
 
 //	EMS specific variables
-boolean EMSPresent;
-word    EMSAvail, EMSPagesAvail, EMSHandle,
+bool EMSPresent;
+word EMSAvail, EMSPagesAvail, EMSHandle,
     EMSPageFrame, EMSPhysicalPage;
 EMSListStruct EMSList[EMSFrameCount];
 
 //	XMS specific variables
-boolean  XMSPresent;
+bool     XMSPresent;
 word     XMSAvail, XMSPagesAvail, XMSHandle;
 longword XMSDriver;
 int      XMSProtectPage = -1;
@@ -33,8 +33,8 @@ char PageFileName[13] = {"VSWAP."};
 shadfile_t FileUsed = sd_NONE;
 
 #if DUAL_SWAP_FILES
-char    AltPageFileName[13] = {"SVSWAP."};
-boolean ShadowsAvail        = false;
+char AltPageFileName[13] = {"SVSWAP."};
+bool ShadowsAvail        = false;
 #endif
 
 int  PageFile = -1;
@@ -42,7 +42,7 @@ word ChunksInFile;
 word PMSpriteStart, PMSoundStart;
 
 //	General usage variables
-boolean PMStarted,
+bool PMStarted,
     PMPanicMode,
     PMThrashing;
 word XMSPagesUsed,
@@ -89,8 +89,7 @@ void PML_MapEMS(word logical, word physical)
 
 char EMMDriverName[9] = "EMMXXXX0";
 
-boolean
-PML_StartupEMS(void)
+bool PML_StartupEMS(void)
 {
     int  i;
     long size;
@@ -198,8 +197,7 @@ void PML_ShutdownEMS(void)
 //		Makes sure that there's at least a page of XMS available
 //		Allocates any remaining XMS (rounded down to the nearest page size)
 //
-boolean
-PML_StartupXMS(void)
+bool PML_StartupXMS(void)
 {
     XMSPresent = false; // Assume failure
     XMSAvail   = 0;
@@ -243,7 +241,7 @@ error:
 //	PML_XMSCopy() - Copies a main/EMS page to or from XMS
 //		Will round an odd-length request up to the next even value
 //
-void PML_XMSCopy(boolean toxms, byte far* addr, word xmspage, word length)
+void PML_XMSCopy(bool toxms, byte far* addr, word xmspage, word length)
 {
     longword xoffset;
     struct
@@ -351,7 +349,7 @@ void PM_SetMainMemPurge(int level)
 
 void PM_CheckMainMem(void)
 {
-    boolean             allocfailed;
+    bool                allocfailed;
     int                 i, n;
     memptr*             p;
     PMBlockAttr*        used;
@@ -692,7 +690,7 @@ PM_GetPageAddress(int pagenum)
 //	PML_GiveLRUPage() - Returns the page # of the least recently used
 //		present & unlocked main/EMS page (or main page if mainonly is true)
 //
-int PML_GiveLRUPage(boolean mainonly)
+int PML_GiveLRUPage(bool mainonly)
 {
     int                 i, lru;
     long                last;
@@ -818,7 +816,7 @@ PML_TransferPageSpace(int orig, int new)
 //		will be looked at by PML_GiveLRUPage().
 //
 byte far*
-PML_GetAPageBuffer(int pagenum, boolean mainonly)
+PML_GetAPageBuffer(int pagenum, bool mainonly)
 {
     byte far*           addr = nil;
     int                 i, n;
@@ -870,7 +868,7 @@ PML_GetAPageBuffer(int pagenum, boolean mainonly)
 //		(pages that are being purged are copied into XMS, if possible)
 //
 memptr
-PML_GetPageFromXMS(int pagenum, boolean mainonly)
+PML_GetPageFromXMS(int pagenum, bool mainonly)
 {
     byte far*           checkaddr;
     memptr              addr = nil;
@@ -896,7 +894,7 @@ PML_GetPageFromXMS(int pagenum, boolean mainonly)
 //		Load it into either main or EMS. If mainonly is true, the page will
 //		only be loaded into main.
 //
-void PML_LoadPage(int pagenum, boolean mainonly)
+void PML_LoadPage(int pagenum, bool mainonly)
 {
     byte far*           addr;
     PageListStruct far* page;
@@ -933,7 +931,7 @@ asm	out	dx,al
 
     if (!(result = PM_GetPageAddress(pagenum)))
     {
-        boolean mainonly = (pagenum >= PMSoundStart);
+        bool mainonly = (pagenum >= PMSoundStart);
         if (!PMPages[pagenum].offset) // JDC: sparse page
             PM_ERROR(PM_GETPAGE_SPARSE_PAGE);
         if (!(result = PML_GetPageFromXMS(pagenum, mainonly)))
@@ -1178,8 +1176,8 @@ void PM_Reset(void)
 //
 void PM_Startup(void)
 {
-    boolean nomain, noems, noxms;
-    int     i;
+    bool nomain, noems, noxms;
+    int  i;
 
     if (PMStarted)
         return;

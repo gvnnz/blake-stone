@@ -1755,7 +1755,7 @@ void TP_CachePage(char far* script)
     piAnimInfo far* anim;
     short           loop;
     unsigned        shapenum;
-    boolean         end_of_page = false;
+    bool            end_of_page = false;
     short           numanims    = 0;
 
     if (pi->flags & TPF_CACHE_NO_GFX)
@@ -1864,7 +1864,7 @@ void TP_JumpCursor()
 //--------------------------------------------------------------------------
 // TP_Print()
 //--------------------------------------------------------------------------
-void TP_Print(char far* str, boolean single_char)
+void TP_Print(char far* str, bool single_char)
 {
 
     //
@@ -1906,12 +1906,12 @@ void TP_Print(char far* str, boolean single_char)
 //--------------------------------------------------------------------------
 // TP_SlowPrint()
 //--------------------------------------------------------------------------
-boolean TP_SlowPrint(char far* str, char delay)
+bool TP_SlowPrint(char far* str, char delay)
 {
-    char    old_color = fontcolor;
-    short   old_x, old_y;
-    long    tc;
-    boolean aborted = false;
+    char  old_color = fontcolor;
+    short old_x, old_y;
+    long  tc;
+    bool  aborted = false;
 
     while (*str)
     {

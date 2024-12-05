@@ -72,13 +72,13 @@ unsigned long PageLen;     // Len of data loaded into MovieBuffer
 char huge*    BufferPtr;   // Ptr to next frame in MovieBuffer
 char huge*    NextPtr;     // Ptr Ofs to next frame after BufferOfs
 
-boolean MorePagesAvail; // More Pages avail on disk?
+bool MorePagesAvail; // More Pages avail on disk?
 
 //
 
 MOVIE_FLAGS movie_flag;
-boolean     ExitMovie;
-boolean     EverFaded;
+bool        ExitMovie;
+bool        EverFaded;
 long        seek_pos;
 char        movie_reps;
 ControlInfo ci;
@@ -102,11 +102,11 @@ MovieStuff_t Movies[] =
 //
 //===========================================================================
 
-void    JM_MemToScreen(void);
-void    JM_ClearVGAScreen(byte fill);
-void    FlipPages(void);
-boolean CheckFading(void);
-boolean CheckPostFade(void);
+void JM_MemToScreen(void);
+void JM_ClearVGAScreen(byte fill);
+void FlipPages(void);
+bool CheckFading(void);
+bool CheckPostFade(void);
 
 //===========================================================================
 //
@@ -265,7 +265,7 @@ void MOVIE_ShowFrame(char huge* inpic)
 // PageLen = Length of data loaded into buffer
 //
 //---------------------------------------------------------------------------
-boolean MOVIE_LoadBuffer()
+bool MOVIE_LoadBuffer()
 {
     anim_frame    blk;
     long          chunkstart;
@@ -537,7 +537,7 @@ void MOVIE_HandlePage(MovieStuff_t* MovieStuff)
 // RETURNS: true  - Movie File was found and "played"
 //				false - Movie file was NOT found!
 //---------------------------------------------------------------------------
-boolean MOVIE_Play(MovieStuff_t* MovieStuff)
+bool MOVIE_Play(MovieStuff_t* MovieStuff)
 {
     // Init our Movie Stuff...
     //

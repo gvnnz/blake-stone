@@ -182,7 +182,7 @@ typedef struct
 
     /* The rest is set up by the code */
     Instrument inst;
-    boolean    percussive;
+    bool       percussive;
     word far*  seq;
     longword   nextevent;
 } ActiveTrack;
@@ -194,29 +194,29 @@ typedef struct
 #define sqMaxFade 64 // DEBUG
 
 // Global variables
-extern boolean AdLibPresent,
+extern bool AdLibPresent,
     SoundSourcePresent,
     SoundBlasterPresent,
     NeedsMusic, // For Caching Mgr
     SoundPositioned;
-extern SDMode           SoundMode;
-extern SDSMode          DigiMode;
-extern SMMode           MusicMode;
-extern volatile boolean DigiPlaying;
-extern int              DigiMap[];
-extern longword         TimeCount; // Global time in ticks
+extern SDMode        SoundMode;
+extern SDSMode       DigiMode;
+extern SMMode        MusicMode;
+extern volatile bool DigiPlaying;
+extern int           DigiMap[];
+extern longword      TimeCount; // Global time in ticks
 
-extern boolean sqActive;
-extern boolean sqPlayedOnce;
+extern bool sqActive;
+extern bool sqPlayedOnce;
 
 // Function prototypes
 extern void SD_Startup(void),
     SD_Shutdown(void),
-    SD_Default(boolean gotit, SDMode sd, SMMode sm),
+    SD_Default(bool gotit, SDMode sd, SMMode sm),
 
     SD_PositionSound(int leftvol, int rightvol);
-extern boolean SD_PlaySound(soundnames sound);
-extern void    SD_SetPosition(int leftvol, int rightvol),
+extern bool SD_PlaySound(soundnames sound);
+extern void SD_SetPosition(int leftvol, int rightvol),
     SD_StopSound(void),
     SD_WaitSoundDone(void),
 
@@ -226,7 +226,7 @@ extern void    SD_SetPosition(int leftvol, int rightvol),
     SD_FadeOutMusic(void),
 
     SD_SetUserHook(void (*hook)(void));
-extern boolean SD_MusicPlaying(void),
+extern bool SD_MusicPlaying(void),
     SD_SetSoundMode(SDMode mode),
     SD_SetMusicMode(SMMode mode);
 extern word SD_SoundPlaying(void);

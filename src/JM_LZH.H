@@ -10,9 +10,9 @@ extern void (*LZH_DecompressDisplayVector)(unsigned long, unsigned long);
 //
 //===========================================================================
 
-boolean LZH_Startup(void);
-void    LZH_Shutdown(void);
-long    LZH_Compress(void far* infile, void far* outfile, unsigned long DataLength, unsigned PtrTypes);
-long    LZH_Decompress(void far* infile, void far* outfile, unsigned long OrginalLength, unsigned long CompressLength, unsigned PtrTypes);
+bool LZH_Startup(void);
+void LZH_Shutdown(void);
+long LZH_Compress(void far* infile, void far* outfile, unsigned long DataLength, unsigned PtrTypes);
+long LZH_Decompress(void far* infile, void far* outfile, unsigned long OrginalLength, unsigned long CompressLength, unsigned PtrTypes);
 
 #endif

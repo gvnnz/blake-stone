@@ -120,7 +120,7 @@ extern byte lightson;
 
 // Global Cloaked Shape flag..
 
-boolean cloaked_shape = false;
+bool cloaked_shape = false;
 
 /*
 =============================================================================
@@ -299,7 +299,7 @@ void TransformActor(objtype* ob)
 =
 ========================
 */
-boolean TransformTile(int tx, int ty, int* dispx, int* dispheight)
+bool TransformTile(int tx, int ty, int* dispx, int* dispheight)
 {
     int   ratio;
     fixed gx, gy, gxt, gyt, nx, ny;
@@ -672,7 +672,7 @@ void HitHorizWall(void)
 void HitHorizDoor(void)
 {
     unsigned texture, doorpage = -1, doornum, xint;
-    boolean  lockable = true;
+    bool     lockable = true;
 
     doornum = tilehit & 0x7f;
 
@@ -810,7 +810,7 @@ void HitHorizDoor(void)
 void HitVertDoor(void)
 {
     unsigned texture, doorpage, doornum, yint;
-    boolean  lockable = true;
+    bool     lockable = true;
 
     doornum = tilehit & 0x7f;
 
@@ -1444,7 +1444,7 @@ void DrawScaleds(void)
 
 int weaponscale[NUMWEAPONS] = {SPR_KNIFEREADY, SPR_PISTOLREADY, SPR_MACHINEGUNREADY, SPR_CHAINREADY, SPR_GRENADEREADY, SPR_BFG_WEAPON1, 0};
 
-boolean useBounceOffset = false;
+bool useBounceOffset = false;
 
 void DrawPlayerWeapon(void)
 {
@@ -1910,9 +1910,9 @@ void ShowOverhead(short bx, short by, short radius, short zoom, unsigned flags)
     fixed     dx, dy, psin, pcos, lmx, lmy, baselmx, baselmy, xinc, yinc;
     short     rx, ry, mx, my;
     byte far *dstptr, far *basedst, mask, startmask;
-    boolean drawplayerok = true;
-    byte    rndindex;
-    boolean snow = false;
+    bool drawplayerok = true;
+    byte rndindex;
+    bool snow = false;
 
     // -zoom == make it snow!
     //

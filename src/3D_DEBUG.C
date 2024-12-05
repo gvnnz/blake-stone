@@ -25,7 +25,7 @@
 =============================================================================
 */
 
-boolean ForceLoadDefault = false;
+bool ForceLoadDefault = false;
 
 int DebugKeys(void);
 
@@ -37,7 +37,7 @@ int DebugKeys(void);
 =============================================================================
 */
 
-boolean PP_step = false;
+bool PP_step = false;
 #if IN_DEVELOPMENT
 /*
 ================
@@ -348,7 +348,7 @@ void ShapeTest(void)
     extern word _seg* DigiList;
     static char       buf[10];
 
-    boolean             done;
+    bool                done;
     ScanCode            scan;
     int                 i, j, k, x;
     int                 sound;
@@ -566,9 +566,9 @@ char far TestQuickSaveMsg[]  = {"QUICK SAVE TEST\n ENTER COUNT:"};
 
 int DebugKeys(void)
 {
-    char    str[3];
-    boolean esc;
-    int     level, i;
+    char str[3];
+    bool esc;
+    int  level, i;
 
     if (Keyboard[sc_A]) // A = Show Actors on AutoMap
     {
@@ -980,7 +980,7 @@ void OverheadRefresh (void)
 
 void ViewMap (void)
 {
-	boolean		button0held;
+	bool		button0held;
 
 	viewtype = actoratview;
 //	button0held = false;

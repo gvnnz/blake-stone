@@ -268,7 +268,7 @@ void MouseSensitivity(void);
 
 void DrawMenuTitle(char* title);
 void CheckForEpisodes(void);
-void HelpPresenter(char* fname, boolean continuekeys, unsigned id_cache, boolean startmusic);
+void HelpPresenter(char* fname, bool continuekeys, unsigned id_cache, bool startmusic);
 void ShadowPrint(char far* string, int x, int y);
 
 //

@@ -30,7 +30,7 @@ char far QuitToDosStr[] = {"      Quit to DOS?\n"
             UNCACHEGRCHUNK(fontnum);                     \
     }
 
-boolean EscPressed = false;
+bool EscPressed = false;
 
 int lastmenumusic;
 
@@ -55,7 +55,7 @@ void DrawSwitchMenu(void);
 void DrawAllSwitchLights(int which);
 void DrawSwitchDescription(int which);
 
-extern boolean refresh_screen;
+extern bool refresh_screen;
 
 //===========================================================================
 //
@@ -272,7 +272,7 @@ void HelpScreens()
 //-------------------------------------------------------------------------
 // HelpPresenter()
 //-------------------------------------------------------------------------
-void HelpPresenter(char* fname, boolean continue_keys, unsigned id_cache, boolean startmusic)
+void HelpPresenter(char* fname, bool continue_keys, unsigned id_cache, bool startmusic)
 {
 #define FULL_VIEW_WIDTH 19
 
@@ -1587,7 +1587,7 @@ int CP_SaveGame(int quick)
     int             handle, which, exit = 0;
     unsigned        nwritten;
     char            name[13], input[GAME_DESCRIPTION_LEN + 1];
-    boolean         temp_caps  = allcaps;
+    bool            temp_caps  = allcaps;
     US_CursorStruct TermCursor = {'@', 0, HIGHLIGHT_TEXT_COLOR, 2};
 
     _fstrcpy(name, SaveName);
@@ -2078,7 +2078,7 @@ void DefineKeyMove(void)
 //--------------------------------------------------------------------------
 // TestForValidKey
 //--------------------------------------------------------------------------
-boolean TestForValidKey(ScanCode Scan)
+bool TestForValidKey(ScanCode Scan)
 {
     char far* pos;
 
@@ -2096,7 +2096,7 @@ boolean TestForValidKey(ScanCode Scan)
         DrawCustomScreen();
     }
 
-    return (!(boolean)pos);
+    return (!(bool)pos);
 }
 
 //--------------------------------------------------------------------------
@@ -2116,7 +2116,7 @@ void EnterCtrlData(int index, CustomCtrls* cust, void (*DrawRtn)(int), void (*Pr
 {
     int         j, exit, tick, redraw, which, x, picked;
     ControlInfo ci;
-    boolean     clean_display = true;
+    bool        clean_display = true;
 
     ShootSnd();
     PrintY = CST_Y + 13 * index;
@@ -3603,10 +3603,10 @@ unsigned long CacheCompData(unsigned ItemNum, memptr* dest_loc)
 //       - The chunk being checked MUST be JAMPAKd - (this may change)
 //
 //-------------------------------------------------------------------------
-boolean CheckForSpecialCode(unsigned ItemNum)
+bool CheckForSpecialCode(unsigned ItemNum)
 {
     memptr    code;
-    boolean   return_val = false;
+    bool      return_val = false;
     char      i;
     char far* code_ptr;
 

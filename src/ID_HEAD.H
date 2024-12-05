@@ -10,11 +10,6 @@
 
 #define GRMODE VGAGR
 
-typedef enum
-{
-    false,
-    true
-} boolean;
 typedef unsigned char byte;
 typedef unsigned int  word;
 typedef unsigned long longword;

@@ -29,11 +29,11 @@
 pictabletype _seg* pictable;
 pictabletype _seg* picmtable;
 
-int     px, py;
-byte    fontcolor, backcolor;
-int     fontnumber;
-int     bufferwidth, bufferheight;
-boolean allcaps = false;
+int  px, py;
+byte fontcolor, backcolor;
+int  fontnumber;
+int  bufferwidth, bufferheight;
+bool allcaps = false;
 
 //==========================================================================
 
@@ -419,8 +419,8 @@ void LoadLatchMem(void)
 
 extern ControlInfo c;
 
-boolean FizzleFade(unsigned source, unsigned dest,
-    unsigned width, unsigned height, unsigned frames, boolean abortable)
+bool FizzleFade(unsigned source, unsigned dest,
+    unsigned width, unsigned height, unsigned frames, bool abortable)
 {
     int      pixperframe;
     unsigned drawofs, pagedelta;

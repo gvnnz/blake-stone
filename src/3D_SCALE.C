@@ -194,7 +194,7 @@ unsigned dc_dest;
 
 extern unsigned far* linecmds;
 
-extern boolean useBounceOffset;
+extern bool useBounceOffset;
 
 fixed bounceOffset = 0;
 

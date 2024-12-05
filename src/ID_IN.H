@@ -167,7 +167,7 @@ typedef enum
 } Direction;
 typedef struct
 {
-    boolean   button0, button1, button2, button3;
+    bool      button0, button1, button2, button3;
     int       x, y;
     Motion    xaxis, yaxis;
     Direction dir;
@@ -192,14 +192,14 @@ typedef struct
 
 // Global variables
 
-extern boolean NGinstalled; // JAM
+extern bool NGinstalled; // JAM
 
-extern boolean     JoystickCalibrated; // JAM - added
+extern bool        JoystickCalibrated; // JAM - added
 extern ControlType ControlTypeUsed;    // JAM - added
-extern boolean     Keyboard[],
+extern bool        Keyboard[],
     MousePresent,
     JoysPresent[];
-extern boolean     Paused;
+extern bool        Paused;
 extern char        LastASCII;
 extern ScanCode    LastScan;
 extern KeyboardDef KbdDefs;
@@ -220,7 +220,7 @@ extern word       DemoOffset, DemoSize;
 
 // DEBUG - put names in prototypes
 extern void IN_Startup(void), IN_Shutdown(void),
-    IN_Default(boolean gotit, ControlType in),
+    IN_Default(bool gotit, ControlType in),
     IN_SetKeyHook(void (*)()),
     IN_ClearKeysDown(void),
     IN_ReadCursor(CursorInfo*),
@@ -231,7 +231,7 @@ extern void IN_Startup(void), IN_Shutdown(void),
         word miny, word maxy),
     IN_StopDemo(void), IN_FreeDemoBuffer(void),
     IN_Ack(void), IN_AckBack(void);
-extern boolean   IN_UserInput(longword delay);
+extern bool      IN_UserInput(longword delay);
 extern char      IN_WaitForASCII(void);
 extern ScanCode  IN_WaitForKey(void);
 extern word      IN_GetJoyButtonsDB(word joy);

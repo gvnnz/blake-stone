@@ -285,8 +285,8 @@ void T_SpaceShip(objtype* ob);
 void T_BlowBack(objtype* obj);
 void DoAttack(objtype* ob);
 
-boolean MoveTrappedDiag(objtype* ob);
-boolean CheckTrappedDiag(objtype* ob);
+bool MoveTrappedDiag(objtype* ob);
+bool CheckTrappedDiag(objtype* ob);
 
 void ChangeShootMode(objtype* ob);
 
@@ -372,14 +372,14 @@ extern statetype s_ofs_esphere_death3;
 // Local Prototypes
 //
 
-void    T_SmartThink(objtype* obj);
-void    T_SmartThought(objtype* obj);
-void    T_Action(objtype* obj);
-boolean ProjectileTryMove(objtype* ob, fixed deltax, fixed deltay);
-void    T_Projectile(objtype* ob);
-void    T_OfsShoot(enemy_t which, objtype* ob);
-void    SphereStartDir(objtype* ob);
-void    T_OfsBounce(objtype* obj);
+void T_SmartThink(objtype* obj);
+void T_SmartThought(objtype* obj);
+void T_Action(objtype* obj);
+bool ProjectileTryMove(objtype* ob, fixed deltax, fixed deltay);
+void T_Projectile(objtype* ob);
+void T_OfsShoot(enemy_t which, objtype* ob);
+void SphereStartDir(objtype* ob);
+void T_OfsBounce(objtype* obj);
 
 //
 // Local Offset Anim Structures
@@ -1068,7 +1068,7 @@ void T_OfsBounce(objtype* ob)
         oldty = ob->tiley;
         if (!TryWalk(ob, true))
         {
-            boolean check_opposite = false;
+            bool check_opposite = false;
 
             // Restore tilex/tiley
             //
@@ -1161,7 +1161,7 @@ void T_OfsBounce(objtype* ob)
 //---------------------------------------------------------------------------
 // MoveTrappedDiag()
 //---------------------------------------------------------------------------
-boolean MoveTrappedDiag(objtype* ob)
+bool MoveTrappedDiag(objtype* ob)
 {
     // Don't mess with HORZs, VERTs, or normal DIAGs.
     //
@@ -1196,7 +1196,7 @@ boolean MoveTrappedDiag(objtype* ob)
 //---------------------------------------------------------------------------
 // CheckTrappedDiag()
 //---------------------------------------------------------------------------
-boolean CheckTrappedDiag(objtype* ob)
+bool CheckTrappedDiag(objtype* ob)
 {
     dirtype orgdir = ob->dir;
 
@@ -1700,9 +1700,9 @@ void T_SmartThought(objtype* obj)
 //				a "smart" think!
 //
 //------------------------------------------------------------------
-boolean AnimateOfsObj(objtype* obj)
+bool AnimateOfsObj(objtype* obj)
 {
-    boolean Done = false;
+    bool Done = false;
 
 #if 0 // Anim existance test moved to the calling function.
 
@@ -1936,7 +1936,7 @@ void DisplaySwitchOperateMsg(unsigned coords)
 // RETURNS: Offset into barrier_table[] for a particular arc
 //
 //--------------------------------------------------------------------------
-unsigned UpdateBarrierTable(unsigned char x, unsigned char y, boolean OnOff)
+unsigned UpdateBarrierTable(unsigned char x, unsigned char y, bool OnOff)
 {
     barrier_type* Barrier;
     short         num;
@@ -1999,7 +1999,7 @@ unsigned ScanBarrierTable(unsigned char x, unsigned char y)
 //--------------------------------------------------------------------------
 // Checks to see if the Barrier obj is free
 //--------------------------------------------------------------------------
-boolean CheckActor(objtype* actor, unsigned code)
+bool CheckActor(objtype* actor, unsigned code)
 {
     if ((unsigned)actor->temp2 == 0xffff) // Is this actor free?
     {
@@ -2099,7 +2099,7 @@ statetype s_barrier_shutdown   = {0, 0, 15, T_BarrierShutdown, NULL, &s_barrier_
 //---------------------------------------------------------------------------
 // SpawnBarrier()
 //---------------------------------------------------------------------------
-void SpawnBarrier(enemy_t which, int tilex, int tiley, boolean OnOff)
+void SpawnBarrier(enemy_t which, int tilex, int tiley, bool OnOff)
 {
     enemy_t dir_which;
 
@@ -3158,7 +3158,7 @@ void CheckForSpecialTile(objtype* obj, unsigned tilex, unsigned tiley)
 {
     unsigned far *map, far *map1;
     objtype* old_new;
-    boolean  getarea = false;
+    bool     getarea = false;
 
     //
     // Only shootables can use special tiles...
@@ -3615,9 +3615,9 @@ void T_Chase(objtype* ob)
     long move;
     int  dx, dy, dist, chance;
 #ifdef DODGE_N_CHASE
-    boolean dodge;
+    bool dodge;
 #endif
-    boolean nearattack = false;
+    bool nearattack = false;
 
     ob->flags &= ~FL_LOCKED_STATE;
 
@@ -3958,7 +3958,7 @@ void DoAttack(objtype* ob)
 
 dirtype SelectPathDir(objtype* ob)
 {
-    boolean  CantWalk = false, RandomTurn = false;
+    bool     CantWalk = false, RandomTurn = false;
     unsigned spot;
 
     // Look for directional arrows!
@@ -4495,8 +4495,8 @@ statetype s_mgold_shoot4 = {false, SPR_MGOLD_ATTACK4, 12, T_Shade, NULL, &s_mgol
 
 statetype s_mgold_pain = {false, SPR_MGOLD_OUCH, 25, NULL, NULL, &s_mgold_chase1};
 
-boolean noShots = false;
-int     morphWaitTime;
+bool noShots = false;
+int  morphWaitTime;
 
 //--------------------------------------------------------------------------
 // T_GoldMorphWait
@@ -4826,7 +4826,7 @@ void T_SteamObj(objtype* obj)
 ===============
 */
 
-boolean CheckPosition(objtype* ob)
+bool CheckPosition(objtype* ob)
 {
     int      x, y, xl, yl, xh, yh;
     objtype* check;
@@ -4909,9 +4909,9 @@ void T_Seek(objtype* ob)
 {
 #define MAX_VIS_DIST 15
 
-    long    move;
-    int     dx, dy, dist, chance;
-    boolean target_found;
+    long move;
+    int  dx, dy, dist, chance;
+    bool target_found;
 
     target_found = false;
 
@@ -5113,7 +5113,7 @@ unsigned char proj_wall;
 //	 distance - vectoral distance of travel
 //
 //---------------------------------------------------------------------------
-boolean ProjectileTryMove(objtype* ob, fixed deltax, fixed deltay)
+bool ProjectileTryMove(objtype* ob, fixed deltax, fixed deltay)
 {
 #define PROJECTILE_MAX_STEP PROJWALLSIZE
 
@@ -5438,7 +5438,7 @@ void ExplodeFill(char tx, char ty);
 //---------------------------------------------------------------------------
 // ExplodeRadius()
 //---------------------------------------------------------------------------
-void ExplodeRadius(objtype* obj, short damage, boolean damageplayer)
+void ExplodeRadius(objtype* obj, short damage, bool damageplayer)
 {
     int xl, yl, xh, yh, y, x;
 

@@ -88,7 +88,7 @@ extern unsigned screenseg; // set to 0xa000 for asm convenience
 extern unsigned linewidth;
 extern unsigned ylookup[MAXSCANLINES];
 
-extern boolean  screenfaded;
+extern bool     screenfaded;
 extern unsigned bordercolor;
 
 //===========================================================================

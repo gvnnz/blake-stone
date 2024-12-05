@@ -48,10 +48,10 @@ extern pictabletype _seg*    pictable;
 extern pictabletype _seg*    picmtable;
 extern spritetabletype _seg* spritetable;
 
-extern byte    fontcolor;
-extern int     fontnumber;
-extern int     px, py;
-extern boolean allcaps;
+extern byte fontcolor;
+extern int  fontnumber;
+extern int  px, py;
+extern bool allcaps;
 
 //
 // Double buffer management routines
@@ -120,10 +120,10 @@ void VW_MeasurePropString(char far* string, word* width, word* height);
 #define LatchDrawChar(x, y, p) VL_LatchToScreen(latchpics[0] + (p)*16, 2, 8, x, y)
 #define LatchDrawTile(x, y, p) VL_LatchToScreen(latchpics[1] + (p)*64, 4, 16, x, y)
 
-void    LatchDrawPic(unsigned x, unsigned y, unsigned picnum);
-void    LoadLatchMem(void);
-boolean FizzleFade(unsigned source, unsigned dest,
-    unsigned width, unsigned height, unsigned frames, boolean abortable);
+void LatchDrawPic(unsigned x, unsigned y, unsigned picnum);
+void LoadLatchMem(void);
+bool FizzleFade(unsigned source, unsigned dest,
+    unsigned width, unsigned height, unsigned frames, bool abortable);
 
 #define NUMLATCHPICS 100
 extern unsigned latchpics[NUMLATCHPICS];

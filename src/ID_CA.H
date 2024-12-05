@@ -101,13 +101,13 @@ void CAL_ShiftSprite(unsigned segment, unsigned source, unsigned dest,
 
 //===========================================================================
 
-void    CA_OpenDebug(void);
-void    CA_CloseDebug(void);
-boolean CA_FarRead(int handle, byte far* dest, long length);
-boolean CA_FarWrite(int handle, byte far* source, long length);
-boolean CA_ReadFile(char* filename, memptr* ptr);
-boolean CA_LoadFile(char* filename, memptr* ptr);
-boolean CA_WriteFile(char* filename, void far* ptr, long length);
+void CA_OpenDebug(void);
+void CA_CloseDebug(void);
+bool CA_FarRead(int handle, byte far* dest, long length);
+bool CA_FarWrite(int handle, byte far* source, long length);
+bool CA_ReadFile(char* filename, memptr* ptr);
+bool CA_LoadFile(char* filename, memptr* ptr);
+bool CA_WriteFile(char* filename, void far* ptr, long length);
 
 long CA_RLEWCompress(unsigned huge* source, long length, unsigned huge* dest,
     unsigned rlewtag);
@@ -141,7 +141,7 @@ void CAL_SetupAudioFile(void);
 void CAL_SetupGrFile(void);
 void CAL_SetupMapFile(void);
 void CAL_HuffExpand(byte huge* source, byte huge* dest,
-    long length, huffnode far* hufftable, boolean screenhack);
+    long length, huffnode far* hufftable, bool screenhack);
 
 void CloseGrFile(void);
 void OpenGrFile(void);

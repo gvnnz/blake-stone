@@ -9,16 +9,6 @@
 //
 //
 
-#ifndef _ID_HEADS_H_
-/*
-typedef enum boolean
-{
-    false,
-    true
-} boolean;
-*/
-#endif
-
 //==========================================================================
 //
 //	  							PARAMETER PASSING TYPES

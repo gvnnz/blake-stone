@@ -313,10 +313,10 @@ void CA_Startup(void)
 
 // #if !IN_DEVELOPMENT
 
-extern boolean       IN_Started;
+extern bool          IN_Started;
 extern char far* far IN_ParmStrings[];
-extern boolean       INL_StartJoy(word joy);
-extern boolean       INL_StartMouse(void);
+extern bool          INL_StartJoy(word joy);
+extern bool          INL_StartMouse(void);
 extern void          INL_StartKbd(void);
 
 ///////////////////////////////////////////////////////////////////////////
@@ -325,8 +325,7 @@ extern void          INL_StartKbd(void);
 //					The auto-config assumes the joystick is centered
 //
 ///////////////////////////////////////////////////////////////////////////
-boolean
-INL_StartJoy(word joy)
+bool INL_StartJoy(word joy)
 {
     word x, y;
 
@@ -349,8 +348,8 @@ INL_StartJoy(word joy)
 ///////////////////////////////////////////////////////////////////////////
 void IN_Startup(void)
 {
-    boolean checkjoys, checkmouse, checkNG;
-    word    i;
+    bool checkjoys, checkmouse, checkNG;
+    word i;
 
     if (IN_Started)
         return;
@@ -407,7 +406,7 @@ void IN_Startup(void)
 ===================
 */
 
-extern boolean         mmstarted, bombonerror;
+extern bool            mmstarted, bombonerror;
 extern mmblocktype far mmblocks[], far *mmhead, far *mmfree,
     far *mmnew, far *mmrover;
 extern void far* farheap;
@@ -497,8 +496,7 @@ extern word EMSAvail, EMSPagesAvail, EMSHandle,
     EMSPageFrame, EMSPhysicalPage;
 extern EMSListStruct EMSList[];
 
-boolean
-PML_StartupEMS(void)
+bool PML_StartupEMS(void)
 {
     int  i;
     long size;
@@ -586,13 +584,12 @@ error:
 //		Allocates any remaining XMS (rounded down to the nearest page size)
 //
 
-extern boolean  XMSPresent;
+extern bool     XMSPresent;
 extern word     XMSAvail, XMSPagesAvail, XMSHandle;
 extern longword XMSDriver;
 extern int      XMSProtectPage;
 
-boolean
-PML_StartupXMS(void)
+bool PML_StartupXMS(void)
 {
     XMSPresent = false; // Assume failure
     XMSAvail   = 0;
@@ -638,7 +635,7 @@ error:
 //		needs to be called.
 //
 
-extern boolean     MainPresent;
+extern bool        MainPresent;
 extern memptr      MainMemPages[PMMaxMainMem];
 extern PMBlockAttr MainMemUsed[PMMaxMainMem];
 extern int         MainPagesAvail;
@@ -671,13 +668,13 @@ void PML_StartupMainMem(void)
 //	PM_Startup() - Start up the Page Mgr
 //
 
-extern boolean       PMStarted;
+extern bool          PMStarted;
 extern char far* far PM_ParmStrings[];
 
 void PM_Startup(void)
 {
-    boolean nomain, noems, noxms;
-    int     i;
+    bool nomain, noems, noxms;
+    int  i;
 
     if (PMStarted)
         return;
@@ -724,7 +721,7 @@ void PM_Startup(void)
 //
 ///////////////////////////////////////////////////////////////////////////
 
-extern boolean       US_Started;
+extern bool          US_Started;
 extern char far* far US_ParmStrings[];
 extern char far* far US_ParmStrings2[];
 extern int           USL_HardError(word errval, int ax, int bp, int si);
@@ -1243,7 +1240,7 @@ void ReadConfig(void)
     SMMode  sm;
     SDSMode sds;
 
-    boolean  config_found = false;
+    bool     config_found = false;
     unsigned flags        = gamestate.flags;
     MakeDestPath(configname);
 
@@ -1616,7 +1613,7 @@ void PreDemo()
 
 #elif BETA_TEST
 
-    boolean param = false;
+    bool param = false;
 
     for (i = 1; i < _argc; i++)
         switch (US_CheckParm(_argv[i], MainStrs))

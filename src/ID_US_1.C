@@ -34,21 +34,21 @@
 
 //	Global variables
 char* abortprogram;
-//		boolean		NoWait;
+//		bool		NoWait;
 word PrintX, PrintY;
 word WindowX, WindowY, WindowW, WindowH;
 
 US_CursorStruct US_CustomCursor;           // JAM
-boolean         use_custom_cursor = false; // JAM
+bool            use_custom_cursor = false; // JAM
 
 //	Internal variables
 #define ConfigVersion 1
 
 char far *far          US_ParmStrings[]  = {"TEDLEVEL", "NOWAIT"},
               far *far US_ParmStrings2[] = {"COMP", "NOCOMP"};
-boolean                US_Started;
+bool                   US_Started;
 
-boolean Button0, Button1,
+bool Button0, Button1,
     CursorBad;
 int CursorX, CursorY;
 
@@ -479,10 +479,10 @@ void US_RestoreWindow(WindowRec* win)
 static void
 USL_XORICursor(int x, int y, char* s, word cursor)
 {
-    static boolean status; // VGA doesn't XOR...
-    char           buf[MaxString];
-    int            temp;
-    word           w, h;
+    static bool status; // VGA doesn't XOR...
+    char        buf[MaxString];
+    int         temp;
+    word        w, h;
 
     strcpy(buf, s);
     buf[cursor] = '\0';
@@ -515,10 +515,10 @@ USL_XORICursor(int x, int y, char* s, word cursor)
 ///////////////////////////////////////////////////////////////////////////
 static void USL_CustomCursor(int x, int y, char* s, word cursor)
 {
-    static boolean status; // VGA doesn't XOR...
-    char           buf[MaxString];
-    int            temp, temp_font;
-    word           w, h;
+    static bool status; // VGA doesn't XOR...
+    char        buf[MaxString];
+    int         temp, temp_font;
+    word        w, h;
 
     strcpy(buf, s);
     buf[cursor] = '\0';
@@ -555,10 +555,10 @@ static void USL_CustomCursor(int x, int y, char* s, word cursor)
 //		returned
 //
 ///////////////////////////////////////////////////////////////////////////
-boolean US_LineInput(int x, int y, char far* buf, char far* def, boolean escok,
+bool US_LineInput(int x, int y, char far* buf, char far* def, bool escok,
     int maxchars, int maxwidth)
 {
-    boolean redraw,
+    bool redraw,
         cursorvis, cursormoved,
         done, result;
     ScanCode sc;

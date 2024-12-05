@@ -32,10 +32,10 @@ typedef struct
 #define MaxSaveGames 6
 typedef struct
 {
-    char    signature[4];
-    word*   oldtest;
-    boolean present;
-    char    name[MaxGameName + 1];
+    char  signature[4];
+    word* oldtest;
+    bool  present;
+    char  name[MaxGameName + 1];
 } SaveGame;
 
 #define MaxString 128 // Maximum input string size
@@ -66,13 +66,13 @@ typedef struct // JAM - Custom Cursor Support
 } US_CursorStruct;
 
 //	Hack import for TED launch support
-// extern	boolean		tedlevel;
+// extern	bool		tedlevel;
 // extern	word		tedlevelnum;
 extern void TEDDeath(void);
 
-extern boolean ingame, // Set by game code if a game is in progress
-    abortgame,         // Set if a game load failed
-    loadedgame,        // Set if the current game was loaded
+extern bool ingame, // Set by game code if a game is in progress
+    abortgame,      // Set if a game load failed
+    loadedgame,     // Set if the current game was loaded
     NoWait,
     HighScoresDirty;
 extern char*    abortprogram;     // Set to error msg if program is dying
@@ -81,20 +81,20 @@ extern word     PrintX, PrintY;   // Current printing location in the window
 extern word     WindowX, WindowY, // Current location of window
     WindowW, WindowH;             // Current size of window
 
-extern boolean Button0, Button1,
+extern bool Button0, Button1,
     CursorBad;
 extern int CursorX, CursorY;
 
 extern void (*USL_MeasureString)(char far*, word*, word*),
     (*USL_DrawString)(char far*);
 
-extern boolean (*USL_SaveGame)(int), (*USL_LoadGame)(int);
+extern bool (*USL_SaveGame)(int), (*USL_LoadGame)(int);
 extern void (*USL_ResetGame)(void);
 extern SaveGame  Games[MaxSaveGames];
 extern HighScore Scores[];
 
 extern US_CursorStruct US_CustomCursor;   // JAM
-extern boolean         use_custom_cursor; // JAM
+extern bool            use_custom_cursor; // JAM
 
 #define US_HomeWindow()   \
     {                     \
@@ -105,9 +105,9 @@ extern boolean         use_custom_cursor; // JAM
 extern void US_Startup(void),
     US_Setup(void),
     US_Shutdown(void),
-    US_InitRndT(boolean randomize),
-    US_SetLoadSaveHooks(boolean (*load)(int),
-        boolean (*save)(int),
+    US_InitRndT(bool randomize),
+    US_SetLoadSaveHooks(bool (*load)(int),
+        bool (*save)(int),
         void (*reset)(void)),
     US_TextScreen(void),
     US_UpdateTextScreen(void),
@@ -129,8 +129,8 @@ extern void US_Startup(void),
     US_ShutCursor(void),
     US_CheckHighScore(long score, word other),
     US_DisplayHighScores(int which);
-extern boolean US_UpdateCursor(void),
-    US_LineInput(int x, int y, char far* buf, char far* def, boolean escok,
+extern bool US_UpdateCursor(void),
+    US_LineInput(int x, int y, char far* buf, char far* def, bool escok,
         int maxchars, int maxwidth);
 extern int US_CheckParm(char far* parm, char far* far* strings),
 

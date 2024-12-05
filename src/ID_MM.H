@@ -67,7 +67,7 @@ typedef struct
 extern unsigned   blockcount;
 extern mminfotype mminfo;
 extern memptr     bufferseg;
-extern boolean    mmerror;
+extern bool       mmerror;
 // unsigned __SEGS_AVAILABLE__;
 unsigned long __PUR_MEM_AVAIL__;
 unsigned long __FREE_MEM_AVAIL__;
@@ -87,7 +87,7 @@ void MM_GetPtr(memptr* baseptr, unsigned long size);
 void MM_FreePtr(memptr* baseptr);
 
 void MM_SetPurge(memptr* baseptr, int purge);
-void MM_SetLock(memptr* baseptr, boolean locked);
+void MM_SetLock(memptr* baseptr, bool locked);
 void MM_SortMem(void);
 
 void MM_ShowMemory(void);
@@ -96,7 +96,7 @@ long MM_UnusedMemory(void);
 long MM_TotalFree(void);
 long MM_LargestAvail(void);
 
-void MM_BombOnError(boolean bomb);
+void MM_BombOnError(bool bomb);
 
 void MML_UseSpace(unsigned segstart, unsigned seglength);
 

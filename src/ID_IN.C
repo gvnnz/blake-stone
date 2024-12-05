@@ -50,16 +50,16 @@
 //
 // configuration variables
 //
-boolean MousePresent;
-boolean JoysPresent[MaxJoys];
-boolean JoyPadPresent;
-boolean NGinstalled = false;
+bool MousePresent;
+bool JoysPresent[MaxJoys];
+bool JoyPadPresent;
+bool NGinstalled = false;
 
 // 	Global variables
-boolean     JoystickCalibrated; // JAM - added
+bool        JoystickCalibrated; // JAM - added
 ControlType ControlTypeUsed;    // JAM - added
-boolean     Keyboard[NumCodes];
-boolean     Paused;
+bool        Keyboard[NumCodes];
+bool        Paused;
 char        LastASCII;
 ScanCode    LastScan;
 
@@ -118,8 +118,8 @@ static byte far ASCIINames[] = // Unshifted ASCII for scan codes
                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0    // 7
 };
 
-boolean         IN_Started;
-static boolean  CapsLock;
+bool            IN_Started;
+static bool     CapsLock;
 static ScanCode CurCode, LastCode;
 
 static Direction DirTable[] = // Quick lookup for total direction
@@ -143,8 +143,8 @@ char far* far IN_ParmStrings[] = {"nojoys", "nomouse", "enablegp", nil};
 static void interrupt
 INL_KeyService(void)
 {
-    static boolean special;
-    byte           k, c,
+    static bool special;
+    byte        k, c,
         temp;
     int i;
 
@@ -513,8 +513,7 @@ INL_ShutKbd(void)
 //	INL_StartMouse() - Detects and sets up the mouse
 //
 ///////////////////////////////////////////////////////////////////////////
-boolean
-INL_StartMouse(void)
+bool INL_StartMouse(void)
 {
 #if 0
 	if (getvect(MouseInt))
@@ -615,7 +614,7 @@ INL_ShutJoy(word joy)
 //					The auto-config assumes the joystick is centered
 //
 ///////////////////////////////////////////////////////////////////////////
-boolean
+bool
 INL_StartJoy(word joy)
 {
 	word		x,y;
@@ -643,7 +642,7 @@ INL_StartJoy(word joy)
 void
 IN_Startup(void)
 {
-	boolean	checkjoys,checkmouse,checkNG;
+	bool	checkjoys,checkmouse,checkNG;
 	word	i;
 
 	if (IN_Started)
@@ -700,7 +699,7 @@ IN_Startup(void)
 //
 ///////////////////////////////////////////////////////////////////////////
 void
-IN_Default(boolean gotit,ControlType in)
+IN_Default(bool gotit,ControlType in)
 {
 	if
 	(
@@ -788,7 +787,7 @@ void IN_ClearKeysDown(void)
 ///////////////////////////////////////////////////////////////////////////
 void IN_ReadControl(int player, ControlInfo* info)
 {
-    boolean               realdelta = false;
+    bool                  realdelta = false;
     byte                  dbyte;
     word                  buttons;
     int                   dx, dy;
@@ -1045,7 +1044,7 @@ char IN_WaitForASCII(void)
 //
 ///////////////////////////////////////////////////////////////////////////
 
-boolean btnstate[8];
+bool btnstate[8];
 
 void IN_StartAck(void)
 {
@@ -1066,7 +1065,7 @@ void IN_StartAck(void)
             btnstate[i] = true;
 }
 
-boolean IN_CheckAck(void)
+bool IN_CheckAck(void)
 {
     unsigned i, buttons;
 
@@ -1108,7 +1107,7 @@ void IN_Ack(void)
 //		button up.
 //
 ///////////////////////////////////////////////////////////////////////////
-boolean IN_UserInput(longword delay)
+bool IN_UserInput(longword delay)
 {
     longword lasttime;
 

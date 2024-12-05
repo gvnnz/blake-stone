@@ -84,11 +84,6 @@ extern char far signonv1;
 //      v1.0d1
 //
 
-typedef enum
-{
-    false,
-    true
-} boolean;
 typedef unsigned char byte;
 typedef unsigned int  word;
 typedef unsigned long longword;
@@ -140,7 +135,7 @@ extern void CalcMemFree(void);
 #define UPDATETERMINATE 0x0301
 
 extern unsigned mapwidth, mapheight, tics, realtics;
-extern boolean  compatability;
+extern bool     compatability;
 
 extern byte*    updateptr;
 extern unsigned uwidthtable[UPDATEHIGH];

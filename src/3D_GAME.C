@@ -37,7 +37,7 @@ classtype far debug_bonus[2][800];
 
 fargametype far gamestuff;
 gametype        gamestate;
-boolean         ingame, fizzlein;
+bool            ingame, fizzlein;
 unsigned        latchpics[NUMLATCHPICS];
 eaWallInfo      eaList[MAXEAWALLS];
 char            NumEAWalls;
@@ -54,7 +54,7 @@ extern unsigned scan_value;
 
 void ScanInfoPlane(void);
 void SetupGameLevel(void);
-void DrawPlayScreen(boolean InitInfoMsg);
+void DrawPlayScreen(bool InitInfoMsg);
 void LoadLatchMem(void);
 void GameLoop(void);
 
@@ -280,10 +280,10 @@ void ScanInfoPlane(void)
     unsigned      x, y, i, j;
     int           tile;
     unsigned far *start, far *floor;
-    boolean gotlight = false, gottextures = false;
+    bool gotlight = false, gottextures = false;
 
 #ifdef CEILING_FLOOR_COLORS
-    boolean gotcolors = false;
+    bool gotcolors = false;
 #endif
 
 #if IN_DEVELOPMENT
@@ -2021,8 +2021,8 @@ short an_offset[8] = {1, -1, 64, -64, -65, -63, 63, 65};
 
 void SetupGameLevel(void)
 {
-    extern boolean  ForceLoadDefault;
-    boolean         switchon = false;
+    extern bool     ForceLoadDefault;
+    bool            switchon = false;
     memptr          hold;
     sci_mCacheInfo* ci = InfHintList.smInfo;
     int             x, y, i;
@@ -2536,7 +2536,7 @@ void DrawTopInfo(sp_type type)
 =
 ===================
 */
-void DrawPlayScreen(boolean InitInfoMsg)
+void DrawPlayScreen(bool InitInfoMsg)
 {
     int      i;
     unsigned temp;
@@ -3061,7 +3061,7 @@ void RotateView(int DestAngle, unsigned char RotSpeed)
 {
     int      curangle, clockwise, counter, change;
     objtype* obj;
-    boolean  old_godmode = godmode;
+    bool     old_godmode = godmode;
 
     if (player->angle > DestAngle)
     {
@@ -3146,13 +3146,13 @@ void RotateView(int DestAngle, unsigned char RotSpeed)
 
 void GameLoop(void)
 {
-    extern boolean sqActive;
+    extern bool sqActive;
 
     char mod;
 
-    int     i, xl, yl, xh, yh;
-    char    Score[13];
-    boolean died;
+    int  i, xl, yl, xh, yh;
+    char Score[13];
+    bool died;
 #ifdef MYPROFILE
     clock_t start, end;
 #endif

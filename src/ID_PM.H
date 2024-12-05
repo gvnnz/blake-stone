@@ -60,8 +60,8 @@ typedef struct
     longword lastHit;     // Last frame number of hit
 } EMSListStruct;
 
-extern boolean XMSPresent, EMSPresent, PageManagerInstalled;
-extern word    XMSPagesAvail, EMSPagesAvail;
+extern bool XMSPresent, EMSPresent, PageManagerInstalled;
+extern word XMSPagesAvail, EMSPagesAvail;
 
 extern word ChunksInFile,
     PMSpriteStart, PMSoundStart;
@@ -75,7 +75,7 @@ extern PageListStruct far* PMPages;
 
 extern char       PageFileName[13];
 extern char       AltPageFileName[13];
-extern boolean    ShadowsAvail;
+extern bool       ShadowsAvail;
 extern shadfile_t FileUsed;
 
 extern void PM_Startup(void),

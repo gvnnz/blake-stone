@@ -63,9 +63,9 @@ extern MovieStuff_t Movies[];
 //
 //===========================================================================
 
-void    MOVIE_ShowFrame(char huge* inpic);
-boolean MOVIE_Play(MovieStuff_t* MovieStuff);
-void    SetupMovie(MovieStuff_t* MovieStuff);
-void    ShutdownMovie(void);
+void MOVIE_ShowFrame(char huge* inpic);
+bool MOVIE_Play(MovieStuff_t* MovieStuff);
+void SetupMovie(MovieStuff_t* MovieStuff);
+void ShutdownMovie(void);
 
 #endif

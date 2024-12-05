@@ -85,8 +85,8 @@ char QuitMsg[] = {"Unit: $%02x Error: $%02x"};
 unsigned TopColor, BottomColor;
 #endif
 
-boolean nospr;
-boolean IsA386;
+bool nospr;
+bool IsA386;
 
 int dirangle[9] = {0, ANGLES / 8, 2 * ANGLES / 8, 3 * ANGLES / 8, 4 * ANGLES / 8, 5 * ANGLES / 8, 6 * ANGLES / 8, 7 * ANGLES / 8, ANGLES};
 
@@ -103,8 +103,8 @@ fixed    scale, maxslope;
 long     heightnumerator;
 int      minheightdiv;
 
-boolean startgame, loadedgame;
-int     mouseadjustment;
+bool startgame, loadedgame;
+int  mouseadjustment;
 
 char configname[13] = "CONFIG.";
 
@@ -195,8 +195,8 @@ void WriteConfig(void)
 =====================
 */
 
-boolean ShowQuickMsg;
-void    NewGame(int difficulty, int episode)
+bool ShowQuickMsg;
+void NewGame(int difficulty, int episode)
 {
     unsigned oldf = gamestate.flags, loop;
 
@@ -274,7 +274,7 @@ void    NewGame(int difficulty, int episode)
 //
 //==========================================================================
 
-boolean LevelInPlaytemp(char levelnum);
+bool LevelInPlaytemp(char levelnum);
 
 #define WriteIt(c, p, s) cksize += WriteInfo(c, (char far*)p, s, handle)
 #define ReadIt(d, p, s) ReadInfo(d, (char far*)p, s, handle)
@@ -359,7 +359,7 @@ char LS_current = -1, LS_total = -1;
 //--------------------------------------------------------------------------
 // ReadInfo()
 //--------------------------------------------------------------------------
-void ReadInfo(boolean decompress, char far* dst, unsigned size, int file)
+void ReadInfo(bool decompress, char far* dst, unsigned size, int file)
 {
     unsigned csize, dsize;
 
@@ -384,7 +384,7 @@ void ReadInfo(boolean decompress, char far* dst, unsigned size, int file)
 //--------------------------------------------------------------------------
 // WriteInfo()
 //--------------------------------------------------------------------------
-unsigned WriteInfo(boolean compress, char far* src, unsigned size, int file)
+unsigned WriteInfo(bool compress, char far* src, unsigned size, int file)
 {
     unsigned csize;
 
@@ -413,13 +413,13 @@ unsigned WriteInfo(boolean compress, char far* src, unsigned size, int file)
 //--------------------------------------------------------------------------
 // LoadLevel()
 //--------------------------------------------------------------------------
-boolean LoadLevel(short levelnum)
+bool LoadLevel(short levelnum)
 {
-    extern boolean  ShowQuickMsg;
-    extern boolean  ForceLoadDefault;
+    extern bool     ShowQuickMsg;
+    extern bool     ForceLoadDefault;
     extern unsigned destoff;
 
-    boolean    oldloaded = loadedgame;
+    bool       oldloaded = loadedgame;
     long       oldchecksum;
     objtype*   ob;
     statobj_t* statptr;
@@ -607,7 +607,7 @@ overlay:;
 //--------------------------------------------------------------------------
 // SaveLevel()
 //--------------------------------------------------------------------------
-boolean SaveLevel(short levelnum)
+bool SaveLevel(short levelnum)
 {
     objtype*     ob;
     int          handle;
@@ -615,7 +615,7 @@ boolean SaveLevel(short levelnum)
     long         offset, cksize;
     char         chunk[5] = "LVxx";
     unsigned     gflags   = gamestate.flags;
-    boolean      rt_value = false;
+    bool         rt_value = false;
     memptr       temp;
     unsigned     count;
     char far*    ptr;
@@ -782,16 +782,16 @@ char far SavegameInfoText[] = "\n\r"
 //--------------------------------------------------------------------------
 // LoadTheGame()
 //--------------------------------------------------------------------------
-boolean LoadTheGame(int handle)
+bool LoadTheGame(int handle)
 {
     extern int lastmenumusic;
 
-    int     shandle;
-    long    cksize;
-    memptr  temp     = NULL;
-    boolean rt_value = false;
-    char    InfoSpace[400];
-    memptr  tempspace;
+    int    shandle;
+    long   cksize;
+    memptr temp     = NULL;
+    bool   rt_value = false;
+    char   InfoSpace[400];
+    memptr tempspace;
 
     // Setup LZH decompression
     //
@@ -898,14 +898,14 @@ cleanup:;
 //--------------------------------------------------------------------------
 // SaveTheGame()
 //--------------------------------------------------------------------------
-boolean SaveTheGame(int handle, char far* description)
+bool SaveTheGame(int handle, char far* description)
 {
     struct ffblk  finfo;
     unsigned long cksize, offset;
     int           shandle;
     memptr        temp;
     char          nbuff[GAME_DESCRIPTION_LEN + 1];
-    boolean       rt_value = false, exists;
+    bool          rt_value = false, exists;
 
     //
     // Save PLAYTEMP becuase we'll want to restore it to the way it was
@@ -985,11 +985,11 @@ cleanup:;
 //--------------------------------------------------------------------------
 // LevelInPlaytemp()
 //--------------------------------------------------------------------------
-boolean LevelInPlaytemp(char levelnum)
+bool LevelInPlaytemp(char levelnum)
 {
-    int     handle;
-    char    chunk[5] = "LVxx";
-    boolean rt_value;
+    int  handle;
+    char chunk[5] = "LVxx";
+    bool rt_value;
 
     // Open PLAYTEMP file
     //
@@ -1011,7 +1011,7 @@ boolean LevelInPlaytemp(char levelnum)
 //--------------------------------------------------------------------------
 // CheckDiskSpace()
 //--------------------------------------------------------------------------
-boolean CheckDiskSpace(long needed, char far* text, cds_io_type io_type)
+bool CheckDiskSpace(long needed, char far* text, cds_io_type io_type)
 {
     struct ffblk      finfo;
     struct diskfree_t dfree;
@@ -1161,8 +1161,8 @@ void CycleColors()
         {12, 0, 0xfa, 0xfe},
     };
 
-    byte    loop, cbuffer[CRNG_SIZE][3];
-    boolean changes = false;
+    byte loop, cbuffer[CRNG_SIZE][3];
+    bool changes = false;
 
     for (loop = 0; loop < NUM_RANGES; loop++)
     {
@@ -1288,9 +1288,9 @@ void CalcProjection(long focal)
 //--------------------------------------------------------------------------
 // DoMovie()
 //--------------------------------------------------------------------------
-boolean DoMovie(movie_t movie, memptr palette)
+bool DoMovie(movie_t movie, memptr palette)
 {
-    boolean ReturnVal;
+    bool ReturnVal;
     //	StopMusic();
     SD_StopSound();
 
@@ -1322,7 +1322,7 @@ boolean DoMovie(movie_t movie, memptr palette)
 =================
 */
 
-boolean MS_CheckParm(char far* check)
+bool MS_CheckParm(char far* check)
 {
     int   i;
     char* parm;
@@ -1366,7 +1366,7 @@ void LoadFonts(void)
 ==========================
 */
 
-boolean SetViewSize(unsigned width, unsigned height)
+bool SetViewSize(unsigned width, unsigned height)
 {
     viewwidth  = width & ~15; // must be divisable by 16
     viewheight = height & ~1; // must be even
@@ -1557,7 +1557,7 @@ void DemoLoop(void)
 {
     int      i, level;
     int      LastDemo = 0;
-    boolean  breakit;
+    bool     breakit;
     unsigned old_bufferofs;
 
     while (1)
@@ -1569,7 +1569,7 @@ void DemoLoop(void)
 
         while (!(gamestate.flags & GS_NOWAIT))
         {
-            extern boolean sqActive;
+            extern bool sqActive;
 
             // Start music when coming from menu...
             //

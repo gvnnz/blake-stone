@@ -88,9 +88,9 @@ int errorfile = -1; // jdebug
 
 mminfotype mminfo;
 memptr     bufferseg;
-boolean    mmerror;
+bool       mmerror;
 #if IN_DEVELOPMENT
-boolean clearblock_error = false; // mdebug
+bool clearblock_error = false; // mdebug
 #endif
 
 void (*beforesort)(void);
@@ -104,14 +104,14 @@ void (*aftersort)(void);
 =============================================================================
 */
 
-boolean mmstarted;
+bool mmstarted;
 
 void far* farheap;
 void*     nearheap;
 
 mmblocktype far mmblocks[MAXBLOCKS], far *mmhead, far *mmfree, far *mmrover, far *mmnew;
 
-boolean bombonerror;
+bool bombonerror;
 
 // unsigned	totalEMSpages,freeEMSpages,EMSpageframe,EMSpagesmapped,EMShandle;
 
@@ -129,13 +129,13 @@ unsigned blockcount = 0;
 // local prototypes
 //
 
-boolean MML_CheckForEMS(void);
-void    MML_ShutdownEMS(void);
-void    MM_MapEMS(void);
-boolean MML_CheckForXMS(void);
-void    MML_ShutdownXMS(void);
-void    MML_UseSpace(unsigned segstart, unsigned seglength);
-void    MML_ClearBlock(void);
+bool MML_CheckForEMS(void);
+void MML_ShutdownEMS(void);
+void MM_MapEMS(void);
+bool MML_CheckForXMS(void);
+void MML_ShutdownXMS(void);
+void MML_UseSpace(unsigned segstart, unsigned seglength);
+void MML_ClearBlock(void);
 
 //==========================================================================
 
@@ -153,7 +153,7 @@ void PrintAllocated(long amount); // mdebug
 
 #if 0	
 
-boolean MML_CheckForXMS (void)
+bool MML_CheckForXMS (void)
 {
 	numUMBs = 0;
 
@@ -355,7 +355,7 @@ char far cb_text[] = "\n\n"
 // RETURNS : TRUE  - Able to open file.
 //				 FALSE - Unable to open file.
 //-----------------------------------------------------------------------
-boolean OpenErrorFile(void)
+bool OpenErrorFile(void)
 {
     if (errorfile == -1)
         errorfile = open(ERROR_LOG, O_APPEND | O_CREAT | O_TEXT, S_IWRITE);
@@ -762,7 +762,7 @@ void MM_SetPurge(memptr* baseptr, int purge)
 =====================
 */
 
-void MM_SetLock(memptr* baseptr, boolean locked)
+void MM_SetLock(memptr* baseptr, bool locked)
 {
     mmblocktype far* start;
 
@@ -1122,7 +1122,7 @@ long MM_LargestAvail(void)
 =====================
 */
 
-void MM_BombOnError(boolean bomb)
+void MM_BombOnError(bool bomb)
 {
     bombonerror = bomb;
 }
