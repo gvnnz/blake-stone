@@ -68,8 +68,8 @@ list(APPEND SOURCES
     src/JAM_IO.H
     src/jm_cio.cpp
     src/jm_cio.hpp
-    src/JM_DEBUG.C
-    src/JM_DEBUG.H
+    src/jm_debug.cpp
+    src/jm_debug.hpp
     src/jm_error.hpp
     src/JM_FREE.C
     src/JM_IO.C

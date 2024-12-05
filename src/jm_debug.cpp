@@ -1,15 +1,13 @@
-#include "3D_DEF.H"
-
-#include "jm_debug.h"
+#include "jm_debug.hpp"
 #include "jm_error.hpp"
 
 #pragma hdrstop
 
 #ifdef __MPRINTF__
 
-static char      x     = 0;
-static char      y     = 0;
-static char far* video = MK_FP(0xb000, 0x0000);
+static char  x     = 0;
+static char  y     = 0;
+static char* video = MK_FP(0xb000, 0x0000);
 
 //-------------------------------------------------------------------------
 // mclear()
@@ -74,7 +72,7 @@ void mprintf(char* msg, ...)
 //-------------------------------------------------------------------------
 // fmprint()
 //-------------------------------------------------------------------------
-void fmprint(char far* text)
+void fmprint(char* text)
 {
     while (*text)
         mprintf("%c", *text++);

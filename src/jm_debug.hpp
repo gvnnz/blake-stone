@@ -1,5 +1,5 @@
-#ifndef _JM_DEBUG_H_
-#define _JM_DEBUG_H_
+#ifndef JM_DEBUG_HPP
+#define JM_DEBUG_HPP
 
 //-------------------------------------------------------------------------
 // defines
@@ -18,6 +18,6 @@
 //-------------------------------------------------------------------------
 void mclear(void);
 void mprintf(char* msg, ...);
-void fmprint(char far* text);
+void fmprint(char* text);
 
 #endif
