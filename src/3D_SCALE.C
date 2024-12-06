@@ -1,6 +1,6 @@
 // 3D_SCALE.C
 
-#include "3D_DEF.H"
+#include "3d_def.hpp"
 #pragma hdrstop
 
 #define OP_RETF 0xcb

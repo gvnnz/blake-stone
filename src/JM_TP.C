@@ -76,7 +76,7 @@
 //
 //--------------------------------------------------------------------------
 
-#include "3D_DEF.H"
+#include "3d_def.hpp"
 
 #include "jm_error.hpp"
 #include "jm_io.hpp"

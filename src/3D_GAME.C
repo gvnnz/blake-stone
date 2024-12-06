@@ -1,6 +1,6 @@
 // 3D_GAME.C
 
-#include "3D_DEF.H"
+#include "3d_def.hpp"
 #pragma hdrstop
 
 #ifdef MYPROFILE

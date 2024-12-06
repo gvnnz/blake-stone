@@ -1,6 +1,6 @@
 // WOLFHACK.C
 
-#include "3D_DEF.H"
+#include "3d_def.hpp"
 
 #define MAXVIEWHEIGHT 200
 #define GAMESTATE_TEST (true)

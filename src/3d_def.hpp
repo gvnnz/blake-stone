@@ -1,9 +1,9 @@
 #include "id_heads.hpp"
 #include "jm_cio.hpp"
 #include "jm_io.hpp"
-#include <MATH.H>
-#include <VALUES.H>
-#include <stdarg.h>
+// #include <MATH.H>
+// #include <VALUES.H>
+#include <cstdarg>
 
 // #define DEMOS_EXTERN
 // #define MYPROFILE

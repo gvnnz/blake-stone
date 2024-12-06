@@ -1,6 +1,6 @@
 // 3D_DRAW.C
 
-#include "3D_DEF.H"
+#include "3d_def.hpp"
 #include <time.h>
 #pragma hdrstop
 

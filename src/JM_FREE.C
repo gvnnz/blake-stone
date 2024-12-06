@@ -10,7 +10,7 @@
 #include "id_heads.hpp"
 #pragma hdrstop
 
-#include "3d_def.h"
+#include "3d_def.hpp"
 
 #define SKIP_CHECKSUMS (true)
 #define SHOW_CHECKSUM (false)

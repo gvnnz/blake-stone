@@ -1,6 +1,6 @@
 // 3D_MAIN.C
 
-#include "3D_DEF.H"
+#include "3d_def.hpp"
 #pragma hdrstop
 #include <ctype.h>
 #include <dos.h>
