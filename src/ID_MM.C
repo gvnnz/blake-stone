@@ -24,7 +24,7 @@ EMS / XMS unmanaged routines
 =============================================================================
 */
 
-#include "ID_HEADS.H"
+#include "id_heads.hpp"
 #include <STDARG.H>
 #include <dos.h>
 #pragma hdrstop

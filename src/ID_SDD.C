@@ -3,7 +3,7 @@
 //	ID_SDD.c - Sound Manager dummy file
 //
 
-#include "ID_HEADS.H"
+#include "id_heads.hpp"
 #pragma hdrstop
 
 word sdStartPCSounds = STARTPCSOUNDS;

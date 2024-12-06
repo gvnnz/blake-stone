@@ -1,4 +1,4 @@
-// #include "id_heads.h"
+// #include "id_heads.hpp"
 // #include "JM_IO.H"
 // #include "JM_LZH.H"
 #include "jm_cio.hpp"

@@ -42,7 +42,7 @@ list(APPEND SOURCES
     src/ID_CA.C
     src/ID_CA.H
     src/ID_HEAD.H
-    src/ID_HEADS.H
+    src/id_heads.hpp
     src/ID_IN.C
     src/ID_IN.H
     src/ID_MM.C

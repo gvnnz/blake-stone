@@ -1,22 +1,22 @@
-#ifndef _ID_HEADS_H_
-#define _ID_HEADS_H_
+#ifndef ID_HEADS_HPP
+#define ID_HEADS_HPP
 
 // ID_GLOB.H
 
-#include <ALLOC.H>
-#include <CTYPE.H>
-#include <DIR.H>
-#include <DOS.H>
-#include <ERRNO.H>
-#include <FCNTL.H>
-#include <IO.H>
-#include <MEM.H>
-#include <PROCESS.H>
-#include <STDIO.H>
-#include <STDLIB.H>
-#include <STRING.H>
-#include <SYS\STAT.H>
-#include <VALUES.H>
+// #include <ALLOC.H>
+// #include <CTYPE.H>
+// #include <DIR.H>
+// #include <DOS.H>
+// #include <ERRNO.H>
+// #include <FCNTL.H>
+// #include <IO.H>
+// #include <MEM.H>
+// #include <PROCESS.H>
+// #include <STDIO.H>
+// #include <STDLIB.H>
+// #include <STRING.H>
+// #include <SYS\STAT.H>
+// #include <VALUES.H>
 #define __ID_GLOB__
 
 //--------------------------------------------------------------------------

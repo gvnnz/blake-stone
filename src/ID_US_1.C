@@ -26,7 +26,7 @@
 //			window
 //
 
-#include "ID_HEADS.H"
+#include "id_heads.hpp"
 
 #pragma hdrstop
 

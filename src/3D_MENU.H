@@ -1,7 +1,7 @@
 //
 // WL_MENU.H
 //
-#include "id_heads.h"
+#include "id_heads.hpp"
 
 #define GAME_DESCRIPTION_LEN 31
 

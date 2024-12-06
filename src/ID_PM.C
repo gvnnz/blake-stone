@@ -6,7 +6,7 @@
 
 // #define FLASH_LOAD			// Flashes border during Disk Hits
 
-#include "ID_HEADS.H"
+#include "id_heads.hpp"
 #pragma hdrstop
 
 //	Main Mem specific variables

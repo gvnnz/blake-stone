@@ -1,6 +1,6 @@
 // ID_VH.C
 
-#include "ID_HEADS.H"
+#include "id_heads.hpp"
 
 #define SCREENWIDTH 80
 #define CHARWIDTH 2

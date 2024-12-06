@@ -7,7 +7,7 @@
 // manager after program initialization.
 //
 
-#include "ID_HEADS.H"
+#include "id_heads.hpp"
 #pragma hdrstop
 
 #include "3d_def.h"
