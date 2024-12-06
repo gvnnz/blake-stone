@@ -81,7 +81,7 @@ list(APPEND SOURCES
     src/JM_VL.ASM
     src/JM_VL.H
     src/MAPSBS1.H
-    src/MAPSVSI.H
+    src/mapsvsi.hpp
     src/MARKHACK.ASM
     src/MOVIE.C
     src/MOVIE.H

@@ -40,4 +40,4 @@ typedef enum
 // TILEINFO offsets
 //
 #define ANIM 402
-#define SPEED (ANIM + NUMTILE16)
+#define SPEED (ANIM + NUMTILE16)

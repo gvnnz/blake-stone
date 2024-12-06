@@ -63,8 +63,8 @@ extern char signonv1;
 #ifndef SPEAR
 
 #include "GFXV_vsi.H"
-#include "MAPSvsi.H"
 #include "audiovsi.hpp"
+#include "mapsvsi.hpp"
 
 #else
 
