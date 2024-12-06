@@ -1,5 +1,5 @@
-#ifndef _JM_VL_H_
-#define _JM_VL_H_
+#ifndef JM_VL_HPP
+#define JM_VL_HPP
 //==========================================================================
 //
 //  JM_VL.h 	- Headerfile for JM_VL.ASM

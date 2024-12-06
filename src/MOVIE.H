@@ -1,7 +1,7 @@
 #ifndef _MOVIE_H_
 #define _MOVIE_H_
 
-#include "JM_VL.H"
+#include "jm_vl.hpp"
 
 //==========================================================================
 //

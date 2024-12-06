@@ -1,19 +1,20 @@
+/*
 ;===========================================================================
 ;
 ; JM_VL.ASM
 ;
 ;===========================================================================
 
-	IDEAL
-	MODEL	MEDIUM,C
+    IDEAL
+    MODEL	MEDIUM,C
 
 SCREENSEG	=	0a000h
 
-	DATASEG
+    DATASEG
 
-	EXTRN	bufferofs:WORD
+    EXTRN	bufferofs:WORD
 
-	CODESEG
+    CODESEG
 
 ;===========================================================================
 
@@ -30,25 +31,25 @@ USES SI,DI,DS
 ;
 ;	ES = screen memory segment						(dest)
 
-     	mov	ax,SCREENSEG
-     	mov	es,ax
+        mov	ax,SCREENSEG
+        mov	es,ax
 
 ;
 ; Store off the staring address for later reference
 ;
 
-     	mov	ds,[WORD PTR start]
+        mov	ds,[WORD PTR start]
 
 ; Init our direction flag once for our STOS
 
-     	cld
+        cld
 
 ;
 ; PRE INIT 'bx' for a VGA MAP MASK  (BH will be shifted per plane loop)
 ;
-     	mov bx,0102h
-     	mov dx,03c4h			; Init our VGA register num..
-     	mov si,4
+        mov bx,0102h
+        mov dx,03c4h			; Init our VGA register num..
+        mov si,4
 
 ;
 ; VGA 'PLANE' LOOP (4 times)
@@ -60,17 +61,17 @@ USES SI,DI,DS
 ;
 ;	DI	-> screen memory offset            (dest)
 ;
-     	mov	di,ds
+        mov	di,ds
 
 ;
 ; Set the VGAMAPMASK
 ;
-     	cli
-     	mov ax,bx
-     	out dx,ax
-     	sti
+        cli
+        mov ax,bx
+        out dx,ax
+        sti
 
-     	shl bh,1
+        shl bh,1
 
 
 ;
@@ -79,21 +80,29 @@ USES SI,DI,DS
 ; Get ready to move length/2 WORDS for this MAPMASK
 ;
 
-		mov	cx,[WORD PTR len]
+        mov	cx,[WORD PTR len]
       shr	cx,1
-   	mov	al,[BYTE PTR fill]
-   	mov	ah,al
+    mov	al,[BYTE PTR fill]
+    mov	ah,al
 
-		rep 	stosw
+        rep 	stosw
 
 ;
 ;	 Check to see if we have done all planes
 ;
-     	dec	si
-     	jnz   @@loop
+        dec	si
+        jnz   @@loop
 
-		ret
+        ret
 ENDP
 
 
 END
+*/
+
+#include <cassert>
+
+void JM_VGALinearFill(unsigned start, unsigned length, char fill)
+{
+    assert(false);
+}

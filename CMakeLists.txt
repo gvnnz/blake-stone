@@ -78,8 +78,8 @@ list(APPEND SOURCES
     src/jm_lzh.hpp
     src/jm_tp.cpp
     src/jm_tp.hpp
-    src/JM_VL.ASM
-    src/JM_VL.H
+    src/jm_vl.cpp
+    src/jm_vl.hpp
     src/MAPSBS1.H
     src/mapsvsi.hpp
     src/MARKHACK.ASM
