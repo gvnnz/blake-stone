@@ -51,7 +51,7 @@ word XMSPagesUsed,
     PMNumBlocks;
 long            PMFrameCount;
 PageListStruct *PMPages,
-    _seg *      PMSegPages;
+    *PMSegPages;
 
 char* PM_ParmStrings[] = {"nomain", "noems", "noxms", nil};
 
@@ -532,7 +532,7 @@ void PML_OpenPageFile(char* filename)
 {
     int             i;
     long            size;
-    void _seg*      buf;
+    void*           buf;
     longword*       offsetptr;
     word*           lengthptr;
     PageListStruct* page;
@@ -588,7 +588,7 @@ void PML_ClosePageFile(void)
     if (PMSegPages)
     {
         MM_SetLock(&(memptr)PMSegPages, false);
-        MM_FreePtr(&(void _seg*)PMSegPages);
+        MM_FreePtr(&(void*)PMSegPages);
     }
 }
 

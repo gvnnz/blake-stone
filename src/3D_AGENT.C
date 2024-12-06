@@ -3704,12 +3704,12 @@ void TerminalPrint(char* msg, bool FastPrint)
 void TerminalPrint(char* msg, bool FastPrint)
 {
 #define TERM_PRINT_DELAY 1
-    fontstruct _seg* font;
-    char             buf[2] = {0, 0};
-    char             old_color, old_color2;
-    char             fontheight;
+    fontstruct* font;
+    char        buf[2] = {0, 0};
+    char        old_color, old_color2;
+    char        fontheight;
 
-    font       = (fontstruct _seg*)grsegs[STARTFONT + fontnumber];
+    font       = (fontstruct*)grsegs[STARTFONT + fontnumber];
     fontheight = font->height;
 
     while (msg && *msg)

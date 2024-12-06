@@ -15,7 +15,7 @@
 =============================================================================
 */
 
-// t_compscale _seg *scaledirectory[MAXSCALEHEIGHT+1];
+// t_compscale  *scaledirectory[MAXSCALEHEIGHT+1];
 // long			fullscalefarcall[MAXSCALEHEIGHT+1];
 
 int      maxscale, maxscaleshl2;
@@ -36,7 +36,7 @@ int sm_table[]  = {36, 51, 62, 63, 18, 52};
 =============================================================================
 */
 
-// t_compscale 	_seg *work;
+// t_compscale 	 *work;
 unsigned BuildCompScale(int height, memptr* finalspot);
 
 int stepbytwo;
@@ -174,7 +174,7 @@ unsigned BuildCompScale (int height, memptr *finalspot)
 
 	totalsize = FP_OFF(code);
 	MM_GetPtr (finalspot,totalsize);
-	_fmemcpy ((byte _seg *)(*finalspot),(byte _seg *)work,totalsize);
+	_fmemcpy ((byte  *)(*finalspot),(byte  *)work,totalsize);
 
 	return totalsize;
 }
@@ -424,19 +424,19 @@ extern byte* lightsource;
 
 void ScaleLSShape(int xcenter, int shapenum, unsigned height, char lighting)
 {
-    t_compshape _seg* shape;
-    int               dest;
-    int               i;
-    longword          frac;
-    unsigned          width;
-    int               x1, x2;
-    longword          xscale;
-    longword          screenscale;
-    long              texturecolumn;
-    long              lastcolumn;
-    int               startx;
-    unsigned          swidth;
-    long              xcent;
+    t_compshape* shape;
+    int          dest;
+    int          i;
+    longword     frac;
+    unsigned     width;
+    int          x1, x2;
+    longword     xscale;
+    longword     screenscale;
+    long         texturecolumn;
+    long         lastcolumn;
+    int          startx;
+    unsigned     swidth;
+    long         xcent;
 
     if ((height >> 1 > maxscaleshl2) || (!(height >> 1)))
         return;
@@ -564,19 +564,19 @@ void ScaleLSShape(int xcenter, int shapenum, unsigned height, char lighting)
 */
 void ScaleShape(int xcenter, int shapenum, unsigned height)
 {
-    t_compshape _seg* shape;
-    int               dest;
-    int               i;
-    longword          frac;
-    unsigned          width;
-    int               x1, x2;
-    longword          xscale;
-    longword          screenscale;
-    long              texturecolumn;
-    long              lastcolumn;
-    int               startx;
-    long              xcent;
-    unsigned          swidth;
+    t_compshape* shape;
+    int          dest;
+    int          i;
+    longword     frac;
+    unsigned     width;
+    int          x1, x2;
+    longword     xscale;
+    longword     screenscale;
+    long         texturecolumn;
+    long         lastcolumn;
+    int          startx;
+    long         xcent;
+    unsigned     swidth;
 
     if ((height >> 1 > maxscaleshl2) || (!(height >> 1)))
         return;
@@ -698,19 +698,19 @@ void ScaleShape(int xcenter, int shapenum, unsigned height)
 
 void SimpleScaleShape(int xcenter, int shapenum, unsigned height)
 {
-    t_compshape _seg* shape;
-    int               dest;
-    int               i;
-    longword          frac;
-    int               width;
-    int               x1, x2;
-    longword          xscale;
-    longword          screenscale;
-    long              texturecolumn;
-    long              lastcolumn;
-    int               startx;
-    long              xcent;
-    unsigned          swidth;
+    t_compshape* shape;
+    int          dest;
+    int          i;
+    longword     frac;
+    int          width;
+    int          x1, x2;
+    longword     xscale;
+    longword     screenscale;
+    long         texturecolumn;
+    long         lastcolumn;
+    int          startx;
+    long         xcent;
+    unsigned     swidth;
 
     shape                         = PM_GetSpritePage(shapenum);
     *(((unsigned*)&linecmds) + 1) = (unsigned)shape; // seg of shape
@@ -799,20 +799,20 @@ void SimpleScaleShape(int xcenter, int shapenum, unsigned height)
 //-------------------------------------------------------------------------
 void MegaSimpleScaleShape(int xcenter, int ycenter, int shapenum, unsigned height, unsigned shade)
 {
-    t_compshape _seg* shape;
-    int               dest;
-    int               i;
-    longword          frac;
-    int               width;
-    int               x1, x2;
-    longword          xscale;
-    longword          screenscale;
-    long              texturecolumn;
-    long              lastcolumn;
-    int               startx;
-    long              xcent;
-    unsigned          old_bufferofs;
-    int               swidth;
+    t_compshape* shape;
+    int          dest;
+    int          i;
+    longword     frac;
+    int          width;
+    int          x1, x2;
+    longword     xscale;
+    longword     screenscale;
+    long         texturecolumn;
+    long         lastcolumn;
+    int          startx;
+    long         xcent;
+    unsigned     old_bufferofs;
+    int          swidth;
 
     old_bufferofs = bufferofs;
     ycenter -= 34;

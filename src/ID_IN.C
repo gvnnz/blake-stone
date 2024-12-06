@@ -70,8 +70,8 @@ ControlType Controls[MaxPlayers];
 longword MouseDownCount;
 
 #if DEMOS_ENABLED
-byte _seg* DemoBuffer;
-word       DemoOffset, DemoSize;
+byte* DemoBuffer;
+word  DemoOffset, DemoSize;
 #endif
 
 /*

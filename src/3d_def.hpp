@@ -3593,8 +3593,8 @@ typedef struct
     // table data after dataofs[rightpix-leftpix+1]
 } t_compshape;
 
-extern t_compscale _seg* scaledirectory[MAXSCALEHEIGHT + 1];
-extern long              fullscalefarcall[MAXSCALEHEIGHT + 1];
+extern t_compscale* scaledirectory[MAXSCALEHEIGHT + 1];
+extern long         fullscalefarcall[MAXSCALEHEIGHT + 1];
 
 extern byte     bitmasks1[8][8];
 extern byte     bitmasks2[8][8];

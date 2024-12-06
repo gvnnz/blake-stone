@@ -26,8 +26,8 @@
 
 //==========================================================================
 
-pictabletype _seg* pictable;
-pictabletype _seg* picmtable;
+pictabletype* pictable;
+pictabletype* picmtable;
 
 int  px, py;
 byte fontcolor, backcolor;
@@ -103,7 +103,7 @@ void VW_DrawPropString(char* string)
 void VL_MungePic (byte  *source, unsigned width, unsigned height)
 {
 	unsigned	x,y,plane,size,pwidth;
-	byte		_seg *temp,  *dest,  *srcline;
+	byte		 *temp,  *dest,  *srcline;
 
 	size = width*height;
 
@@ -138,7 +138,7 @@ void VL_MungePic (byte  *source, unsigned width, unsigned height)
 
 #endif
 
-void VWL_MeasureString(char* string, word* width, word* height, fontstruct _seg* font)
+void VWL_MeasureString(char* string, word* width, word* height, fontstruct* font)
 {
     *height = font->height;
     for (*width = 0; *string; string++)
@@ -147,14 +147,14 @@ void VWL_MeasureString(char* string, word* width, word* height, fontstruct _seg*
 
 void VW_MeasurePropString(char* string, word* width, word* height)
 {
-    VWL_MeasureString(string, width, height, (fontstruct _seg*)grsegs[STARTFONT + fontnumber]);
+    VWL_MeasureString(string, width, height, (fontstruct*)grsegs[STARTFONT + fontnumber]);
 }
 
 #if 0
 
 void	VW_MeasureMPropString  (char  *string, word *width, word *height)
 {
-	VWL_MeasureString(string,width,height,(fontstruct _seg *)grsegs[STARTFONTM+fontnumber]);
+	VWL_MeasureString(string,width,height,(fontstruct  *)grsegs[STARTFONTM+fontnumber]);
 }
 #endif
 
@@ -358,7 +358,7 @@ void LoadLatchMem(void)
     //
     latchpics[picnum++] = freelatch;
     CA_CacheGrChunk(STARTTILE8);
-    src     = (byte _seg*)grsegs[STARTTILE8];
+    src     = (byte*)grsegs[STARTTILE8];
     destoff = freelatch;
 
     for (i = 0; i < NUMTILE8; i++)
@@ -373,13 +373,13 @@ void LoadLatchMem(void)
 //
 // tile 16s
 //
-	src = (byte _seg *)grsegs[STARTTILE16];
+	src = (byte  *)grsegs[STARTTILE16];
 	latchpics[picnum++] = destoff;
 
 	for (i=0;i<NUMTILE16;i++)
 	{
 		CA_CacheGrChunk (STARTTILE16+i);
-		src = (byte _seg *)grsegs[STARTTILE16+i];
+		src = (byte  *)grsegs[STARTTILE16+i];
 		VL_MemToLatch (src,16,16,destoff);
 		destoff+=64;
 		if (src)

@@ -94,7 +94,7 @@ SMMode   MusicMode;
 SDSMode  DigiMode;
 longword TimeCount;
 word     HackCount;
-word*    SoundTable; // Really * _seg *SoundTable, but that don't work
+word*    SoundTable; // Really *  *SoundTable, but that don't work
 bool     ssIsTandy;
 word     ssPort = 2;
 
@@ -122,7 +122,7 @@ long       LocalTime;
 word       TimerRate;
 
 word                   NumDigi, DigiLeft, DigiPage;
-word _seg*             DigiList;
+word*                  DigiList;
 word                   DigiLastStart, DigiLastEnd;
 volatile bool          DigiPlaying;
 static volatile bool   DigiMissed, DigiLastSegment;

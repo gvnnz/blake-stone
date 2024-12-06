@@ -44,9 +44,9 @@ typedef struct
 
 //===========================================================================
 
-extern pictabletype _seg*    pictable;
-extern pictabletype _seg*    picmtable;
-extern spritetabletype _seg* spritetable;
+extern pictabletype*    pictable;
+extern pictabletype*    picmtable;
+extern spritetabletype* spritetable;
 
 extern byte fontcolor;
 extern int  fontnumber;

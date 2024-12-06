@@ -36,13 +36,13 @@ loaded into the data segment
 =============================================================================
 */
 
-byte _seg* tinf;
-int        mapon;
+byte* tinf;
+int   mapon;
 
-unsigned _seg* mapsegs[MAPPLANES];
-maptype _seg*  mapheaderseg[NUMMAPS];
-byte _seg*     audiosegs[NUMSNDCHUNKS];
-void _seg*     grsegs[NUMCHUNKS];
+unsigned* mapsegs[MAPPLANES];
+maptype*  mapheaderseg[NUMMAPS];
+byte*     audiosegs[NUMSNDCHUNKS];
+void*     grsegs[NUMCHUNKS];
 
 byte grneeded[NUMCHUNKS];
 byte ca_levelbit, ca_levelnum;
@@ -79,8 +79,8 @@ char extension[5], // Need a string, not constant to change cache files
 
 void CA_CannotOpen(char* string);
 
-long _seg* grstarts;    // array of offsets in egagraph, -1 for sparse
-long _seg* audiostarts; // array of offsets in audio / audiot
+long* grstarts;    // array of offsets in egagraph, -1 for sparse
+long* audiostarts; // array of offsets in audio / audiot
 
 #ifdef GRHEADERLINKED
 huffnode* grhuffman;
@@ -1307,7 +1307,7 @@ void CA_CacheMap(int mapnum)
         MM_GetPtr(&buffer2seg, expanded);
         CAL_CarmackExpand(source, (unsigned*)buffer2seg, expanded);
         CA_RLEWexpand(((unsigned*)buffer2seg) + 1, *dest, size,
-            ((mapfiletype _seg*)tinf)->RLEWtag);
+            ((mapfiletype*)tinf)->RLEWtag);
         MM_FreePtr(&buffer2seg);
 
 #else
@@ -1315,7 +1315,7 @@ void CA_CacheMap(int mapnum)
         // unRLEW, skipping expanded length
         //
         CA_RLEWexpand(source + 1, *dest, size,
-            ((mapfiletype _seg*)tinf)->RLEWtag);
+            ((mapfiletype*)tinf)->RLEWtag);
 #endif
 
         if (compressed > BUFFERSIZE)
@@ -1544,7 +1544,7 @@ void CA_CacheMarks(void)
                 if (bufferstart <= pos && bufferend >= endpos)
                 {
                     // data is allready in buffer
-                    source = (byte _seg*)bufferseg + (pos - bufferstart);
+                    source = (byte*)bufferseg + (pos - bufferstart);
                 }
                 else
                 {

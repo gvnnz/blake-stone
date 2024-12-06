@@ -3464,9 +3464,9 @@ int Confirm(char* string)
 //---------------------------------------------------------------------------
 void Message(char* string)
 {
-    int              h = 0, w = 0, mw = 0, i, x, y, time;
-    fontstruct _seg* font;
-    unsigned         OldPrintX, OldPrintY;
+    int         h = 0, w = 0, mw = 0, i, x, y, time;
+    fontstruct* font;
+    unsigned    OldPrintX, OldPrintY;
 
     fontnumber = 1;
     CA_CacheGrChunk(STARTFONT + 1);

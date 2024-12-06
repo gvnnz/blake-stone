@@ -1063,7 +1063,7 @@ void CAL_SetupAudioFile(void)
 #else
     audiohuffman = (huffnode*)&audiodict;
     CAL_OptimizeNodes(audiohuffman);
-    audiostarts = (long _seg*)FP_SEG(&audiohead);
+    audiostarts = (long*)FP_SEG(&audiohead);
 #endif
 
     //
@@ -1088,7 +1088,7 @@ void CAL_SetupGrFile(void)
 #ifdef GRHEADERLINKED
 
     grhuffman = (huffnode*)&EGAdict;
-    grstarts  = (long _seg*)FP_SEG(&EGAhead);
+    grstarts  = (long*)FP_SEG(&EGAhead);
 
     CAL_OptimizeNodes(grhuffman);
 
@@ -1185,7 +1185,7 @@ void CAL_SetupMapFile(void)
     close(handle);
 #else
 
-    tinf = (byte _seg*)FP_SEG(&maphead);
+    tinf = (byte*)FP_SEG(&maphead);
 
 #endif
 
@@ -1199,7 +1199,7 @@ void CAL_SetupMapFile(void)
     //
     for (i = 0; i < NUMMAPS; i++)
     {
-        pos = ((mapfiletype _seg*)tinf)->headeroffsets[i];
+        pos = ((mapfiletype*)tinf)->headeroffsets[i];
         if (pos < 0) // $FFFFFFFF start is a sparse map
             continue;
 

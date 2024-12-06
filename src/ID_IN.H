@@ -206,8 +206,8 @@ extern KeyboardDef KbdDefs;
 extern JoystickDef JoyDefs[];
 extern ControlType Controls[MaxPlayers];
 
-extern byte _seg* DemoBuffer;
-extern word       DemoOffset, DemoSize;
+extern byte* DemoBuffer;
+extern word  DemoOffset, DemoSize;
 
 // Function prototypes
 #define IN_KeyDown(code) (Keyboard[(code)])

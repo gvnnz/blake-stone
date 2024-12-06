@@ -165,10 +165,10 @@ void ViewMap(void);
 */
 void DebugMemory(void)
 {
-    int              i, temp;
-    char             scratch[80], str[10];
-    long             mem;
-    spritetype _seg* block;
+    int         i, temp;
+    char        scratch[80], str[10];
+    long        mem;
+    spritetype* block;
 
     CenterWindow(22, 15);
 
@@ -344,9 +344,9 @@ void ShowMap(void)
 #pragma warn - pia
 void ShapeTest(void)
 {
-    extern word       NumDigi;
-    extern word _seg* DigiList;
-    static char       buf[10];
+    extern word  NumDigi;
+    extern word* DigiList;
+    static char  buf[10];
 
     bool            done;
     ScanCode        scan;

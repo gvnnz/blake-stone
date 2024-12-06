@@ -2374,10 +2374,10 @@ void BMAmsg(char* msg)
 
     if (msg)
     {
-        PresenterInfo    pi;
-        fontstruct _seg* font     = (fontstruct _seg*)grsegs[STARTFONT + fontnumber];
-        char             numlines = 1, *p = msg;
-        short            cheight;
+        PresenterInfo pi;
+        fontstruct*   font     = (fontstruct*)grsegs[STARTFONT + fontnumber];
+        char          numlines = 1, *p = msg;
+        short         cheight;
 
         memset(&pi, 0, sizeof(pi));
         pi.flags     = TPF_CACHE_NO_GFX;
