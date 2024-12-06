@@ -35,7 +35,7 @@ list(APPEND SOURCES
     src/GFXV_BS1.H
     src/GFXV_FIR.H
     src/GFXV_SOD.EQU
-    src/GFXV_VSI.H
+        src/gfxv_vsi.hpp
     src/GFXV_WL1.EQU
     src/GFXV_WL6.EQU
     src/H_LDIV.ASM
