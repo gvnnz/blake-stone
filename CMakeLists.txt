@@ -23,7 +23,7 @@ list(APPEND SOURCES
     src/AUDIO.H
     src/AUDIOBS1.H
     src/AUDIOFIR.H
-    src/AUDIOVSI.H
+    src/audiovsi.hpp
     src/C0.ASM
     src/D3_ASM.ASM
     src/D3_DASM2.ASM
