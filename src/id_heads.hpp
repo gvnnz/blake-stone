@@ -111,9 +111,9 @@ typedef struct
 
 #include "jm_debug.hpp"
 #include "jm_error.hpp"
-#include "jm_tp.h"
+#include "jm_tp.hpp"
 
-#include "movie.h"
+#include "MOVIE.H"
 
 void Quit(char* error, ...); // defined in user program
 

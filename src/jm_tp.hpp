@@ -1,5 +1,5 @@
-#ifndef _JM_TP_H_
-#define _JM_TP_H_
+#ifndef JM_TP_HPP
+#define JM_TP_HPP
 
 //-------------------------------------------------------------------------
 // defines

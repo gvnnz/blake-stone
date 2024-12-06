@@ -77,9 +77,11 @@
 //--------------------------------------------------------------------------
 
 #include "3d_def.hpp"
-
 #include "jm_error.hpp"
 #include "jm_io.hpp"
+#include <cassert>
+#include <cctype>
+#include <cstdio>
 
 #pragma hdrstop
 
@@ -529,7 +531,7 @@ static char*    first_ch;
 static char *scan_ch, temp;
 static short scan_x, numanims, stemp;
 
-static fontstruct _seg* font;
+static fontstruct* font;
 
 static PresenterInfo* pi;
 
@@ -582,7 +584,7 @@ void TP_Presenter(PresenterInfo* pinfo)
     fontnumber     = pi->fontnumber;
     TP_PurgeAllGfx();
     TP_CachePage(first_ch);
-    font  = (fontstruct _seg*)grsegs[STARTFONT + fontnumber];
+    font  = (fontstruct*)grsegs[STARTFONT + fontnumber];
     flags = fl_presenting | fl_startofline;
     if (*first_ch == TP_CONTROL_CHAR)
         TP_HandleCodes();
@@ -618,7 +620,7 @@ void TP_Presenter(PresenterInfo* pinfo)
         fontnumber = oldf;
     }
 
-    font = (fontstruct _seg*)grsegs[STARTFONT + fontnumber];
+    font = (fontstruct*)grsegs[STARTFONT + fontnumber];
     if (!(pi->flags & TPF_USE_CURRENT))
         VWB_Bar(xl - TP_MARGIN, yl - TP_MARGIN, xh - xl + 1 + (TP_MARGIN * 2), yh - yl + 1 + (TP_MARGIN * 2), bgcolor);
 
@@ -681,6 +683,8 @@ void TP_Presenter(PresenterInfo* pinfo)
 //--------------------------------------------------------------------------
 void TP_WrapText()
 {
+    assert(false);
+#if 0
     flags &= ~fl_startofline;
 
 #pragma warn - pia
@@ -823,6 +827,7 @@ tp_newline:;
             TP_Print("@", true);
         }
     }
+#endif
 }
 
 //--------------------------------------------------------------------------
@@ -830,6 +835,8 @@ tp_newline:;
 //--------------------------------------------------------------------------
 void TP_HandleCodes()
 {
+    assert(false);
+#if 0
     ControlInfo      ci;
     spritetabletype* spr;
     piAnimInfo*      anim;
@@ -1145,7 +1152,7 @@ void TP_HandleCodes()
                 flags |= fl_uncachefont;
             }
             else
-                font = (fontstruct _seg*)grsegs[STARTFONT + fontnumber];
+                font = (fontstruct*)grsegs[STARTFONT + fontnumber];
             break;
 
             // BACKGROUND COLOR -------------------------------------------------
@@ -1473,6 +1480,7 @@ void TP_HandleCodes()
 
     if ((first_ch[0] == TP_RETURN_CHAR) && (first_ch[1] == '\n') && (flags & fl_startofline))
         first_ch += 2;
+#endif
 }
 
 //--------------------------------------------------------------------------
@@ -1516,6 +1524,9 @@ void TP_PrintPageNumber()
 //--------------------------------------------------------------------------
 short TP_DrawShape(short x, short y, short shapenum, pisType shapetype)
 {
+    assert(false);
+    return 0;
+#if 0
     short  width;
     memptr addr;
 
@@ -1589,6 +1600,7 @@ short TP_DrawShape(short x, short y, short shapenum, pisType shapetype)
     //
     cur_x += width;
     return (x);
+#endif
 }
 
 //--------------------------------------------------------------------------
@@ -1752,6 +1764,8 @@ void TP_PurgeAllGfx()
 //--------------------------------------------------------------------------
 void TP_CachePage(char* script)
 {
+    assert(false);
+#if 0
     piAnimInfo* anim;
     short       loop;
     unsigned    shapenum;
@@ -1819,6 +1833,7 @@ void TP_CachePage(char* script)
     }
 
     TP_CacheIn(ct_marks, 0);
+#endif
 }
 
 //--------------------------------------------------------------------------
@@ -1908,6 +1923,10 @@ void TP_Print(char* str, bool single_char)
 //--------------------------------------------------------------------------
 bool TP_SlowPrint(char* str, char delay)
 {
+    assert(false);
+    return false;
+
+#if 0
     char  old_color = fontcolor;
     short old_x, old_y;
     long  tc;
@@ -1980,6 +1999,7 @@ bool TP_SlowPrint(char* str, char delay)
         flags &= ~fl_presenting;
 
     return (aborted);
+#endif
 }
 
 //--------------------------------------------------------------------------
@@ -1987,6 +2007,9 @@ bool TP_SlowPrint(char* str, char delay)
 //--------------------------------------------------------------------------
 long TP_LoadScript(char* filename, PresenterInfo* pi, unsigned id_cache)
 {
+    assert(false);
+    return 0;
+#if 0
 #pragma warn - pia
     long size;
 
@@ -2015,6 +2038,7 @@ long TP_LoadScript(char* filename, PresenterInfo* pi, unsigned id_cache)
 
     return (size);
 #pragma warn + pia
+#endif
 }
 
 //-------------------------------------------------------------------------
@@ -2037,6 +2061,8 @@ void TP_FreeScript(PresenterInfo* pi, unsigned id_cache)
 //-------------------------------------------------------------------------
 void TP_InitScript(PresenterInfo* pi)
 {
+    assert(false);
+#if 0
     char* script = pi->script[0];
 
     pi->numpages = 1; // Assume at least 1 page
@@ -2084,6 +2110,7 @@ void TP_InitScript(PresenterInfo* pi)
 
 end_func:;
     pi->numpages--; // Last page defined is not a real page.
+#endif
 }
 
 //-------------------------------------------------------------------------
@@ -2091,6 +2118,8 @@ end_func:;
 //-------------------------------------------------------------------------
 void TP_CacheIn(tpCacheType type, short chunk)
 {
+    assert(false);
+#if 0
     short first_ch_offset = first_ch - pi->script[0];
     int   loop, offset[TP_MAX_PAGES];
 
@@ -2134,7 +2163,7 @@ void TP_CacheIn(tpCacheType type, short chunk)
 
     // Re-assign font pointer
     //
-    font = (fontstruct _seg*)grsegs[STARTFONT + fontnumber];
+    font = (fontstruct*)grsegs[STARTFONT + fontnumber];
 
     // Re-assign script pointers IF this is a cached script!
     //
@@ -2157,6 +2186,7 @@ void TP_CacheIn(tpCacheType type, short chunk)
         //
         first_ch = pi->script[0] + first_ch_offset;
     }
+#endif
 }
 
 //-------------------------------------------------------------------------
@@ -2186,7 +2216,7 @@ short TP_LineCommented(char* s)
 int MDS_COMPUTERS_SUCK_SHIT()
 {
     char  *fptr;
-    void _seg *sptr;
+    void  *sptr;
     short offset;
 
     sptr = 0xa000;

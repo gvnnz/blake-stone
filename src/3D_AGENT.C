@@ -5,7 +5,7 @@
 
 #include <ctype.h>
 
-#include "jm_tp.h"
+#include "jm_tp.hpp"
 
 void InitWeaponBounce(void);
 void HandleWeaponBounce(void);

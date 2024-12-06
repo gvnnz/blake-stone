@@ -3362,7 +3362,7 @@ extern int bordertime;
 extern bool          madenoise, usedummy, nevermark;
 extern unsigned char alerted, alerted_areanum;
 
-extern objtype objlist[MAXACTORS], *new, *player, *lastobj,
+extern objtype objlist[MAXACTORS], *new_, *player, *lastobj,
     *objfreelist, *killerobj;
 extern statobj_t statobjlist[MAXSTATS], *laststatobj;
 extern doorobj_t doorobjlist[MAXDOORS], *lastdoorobj;
@@ -3945,7 +3945,7 @@ void PlaceTowardPlayer(objtype* obj);
 
 void T_Seek(objtype* ob);
 
-void SpawnProjectile(objtype* shooter, classtype class);
+void SpawnProjectile(objtype* shooter, classtype);
 void SpawnStand(enemy_t which, int tilex, int tiley, int dir);
 void SpawnPatrol(enemy_t which, int tilex, int tiley, int dir);
 void KillActor(objtype* ob);
@@ -3980,7 +3980,7 @@ void InitAnim(objtype* obj, unsigned ShapeNum, unsigned char StartOfs, unsigned 
 objtype* FindObj(classtype which, short tilex, short tiley);
 objtype* FindHiddenOfs(classtype which);
 void     SpawnHiddenOfs(enemy_t which, int tilex, int tiley);
-objtype* MoveHiddenOfs(classtype which_class, classtype new, fixed x, fixed y);
+objtype* MoveHiddenOfs(classtype which_class, classtype new_, fixed x, fixed y);
 
 void CheckForSpecialTile(objtype* obj, unsigned tilex, unsigned tiley);
 void DropCargo(objtype* obj);

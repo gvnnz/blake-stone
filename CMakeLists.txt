@@ -76,8 +76,8 @@ list(APPEND SOURCES
     src/jm_io.hpp
     src/jm_lzh.cpp
     src/jm_lzh.hpp
-    src/JM_TP.C
-    src/JM_TP.H
+    src/jm_tp.cpp
+    src/jm_tp.hpp
     src/JM_VL.ASM
     src/JM_VL.H
     src/MAPSBS1.H
