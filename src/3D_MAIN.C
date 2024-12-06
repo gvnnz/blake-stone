@@ -1778,8 +1778,8 @@ void main(void)
     freed_main();
 
 #if FREE_FUNCTIONS
-    UseFunc((char huge*)JM_FREE_START, (char huge*)JM_FREE_END);
-    UseFunc((char huge*)JM_FREE_DATA_START, (char huge*)JM_FREE_DATA_END);
+    UseFunc((char*)JM_FREE_START, (char*)JM_FREE_END);
+    UseFunc((char*)JM_FREE_DATA_START, (char*)JM_FREE_DATA_END);
 #endif
 
     DemoLoop();
@@ -1792,7 +1792,7 @@ void main(void)
 //-------------------------------------------------------------------------
 // UseFunc()
 //-------------------------------------------------------------------------
-unsigned UseFunc(char huge* first, char huge* next)
+unsigned UseFunc(char* first, char* next)
 {
     unsigned start, end;
     unsigned pars;

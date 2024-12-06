@@ -132,24 +132,24 @@ volatile longword      DigiFailSafe;
 longword               DigiFailTriggered;
 
 //	SoundBlaster variables
-word                       SBResetCount;
-static bool                sbNoCheck, sbNoProCheck;
-static volatile bool       sbSamplePlaying;
-static byte                sbPIC1Mask, sbPIC2Mask;
-static byte                sbOldIntMask = -1, sbOldIntMask2 = -1;
-static volatile byte huge* sbNextSegPtr;
-static byte                sbDMA = 1,
+word                  SBResetCount;
+static bool           sbNoCheck, sbNoProCheck;
+static volatile bool  sbSamplePlaying;
+static byte           sbPIC1Mask, sbPIC2Mask;
+static byte           sbOldIntMask = -1, sbOldIntMask2 = -1;
+static volatile byte* sbNextSegPtr;
+static byte           sbDMA = 1,
             sbDMAa1 = 0x83, sbDMAa2 = 2, sbDMAa3 = 3,
             sba1Vals[] = {0x87, 0x83, 0, 0x82},
             sba2Vals[] = {0, 2, 0, 6},
             sba3Vals[] = {1, 3, 0, 7};
 static int sbLocation = -1, sbInterrupt = 7, sbIntVec = 0xf,
            sbIntVectors[] = {-1, -1, 0xa, 0xb, -1, 0xd, -1, 0xf, -1, -1, 0x72};
-static volatile byte               sbLastTimeValue;
-static volatile longword           sbNextSegLen;
-static volatile SampledSound huge* sbSamples;
-static void                        interrupt (*sbOldIntHand)(void);
-static byte                        sbpOldFMMix, sbpOldVOCMix;
+static volatile byte          sbLastTimeValue;
+static volatile longword      sbNextSegLen;
+static volatile SampledSound* sbSamples;
+static void                   interrupt (*sbOldIntHand)(void);
+static byte                   sbpOldFMMix, sbpOldVOCMix;
 
 //	SoundSource variables
 bool              ssNoCheck;
@@ -401,7 +401,7 @@ SDL_SBStopSample(void)
 //
 ///////////////////////////////////////////////////////////////////////////
 static longword
-SDL_SBPlaySeg(volatile byte huge* data, longword length)
+SDL_SBPlaySeg(volatile byte* data, longword length)
 {
     unsigned datapage;
     longword dataofs, uselen;
@@ -512,7 +512,7 @@ void
 #else
 static void
 #endif
-SDL_SBPlaySample(byte huge* data, longword len)
+SDL_SBPlaySample(byte* data, longword len)
 {
     longword used;
 
@@ -857,7 +857,7 @@ void
 #else
 static void
 #endif
-SDL_SSPlaySample(byte huge* data, longword len)
+SDL_SSPlaySample(byte* data, longword len)
 {
     asm pushf asm cli
 
@@ -1544,7 +1544,7 @@ static void
 SDL_ALPlaySound(AdLibSound* sound)
 {
     Instrument* inst;
-    byte huge*  data;
+    byte*       data;
 
     SDL_ALStopSound();
 

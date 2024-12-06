@@ -3266,7 +3266,7 @@ void     NewViewSize(int width);
 unsigned scan_atoi(char* s);
 void     AlignPlayerOnTransporter(void);
 
-unsigned UseFunc(char huge* first, char huge* next);
+unsigned UseFunc(char* first, char* next);
 bool     DoMovie(movie_t movie, memptr palette);
 bool     CheckDiskSpace(long needed, char* text, cds_io_type io_type);
 bool     SaveTheGame(int handle, char* description);

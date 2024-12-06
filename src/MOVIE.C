@@ -69,8 +69,8 @@ byte  fi_rate, fo_rate;
 memptr        MovieBuffer; // Ptr to Allocated Memory for Buffer
 unsigned long BufferLen;   // Len of MovieBuffer (Ammount of RAM allocated)
 unsigned long PageLen;     // Len of data loaded into MovieBuffer
-char huge*    BufferPtr;   // Ptr to next frame in MovieBuffer
-char huge*    NextPtr;     // Ptr Ofs to next frame after BufferOfs
+char*         BufferPtr;   // Ptr to next frame in MovieBuffer
+char*         NextPtr;     // Ptr Ofs to next frame after BufferOfs
 
 bool MorePagesAvail; // More Pages avail on disk?
 
@@ -178,13 +178,13 @@ void ShutdownMovie(void)
 //---------------------------------------------------------------------------
 void JM_DrawBlock(unsigned dest_offset, unsigned byte_offset, char* source, unsigned length)
 {
-    byte       numplanes;
-    byte       mask, plane;
-    char huge* dest_ptr;
-    char huge* source_ptr;
-    char huge* dest;
-    char huge* end_ptr;
-    unsigned   count, total_len;
+    byte     numplanes;
+    byte     mask, plane;
+    char*    dest_ptr;
+    char*    source_ptr;
+    char*    dest;
+    char*    end_ptr;
+    unsigned count, total_len;
 
     end_ptr = source + length;
 
@@ -236,16 +236,16 @@ void JM_DrawBlock(unsigned dest_offset, unsigned byte_offset, char* source, unsi
 //
 // PARAMETERS: pointer to animpic
 //---------------------------------------------------------------------------
-void MOVIE_ShowFrame(char huge* inpic)
+void MOVIE_ShowFrame(char* inpic)
 {
-    anim_chunk huge* ah;
+    anim_chunk* ah;
 
     if (inpic == NULL)
         return;
 
     for (;;)
     {
-        ah = (anim_chunk huge*)inpic;
+        ah = (anim_chunk*)inpic;
 
         if (ah->opt == 0)
             break;
@@ -269,7 +269,7 @@ bool MOVIE_LoadBuffer()
 {
     anim_frame    blk;
     long          chunkstart;
-    char huge*    frame;
+    char*         frame;
     unsigned long free_space;
 
     NextPtr = BufferPtr = frame = MK_FP(MovieBuffer, 0);
@@ -353,7 +353,7 @@ short MOVIE_GetFrame()
 void MOVIE_HandlePage(MovieStuff_t* MovieStuff)
 {
     anim_frame blk;
-    char huge* frame;
+    char*      frame;
     unsigned   wait_time;
 
     _fmemcpy(&blk, BufferPtr, sizeof(anim_frame));

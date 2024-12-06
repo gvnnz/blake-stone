@@ -1138,7 +1138,7 @@ void CAL_SetupGrFile(void)
     CAL_GetGrChunkLength(STRUCTPIC); // position file pointer
     MM_GetPtr(&compseg, chunkcomplen);
     CA_FarRead(grhandle, compseg, chunkcomplen);
-    CAL_HuffExpand(compseg, (byte huge*)pictable, NUMPICS * sizeof(pictabletype), grhuffman, false);
+    CAL_HuffExpand(compseg, (byte*)pictable, NUMPICS * sizeof(pictabletype), grhuffman, false);
     MM_FreePtr(&compseg);
 
 // MDM begin
@@ -1147,7 +1147,7 @@ void CAL_SetupGrFile(void)
 	CAL_GetGrChunkLength(STRUCTPICM);		// position file pointer
 	MM_GetPtr(&compseg,chunkcomplen);
 	CA_FarRead (grhandle,compseg,chunkcomplen);
-	CAL_HuffExpand (compseg, (byte huge *)picmtable,NUMPICS*sizeof(pictabletype),grhuffman,false);
+	CAL_HuffExpand (compseg, (byte  *)picmtable,NUMPICS*sizeof(pictabletype),grhuffman,false);
 	MM_FreePtr(&compseg);
 #endif
     // MDM end
