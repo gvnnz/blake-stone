@@ -74,8 +74,8 @@ list(APPEND SOURCES
     src/JM_FREE.C
     src/jm_io.cpp
     src/jm_io.hpp
-    src/JM_LZH.C
-    src/JM_LZH.H
+    src/jm_lzh.cpp
+    src/jm_lzh.hpp
     src/JM_TP.C
     src/JM_TP.H
     src/JM_VL.ASM

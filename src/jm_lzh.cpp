@@ -22,18 +22,13 @@
 //
 //---------------------------------------------------------------------------
 
-#include <alloc.h>
-#include <ctype.h>
-#include <dos.h>
-#include <fcntl.h>
-#include <io.h>
-#include <mem.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cctype>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 #include "jm_cio.hpp"
-#include "jm_lzh.h"
+#include "jm_lzh.hpp"
 
 //===========================================================================
 //
@@ -52,7 +47,7 @@
 #define LZH_ID_MEMORY_ALLOCATION
 
 #ifdef LZH_ID_MEMORY_ALLOCATION
-#include "id_mm.h"
+#include "ID_MM.H"
 #endif
 
 //===========================================================================
@@ -889,13 +884,13 @@ static void StartHuff()
     // Assign _seg pointers to  pointers, always initialized here in case
     // the memory manager shifted things around after LZH_Startup() was called.
     //
-    son      = id_son;
-    prnt     = id_prnt;
-    freq     = id_freq;
-    text_buf = id_text_buf;
-    lson     = id_lson;
-    rson     = id_rson;
-    dad      = id_dad;
+    son      = static_cast<int*>(id_son);
+    prnt     = static_cast<int*>(id_prnt);
+    freq     = static_cast<unsigned int*>(id_freq);
+    text_buf = static_cast<unsigned char*>(id_text_buf);
+    lson     = static_cast<int*>(id_lson);
+    rson     = static_cast<int*>(id_rson);
+    dad      = static_cast<int*>(id_dad);
 
 #endif
 #endif
@@ -959,10 +954,10 @@ static void reconst()
         k++;
         l = (j - k) * 2;
 
-        _fmemcpy(&freq[k + 1], &freq[k], l);
+        memcpy(&freq[k + 1], &freq[k], l);
         freq[k] = f;
 
-        _fmemcpy(&son[k + 1], &son[k], l);
+        memcpy(&son[k + 1], &son[k], l);
         son[k] = i;
     }
 

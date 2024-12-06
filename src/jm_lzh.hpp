@@ -1,5 +1,5 @@
-#ifndef _JM_LZH_H_
-#define _JM_LZH_H_
+#ifndef JM_LZH_HPP
+#define JM_LZH_HPP
 
 extern void (*LZH_CompressDisplayVector)(unsigned long, unsigned long);
 extern void (*LZH_DecompressDisplayVector)(unsigned long, unsigned long);
