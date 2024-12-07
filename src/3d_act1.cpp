@@ -1,6 +1,9 @@
 // 3D_ACT1.C
 
 #include "3d_def.hpp"
+#include <cassert>
+#include <cstring>
+
 #pragma hdrstop
 
 //===========================================================================
@@ -201,7 +204,7 @@ void InitStaticList(void)
 //				 at a particular tile x & tile y coords.
 //
 // RETURNS: Ptr == Pointer to static obj.
-//          NULL == No static found.
+//          nullptr == No static found.
 //---------------------------------------------------------------------------
 statobj_t* FindStatic(unsigned tilex, unsigned tiley)
 {
@@ -211,7 +214,7 @@ statobj_t* FindStatic(unsigned tilex, unsigned tiley)
         if (spot->shapenum != -1 && spot->tilex == tilex && spot->tiley == tiley)
             return (spot);
 
-    return (NULL);
+    return (nullptr);
 }
 
 //---------------------------------------------------------------------------
@@ -221,7 +224,7 @@ statobj_t* FindStatic(unsigned tilex, unsigned tiley)
 //				 static object.
 //
 // RETURNS: Ptr == Pointer to empty static obj.
-//          NULL == static objlist full.
+//          nullptr == static objlist full.
 //---------------------------------------------------------------------------
 statobj_t* FindEmptyStatic(void)
 {
@@ -232,7 +235,7 @@ statobj_t* FindEmptyStatic(void)
         if (spot == laststatobj)
         {
             if (spot == &statobjlist[MAXSTATS])
-                return (NULL);
+                return (nullptr);
             laststatobj++; // space at end
             break;
         }
@@ -254,6 +257,8 @@ statobj_t* FindEmptyStatic(void)
 
 void SpawnStatic(int tilex, int tiley, int type)
 {
+    assert(false);
+#if 0
     statobj_t* spot;
 
 #if 0
@@ -350,6 +355,7 @@ void SpawnStatic(int tilex, int tiley, int type)
 
     if (spot == &statobjlist[MAXSTATS])
         ACT1_ERROR(SPAWNSTATIC_TOO_MANY);
+#endif
 }
 
 //---------------------------------------------------------------------------
@@ -391,7 +397,7 @@ statobj_t* FindReservedStatic(void)
             return (spot);
     }
 
-    return (NULL);
+    return (nullptr);
 }
 
 //---------------------------------------------------------------------------
@@ -709,7 +715,7 @@ void InitAreas(void)
 void InitDoorList(void)
 {
     memset(areabyplayer, 0, sizeof(areabyplayer));
-    _fmemset(areaconnect, 0, sizeof(areaconnect));
+    memset(areaconnect, 0, sizeof(areaconnect));
 
     lastdoorobj = &doorobjlist[0];
     doornum     = 0;
@@ -725,6 +731,8 @@ void InitDoorList(void)
 
 void SpawnDoor(int tilex, int tiley, bool vertical, keytype lock, door_t type)
 {
+    assert(false);
+#if 0
     int       areanumber;
     unsigned* map[2];
 
@@ -780,6 +788,7 @@ void SpawnDoor(int tilex, int tiley, bool vertical, keytype lock, door_t type)
 
     doornum++;
     lastdoorobj++;
+#endif
 }
 
 //===========================================================================
@@ -789,6 +798,8 @@ void SpawnDoor(int tilex, int tiley, bool vertical, keytype lock, door_t type)
 //--------------------------------------------------------------------------
 void CheckLinkedDoors(short door, short door_dir)
 {
+    assert(false);
+#if 0
     static short LinkCheck = 0;
     static short base_tilex;
     static short base_tiley;
@@ -845,6 +856,7 @@ void CheckLinkedDoors(short door, short door_dir)
     }
 
     LinkCheck--;
+#endif
 }
 
 /*
@@ -857,7 +869,8 @@ void CheckLinkedDoors(short door, short door_dir)
 
 void OpenDoor(int door)
 {
-
+    assert(false);
+#if 0
     if (doorobjlist[door].action == dr_jammed)
         return;
 
@@ -867,6 +880,7 @@ void OpenDoor(int door)
         doorobjlist[door].action = dr_opening; // start it opening
 
     CheckLinkedDoors(door, dr_opening);
+#endif
 }
 
 /*
@@ -879,6 +893,8 @@ void OpenDoor(int door)
 
 void CloseDoor(int door)
 {
+    assert(false);
+#if 0
     int      tilex, tiley, area;
     objtype* check;
 
@@ -958,6 +974,7 @@ void CloseDoor(int door)
     (unsigned)actorat[tilex][tiley] = door | 0x80;
 
     CheckLinkedDoors(door, dr_closing);
+#endif
 }
 
 /*
@@ -980,6 +997,8 @@ char od_operating[]    = "\r\r    OPERATING DOOR.\r^XX";
 
 void OperateDoor(int door)
 {
+    assert(false);
+#if 0
     int  lock;
     bool OperateMsg, oneway = false;
 
@@ -1074,6 +1093,7 @@ void OperateDoor(int door)
         CloseDoor(door);
         break;
     }
+#endif
 }
 
 //--------------------------------------------------------------------------
@@ -1081,6 +1101,8 @@ void OperateDoor(int door)
 //--------------------------------------------------------------------------
 void BlockDoorOpen(int door)
 {
+    assert(false);
+#if 0
     doorobjlist[door].action   = dr_jammed;
     doorobjlist[door].ticcount = 0;
     doorposition[door]         = 0xffff;
@@ -1092,6 +1114,7 @@ void BlockDoorOpen(int door)
 
     TransformAreas(doorobjlist[door].tilex, doorobjlist[door].tiley, 1);
     //   SpawnStatic(doorobjlist[door].tilex, doorobjlist[door].tiley, DOOR_RUBBLE);
+#endif
 }
 
 //--------------------------------------------------------------------------
@@ -1100,6 +1123,8 @@ void BlockDoorOpen(int door)
 //--------------------------------------------------------------------------
 void TryBlastDoor(char door)
 {
+    assert(false);
+#if 0
     switch (doorobjlist[door].type)
     {
     case dr_oneway_left:
@@ -1120,6 +1145,7 @@ void TryBlastDoor(char door)
         }
         break;
     }
+#endif
 }
 
 //--------------------------------------------------------------------------
@@ -1298,6 +1324,8 @@ int TransformAreas(char tilex, char tiley, char xform)
 
 void DoorOpening(int door)
 {
+    assert(false);
+#if 0
     int       area1, area2;
     unsigned* map;
     long      position;
@@ -1342,6 +1370,7 @@ void DoorOpening(int door)
     }
 
     doorposition[door] = position;
+#endif
 }
 
 /*
@@ -1353,6 +1382,8 @@ void DoorOpening(int door)
 */
 void DoorClosing(int door)
 {
+    assert(false);
+#if 0
     int       area1, area2, move;
     unsigned* map;
     long      position;
@@ -1412,6 +1443,7 @@ void DoorClosing(int door)
     }
 
     doorposition[door] = position;
+#endif
 }
 
 /*
@@ -1425,6 +1457,8 @@ void DoorClosing(int door)
 */
 void MoveDoors(void)
 {
+    assert(false);
+#if 0
     int door;
 
     for (door = 0; door < doornum; door++)
@@ -1442,6 +1476,7 @@ void MoveDoors(void)
             DoorClosing(door);
             break;
         }
+#endif
 }
 
 /*
@@ -1467,6 +1502,8 @@ int      pwalldir, pwalldist;
 
 void PushWall(int checkx, int checky, int dir)
 {
+    assert(false);
+#if 0
     int oldtile;
 
     if (pwallstate)
@@ -1527,6 +1564,7 @@ void PushWall(int checkx, int checky, int dir)
     *(mapsegs[1] + farmapylookup[pwally] + pwallx) = 0; // remove P tile info
 
     SD_PlaySound(PUSHWALLSND);
+#endif
 }
 
 /*
@@ -1539,6 +1577,8 @@ void PushWall(int checkx, int checky, int dir)
 
 void MovePWalls(void)
 {
+    assert(false);
+#if 0
     int oldblock, oldtile;
 
     if (!pwallstate)
@@ -1634,6 +1674,7 @@ void MovePWalls(void)
     }
 
     pwallpos = (pwallstate / 2) & 63;
+#endif
 }
 
 //==========================================================================
@@ -1693,6 +1734,8 @@ extern char int_xx[];
 //---------------------------------------------------------------------------
 void CacheMsg(mCacheInfo* ci, unsigned SegNum, unsigned MsgNum)
 {
+    assert(false);
+#if 0
     //	char  *Message,  *EndOfMsg,  *hint_buffer;
     //	unsigned char pos=0;
 
@@ -1704,6 +1747,7 @@ void CacheMsg(mCacheInfo* ci, unsigned SegNum, unsigned MsgNum)
     // Load message into CachInfo Message Seg.
     //
     LoadMsg(ci->mSeg, SegNum, MsgNum, MAX_CACHE_MSG_LEN);
+#endif
 }
 
 //---------------------------------------------------------------------------
@@ -1722,6 +1766,8 @@ void CacheMsg(mCacheInfo* ci, unsigned SegNum, unsigned MsgNum)
 //---------------------------------------------------------------------------
 short LoadMsg(char* hint_buffer, unsigned SegNum, unsigned MsgNum, unsigned MaxMsgLen)
 {
+    assert(false);
+#if 0
     char *Message, *EndOfMsg;
     short pos = 0;
 
@@ -1768,6 +1814,7 @@ short LoadMsg(char* hint_buffer, unsigned SegNum, unsigned MsgNum, unsigned MaxM
     UNCACHEGRCHUNK(SegNum);
 
     return (pos);
+#endif
 }
 
 #if 0
@@ -1847,6 +1894,8 @@ void CacheMsg(mCacheInfo *ci, unsigned SegNum, unsigned MsgNum)
 //--------------------------------------------------------------------------
 void SpawnConcession(int tilex, int tiley, unsigned credits, unsigned machinetype)
 {
+    assert(false);
+#if 0
     con_mCacheInfo* ci = &ConHintList.cmInfo[ConHintList.NumMsgs];
 
     if (ConHintList.NumMsgs >= MAXCONCESSIONS)
@@ -1886,6 +1935,7 @@ void SpawnConcession(int tilex, int tiley, unsigned credits, unsigned machinetyp
     //
     //	(unsigned)actorat[tilex][tiley] = ++ConHintList.NumMsgs;
     //
+#endif
 }
 
 #ifdef CON_HINTS
@@ -1959,6 +2009,8 @@ char OutOrder[] = {"\r\r   FOOD UNIT MACHINE\r    IS OUT OF ORDER.^XX"};
 
 void OperateConcession(unsigned concession)
 {
+    assert(false);
+#if 0
     con_mCacheInfo* ci;
     char*           msgptr;
     bool            ok = false;
@@ -2047,6 +2099,7 @@ void OperateConcession(unsigned concession)
         DISPLAY_TIMED_MSG(OutOrder, MP_CONCESSION_OUT_ORDER, MT_GENERAL);
         SD_PlaySound(NOWAYSND);
     }
+#endif
 }
 
 char xy_offset[8][2] = {{0, -1}, {0, +1}, {-1, 0}, {+1, 0}, // vert / horz
@@ -2057,6 +2110,8 @@ char xy_offset[8][2] = {{0, -1}, {0, +1}, {-1, 0}, {+1, 0}, // vert / horz
 //--------------------------------------------------------------------------
 void CheckSpawnEA()
 {
+    assert(false);
+#if 0
     objtype temp, *ob;
     char    loop, ofs, tx, ty, x_diff, y_diff;
 
@@ -2158,6 +2213,7 @@ void CheckSpawnEA()
 
         break;
     }
+#endif
 }
 
 //--------------------------------------------------------------------------

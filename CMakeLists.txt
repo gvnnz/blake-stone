@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.12)
 project(blake-stone LANGUAGES CXX)
 
 list(APPEND SOURCES
-    src/3D_ACT1.C
+        src/3d_act1.cpp
     src/3D_ACT2.C
     src/3D_AGENT.C
     src/3D_DEBUG.C
