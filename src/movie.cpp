@@ -5,17 +5,17 @@
 //
 //===========================================================================
 
-#include <FCNTL.H>
-#include <alloc.h>
-#include <dos.h>
-#include <io.h>
-#include <mem.h>
-#include <stdio.h>
-#include <string.h>
-
+// #include <FCNTL.H>
+// #include <alloc.h>
+// #include <dos.h>
+// #include <io.h>
+// #include <mem.h>
 #include "3d_def.hpp"
-#include "an_codes.h"
+#include "AN_CODES.H"
 #include "jm_io.hpp"
+#include <cassert>
+#include <cstdio>
+#include <cstring>
 
 //===========================================================================
 //
@@ -158,8 +158,11 @@ void SetupMovie(MovieStuff_t* MovieStuff)
 //---------------------------------------------------------------------------
 void ShutdownMovie(void)
 {
+    assert(false);
+#if 0
     MM_FreePtr(&MovieBuffer);
     close(Movie_FHandle);
+#endif
 }
 
 //---------------------------------------------------------------------------
@@ -178,6 +181,8 @@ void ShutdownMovie(void)
 //---------------------------------------------------------------------------
 void JM_DrawBlock(unsigned dest_offset, unsigned byte_offset, char* source, unsigned length)
 {
+    assert(false);
+#if 0
     byte     numplanes;
     byte     mask, plane;
     char*    dest_ptr;
@@ -229,6 +234,7 @@ void JM_DrawBlock(unsigned dest_offset, unsigned byte_offset, char* source, unsi
         for (count = 0; count < length, source_ptr < end_ptr; count += 4, dest_ptr++, source_ptr += 4)
             *dest_ptr = *source_ptr;
     }
+#endif
 }
 
 //---------------------------------------------------------------------------
@@ -240,7 +246,7 @@ void MOVIE_ShowFrame(char* inpic)
 {
     anim_chunk* ah;
 
-    if (inpic == NULL)
+    if (inpic == nullptr)
         return;
 
     for (;;)
@@ -267,6 +273,8 @@ void MOVIE_ShowFrame(char* inpic)
 //---------------------------------------------------------------------------
 bool MOVIE_LoadBuffer()
 {
+    assert(false);
+#if 0
     anim_frame    blk;
     long          chunkstart;
     char*         frame;
@@ -306,7 +314,7 @@ bool MOVIE_LoadBuffer()
             free_space = 0;
         }
     }
-
+#endif
     return (true);
 }
 
@@ -321,6 +329,8 @@ bool MOVIE_LoadBuffer()
 //---------------------------------------------------------------------------
 short MOVIE_GetFrame()
 {
+    assert(false);
+#if 0
     unsigned   ReturnVal;
     anim_frame blk;
 
@@ -337,6 +347,7 @@ short MOVIE_GetFrame()
     PageLen -= sizeof(anim_frame);
     PageLen -= blk.recsize;
     NextPtr = BufferPtr + sizeof(anim_frame) + blk.recsize;
+#endif
     return (0);
 }
 
@@ -352,6 +363,8 @@ short MOVIE_GetFrame()
 //---------------------------------------------------------------------------
 void MOVIE_HandlePage(MovieStuff_t* MovieStuff)
 {
+    assert(false);
+#if 0
     anim_frame blk;
     char*      frame;
     unsigned   wait_time;
@@ -529,6 +542,7 @@ void MOVIE_HandlePage(MovieStuff_t* MovieStuff)
         AN_ERROR(HANDLEPAGE_BAD_CODE);
         break;
     }
+#endif
 }
 
 //---------------------------------------------------------------------------
@@ -539,6 +553,8 @@ void MOVIE_HandlePage(MovieStuff_t* MovieStuff)
 //---------------------------------------------------------------------------
 bool MOVIE_Play(MovieStuff_t* MovieStuff)
 {
+    assert(false);
+#if 0
     // Init our Movie Stuff...
     //
 
@@ -570,7 +586,7 @@ bool MOVIE_Play(MovieStuff_t* MovieStuff)
     }
 
     ShutdownMovie();
-
+#endif
     return (true);
 }
 
@@ -579,7 +595,8 @@ bool MOVIE_Play(MovieStuff_t* MovieStuff)
 //---------------------------------------------------------------------------
 void FlipPages(void)
 {
-
+    assert(false);
+#if 0
 #ifndef DRAW_TO_FRONT
 
     displayofs = bufferofs;
@@ -603,5 +620,6 @@ void FlipPages(void)
     if (bufferofs > PAGE3START)
         bufferofs = PAGE1START;
 
+#endif
 #endif
 }

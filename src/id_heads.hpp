@@ -113,7 +113,7 @@ typedef struct
 #include "jm_error.hpp"
 #include "jm_tp.hpp"
 
-#include "MOVIE.H"
+#include "movie.hpp"
 
 void Quit(char* error, ...); // defined in user program
 

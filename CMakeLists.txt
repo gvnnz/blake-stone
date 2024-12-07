@@ -83,8 +83,8 @@ list(APPEND SOURCES
     src/MAPSBS1.H
     src/mapsvsi.hpp
     src/MARKHACK.ASM
-    src/MOVIE.C
-    src/MOVIE.H
+    src/movie.cpp
+    src/movie.hpp
     src/MUNGE.C
     src/RND.ASM
     src/SCALE.ASM

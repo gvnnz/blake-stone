@@ -1,5 +1,5 @@
-#ifndef _MOVIE_H_
-#define _MOVIE_H_
+#ifndef MOVIE_HPP
+#define MOVIE_HPP
 
 #include "jm_vl.hpp"
 
