@@ -3270,10 +3270,10 @@ restart:
 
 #ifdef MYPROFILE
         end = clock();
-        strcpy(str, "300 frames in 1/18ths:"); // defined in 3d_main.c
-        itoa(end - start, str2, 10);           // defined in 3d_main.c
-        strcat(str, str2);                     // defined in 3d_main.c
-        Quit(str);                             // defined in 3d_main.c
+        strcpy(str, "300 frames in 1/18ths:"); // defined in 3d_main.cpp
+        itoa(end - start, str2, 10);           // defined in 3d_main.cpp
+        strcat(str, str2);                     // defined in 3d_main.cpp
+        Quit(str);                             // defined in 3d_main.cpp
 #endif
 
 #ifdef DEMOS_EXTERN

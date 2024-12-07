@@ -12,7 +12,7 @@ list(APPEND SOURCES
     src/3D_DRAW2.C
     src/3D_GAME.C
     src/3D_INTER.C
-    src/3D_MAIN.C
+    src/3d_main.cpp
     src/3D_MENU.C
     src/3D_MENU.H
     src/3D_MSGS.C

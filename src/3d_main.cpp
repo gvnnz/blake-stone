@@ -2,15 +2,19 @@
 
 #include "3d_def.hpp"
 #pragma hdrstop
-#include <ctype.h>
-#include <dos.h>
+#include <cctype>
+// #include <dos.h>
+// #include <fcntl.h>
+// #include <io.h>
+// #include <mem.h>
+#include <cstdio>
+#include <cstring>
+// #include <sys/stat.h>
+#include <cassert>
+#include <cmath>
+#include <ctime>
 #include <fcntl.h>
-#include <io.h>
-#include <mem.h>
-#include <stdio.h>
-#include <string.h>
-#include <sys/stat.h>
-#include <time.h>
+#include <unistd.h>
 
 #include "jm_cio.hpp"
 #include "jm_error.hpp"
@@ -149,6 +153,8 @@ void CalcSpeedRating()
 
 void WriteConfig(void)
 {
+    assert(false);
+#if 0
     int file;
 
     MakeDestPath(configname);
@@ -181,6 +187,7 @@ void WriteConfig(void)
 
         close(file);
     }
+#endif
 }
 
 //===========================================================================
@@ -204,7 +211,7 @@ void NewGame(int difficulty, int episode)
     playstate = ex_stillplaying;
 
     ShowQuickMsg = true;
-    _fmemset(&gamestuff, 0, sizeof(gamestuff));
+    memset(&gamestuff, 0, sizeof(gamestuff));
     memset(&gamestate, 0, sizeof(gamestate));
 
     memset(&gamestate.barrier_table, 0xff, sizeof(gamestate.barrier_table));
@@ -289,6 +296,8 @@ long   checksum;
 //--------------------------------------------------------------------------
 void InitPlaytemp()
 {
+    assert(false);
+#if 0
     int  handle;
     long size;
 
@@ -297,6 +306,7 @@ void InitPlaytemp()
         MAIN_ERROR(INITPLAYTEMP_OPEN_ERR);
 
     close(handle);
+#endif
 }
 
 //--------------------------------------------------------------------------
@@ -361,6 +371,8 @@ char LS_current = -1, LS_total = -1;
 //--------------------------------------------------------------------------
 void ReadInfo(bool decompress, char* dst, unsigned size, int file)
 {
+    assert(false);
+#if 0
     unsigned csize, dsize;
 
     PreloadUpdate(LS_current++, LS_total);
@@ -379,6 +391,7 @@ void ReadInfo(bool decompress, char* dst, unsigned size, int file)
         IO_FarRead(file, dst, size);
         checksum = DoChecksum(dst, size, checksum);
     }
+#endif
 }
 
 //--------------------------------------------------------------------------
@@ -386,6 +399,9 @@ void ReadInfo(bool decompress, char* dst, unsigned size, int file)
 //--------------------------------------------------------------------------
 unsigned WriteInfo(bool compress, char* src, unsigned size, int file)
 {
+    assert(false);
+    return 0;
+#if 0
     unsigned csize;
 
     PreloadUpdate(LS_current++, LS_total);
@@ -408,6 +424,7 @@ unsigned WriteInfo(bool compress, char* src, unsigned size, int file)
     }
 
     return (csize);
+#endif
 }
 
 //--------------------------------------------------------------------------
@@ -415,6 +432,8 @@ unsigned WriteInfo(bool compress, char* src, unsigned size, int file)
 //--------------------------------------------------------------------------
 bool LoadLevel(short levelnum)
 {
+    assert(false);
+#if 0
     extern bool     ShowQuickMsg;
     extern bool     ForceLoadDefault;
     extern unsigned destoff;
@@ -600,7 +619,7 @@ bool LoadLevel(short levelnum)
     CleanUpDoors_N_Actors();
 
 overlay:;
-
+#endif
     return (true);
 }
 
@@ -609,6 +628,9 @@ overlay:;
 //--------------------------------------------------------------------------
 bool SaveLevel(short levelnum)
 {
+    assert(false);
+    return false;
+#if 0
     objtype*     ob;
     int          handle;
     struct ffblk finfo;
@@ -715,6 +737,7 @@ exit_func:;
     gamestate.flags = gflags;
 
     return (rt_value);
+#endif
 }
 
 #pragma warn - pia
@@ -724,6 +747,9 @@ exit_func:;
 //--------------------------------------------------------------------------
 long DeleteChunk(int handle, char* chunk)
 {
+    assert(false);
+    return 0;
+#if 0
     long filesize, cksize, offset, bmove;
     int  dhandle;
 
@@ -761,6 +787,7 @@ long DeleteChunk(int handle, char* chunk)
     }
 
     return (cksize);
+#endif
 }
 
 #pragma warn + pia
@@ -771,10 +798,10 @@ char SavegameInfoText[] = "\n\r"
                           "    Blake Stone: Aliens Of Gold\n\r"
                           "Copyright 1993, JAM Productions, Inc.\n\r"
                           "\n\r"
-                          "SAVEGAME file is from version: "__VERSION__
+                          "SAVEGAME file is from version: " //__VERSION__
                           "\n\r"
-                          " Compile Date :"__DATE__
-                          " : "__TIME__
+                          " Compile Date :" //__DATE__
+                          " : "             //__TIME__
                           "\n\r"
                           "-------------------------------------\n\r"
                           "\x1a";
@@ -784,6 +811,9 @@ char SavegameInfoText[] = "\n\r"
 //--------------------------------------------------------------------------
 bool LoadTheGame(int handle)
 {
+    assert(false);
+    return false;
+#if 0
     extern int lastmenumusic;
 
     int    shandle;
@@ -893,6 +923,7 @@ cleanup:;
     }
 
     return (rt_value);
+#endif
 }
 
 //--------------------------------------------------------------------------
@@ -900,6 +931,9 @@ cleanup:;
 //--------------------------------------------------------------------------
 bool SaveTheGame(int handle, char* description)
 {
+    assert(false);
+    return false;
+#if 0
     struct ffblk  finfo;
     unsigned long cksize, offset;
     int           shandle;
@@ -980,6 +1014,7 @@ cleanup:;
     //
 
     return (rt_value);
+#endif
 }
 
 //--------------------------------------------------------------------------
@@ -987,6 +1022,9 @@ cleanup:;
 //--------------------------------------------------------------------------
 bool LevelInPlaytemp(char levelnum)
 {
+    assert(false);
+    return false;
+#if 0
     int  handle;
     char chunk[5] = "LVxx";
     bool rt_value;
@@ -1006,6 +1044,7 @@ bool LevelInPlaytemp(char levelnum)
     close(handle);
 
     return (rt_value);
+#endif
 }
 
 //--------------------------------------------------------------------------
@@ -1013,6 +1052,9 @@ bool LevelInPlaytemp(char levelnum)
 //--------------------------------------------------------------------------
 bool CheckDiskSpace(long needed, char* text, cds_io_type io_type)
 {
+    assert(false);
+    return false;
+#if 0
     struct ffblk      finfo;
     struct diskfree_t dfree;
     long              avail;
@@ -1059,6 +1101,7 @@ bool CheckDiskSpace(long needed, char* text, cds_io_type io_type)
     }
 
     return (true);
+#endif
 }
 
 //--------------------------------------------------------------------------
@@ -1066,6 +1109,8 @@ bool CheckDiskSpace(long needed, char* text, cds_io_type io_type)
 //--------------------------------------------------------------------------
 void CleanUpDoors_N_Actors(void)
 {
+    assert(false);
+#if 0
     char      x, y;
     objtype*  obj;
     objtype** actor_ptr;
@@ -1106,6 +1151,7 @@ void CleanUpDoors_N_Actors(void)
             tile_ptr++;
             actor_ptr++;
         }
+#endif
 }
 
 //--------------------------------------------------------------------------
@@ -1118,6 +1164,8 @@ void CleanUpDoors_N_Actors(void)
 //--------------------------------------------------------------------------
 void ClearNClose()
 {
+    assert(false);
+#if 0
     char x, y, tx = 0, ty = 0, px = player->x >> TILESHIFT, py = player->y >> TILESHIFT;
 
     // Locate the door.
@@ -1141,6 +1189,7 @@ void ClearNClose()
         doorposition[doornum]       = 0;              // draw it closed!
         (unsigned)actorat[tx][ty]   = doornum | 0x80; // make it solid!
     }
+#endif
 }
 
 //--------------------------------------------------------------------------
@@ -1290,6 +1339,9 @@ void CalcProjection(long focal)
 //--------------------------------------------------------------------------
 bool DoMovie(movie_t movie, memptr palette)
 {
+    assert(false);
+    return false;
+#if 0
     bool ReturnVal;
     //	StopMusic();
     SD_StopSound();
@@ -1310,6 +1362,7 @@ bool DoMovie(movie_t movie, memptr palette)
     LoadFonts();
 
     return (ReturnVal);
+#endif
 }
 
 //===========================================================================
@@ -1324,6 +1377,9 @@ bool DoMovie(movie_t movie, memptr palette)
 
 bool MS_CheckParm(char* check)
 {
+    assert(false);
+    return false;
+#if 0
     int   i;
     char* parm;
 
@@ -1340,6 +1396,7 @@ bool MS_CheckParm(char* check)
     }
 
     return false;
+#endif
 }
 
 //===========================================================================
@@ -1435,6 +1492,8 @@ void NewViewSize(int width)
 
 void Quit(char* error, ...)
 {
+    assert(false);
+#if 0
     unsigned finscreen;
     memptr   diz;
     char*    screen;
@@ -1541,6 +1600,7 @@ void Quit(char* error, ...)
 
     va_end(ap);
     exit(0);
+#endif
 }
 
 //===========================================================================
@@ -1555,6 +1615,8 @@ void Quit(char* error, ...)
 
 void DemoLoop(void)
 {
+    assert(false);
+#if 0
     int      i, level;
     int      LastDemo = 0;
     bool     breakit;
@@ -1714,6 +1776,7 @@ void DemoLoop(void)
         if (startgame || loadedgame)
             GameLoop();
     }
+#endif
 }
 
 //-------------------------------------------------------------------------
@@ -1721,6 +1784,8 @@ void DemoLoop(void)
 //-------------------------------------------------------------------------
 void DrawCreditsPage()
 {
+    assert(false);
+#if 0
     PresenterInfo pi;
 
     CA_CacheScreen(BACKGROUND_SCREENPIC);
@@ -1744,6 +1809,7 @@ void DrawCreditsPage()
 #endif
 
     TP_Presenter(&pi);
+#endif
 }
 
 //===========================================================================
@@ -1765,8 +1831,11 @@ short starting_episode = 0, starting_level = 0, starting_difficulty = 2;
 #endif
 short debug_value = 0;
 
-void main(void)
+int main(void)
 {
+    assert(false);
+    return 0;
+#if 0
 #if IN_DEVELOPMENT
     MakeDestPath(ERROR_LOG);
     remove(tempPath);
@@ -1785,6 +1854,7 @@ void main(void)
     DemoLoop();
 
     Quit(NULL);
+#endif
 }
 
 #if FREE_FUNCTIONS
@@ -1828,6 +1898,8 @@ void fprint(char* text)
 //-------------------------------------------------------------------------
 void InitDestPath(void)
 {
+    assert(false);
+#if 0
     char* ptr;
 
 #pragma warn - pia
@@ -1858,6 +1930,7 @@ void InitDestPath(void)
     else
         _fstrcpy(destPath, "");
 #pragma warn + pia
+#endif
 }
 
 //-------------------------------------------------------------------------
@@ -1865,8 +1938,8 @@ void InitDestPath(void)
 //-------------------------------------------------------------------------
 void MakeDestPath(char* file)
 {
-    _fstrcpy(tempPath, destPath);
-    _fstrcat(tempPath, file);
+    strcpy(tempPath, destPath);
+    strcat(tempPath, file);
 }
 
 #if IN_DEVELOPMENT
