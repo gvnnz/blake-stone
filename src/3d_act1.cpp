@@ -128,7 +128,7 @@ stattype statinfo[] =
         {SPR_STAT_57},                // 71 Body Parts
         {SPR_STAT_58},                // 72 OR Lamp
         {SPR_STAT_59, block},         // 73 Office Sink
-        {SPR_STAT_57, 0},             // EMPTY - Copy of 71 - Body Parts...
+        {SPR_STAT_57, {}},            // EMPTY - Copy of 71 - Body Parts...
         {SPR_CANDY_BAR, bo_candybar}, // 75 candy bar
         {SPR_SANDWICH, bo_sandwich},  // 76 sandwich
         {SPR_CRATE_1, block},         // 77 Crate #1
