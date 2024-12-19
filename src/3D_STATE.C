@@ -1,6 +1,8 @@
 // 3D_STATE.C
 
 #include "3d_def.hpp"
+#include "3d_state.hpp"
+
 // #include <math.h>
 
 #pragma hdrstop

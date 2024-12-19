@@ -4,8 +4,9 @@ project(blake-stone LANGUAGES CXX)
 
 list(APPEND SOURCES
         src/3d_act1.cpp
-    src/3D_ACT2.C
+    src/3d_act2.cpp
     src/3D_AGENT.C
+    src/3d_agent.hpp
     src/3D_DEBUG.C
     src/3d_def.hpp
     src/3D_DRAW.C
@@ -19,6 +20,7 @@ list(APPEND SOURCES
     src/3D_PLAY.C
     src/3D_SCALE.C
     src/3D_STATE.C
+    src/3d_state.hpp
     src/AN_CODES.H
     src/AUDIO.H
     src/AUDIOBS1.H

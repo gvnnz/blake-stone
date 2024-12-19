@@ -1,6 +1,8 @@
 // 3D_ACT2.C
 
 #include "3d_def.hpp"
+#include <cmath>
+#include <cstring>
 
 #pragma hdrstop
 
@@ -46,6 +48,16 @@
 
 #define DR_MIN_STATICS (50) // Min number of statics avail
                             // before 50/50 chance of door rubble on exp. doors.
+
+extern void FirstSighting(objtype*);
+extern bool SightPlayer(objtype*);
+extern void TakeDamage(int points, objtype* attacker);
+extern void OpenDoor(int door);
+extern void SpawnProjectile(objtype* shooter, classtype);
+extern bool CheckView(objtype* from_obj, objtype* to_obj);
+extern int  CalcAngle(objtype* from_obj, objtype* to_obj);
+extern bool ClipMove(objtype* ob, long xmove, long ymove);
+
 /*
 =============================================================================
 
@@ -384,46 +396,46 @@ void T_OfsBounce(objtype* obj);
 //
 // Local Offset Anim Structures
 //
-statetype s_ofs_stand = {false, SPR_GENETIC_W1 - SPR_GENETIC_W1, 0, T_OfsThink, nullptr, &s_ofs_stand};
+statetype s_ofs_stand = {false, SPR_GENETIC_W1 - SPR_GENETIC_W1, 0, reinterpret_cast<void (*)()>(T_OfsThink), nullptr, &s_ofs_stand};
 
-statetype s_ofs_chase1  = {false, SPR_GENETIC_W1 - SPR_GENETIC_W1, 10, T_Chase, nullptr, &s_ofs_chase1s};
+statetype s_ofs_chase1  = {false, SPR_GENETIC_W1 - SPR_GENETIC_W1, 10, reinterpret_cast<void (*)()>(T_Chase), nullptr, &s_ofs_chase1s};
 statetype s_ofs_chase1s = {false, SPR_GENETIC_W1 - SPR_GENETIC_W1, 5, nullptr, nullptr, &s_ofs_chase2};
-statetype s_ofs_chase2  = {false, SPR_GENETIC_W2 - SPR_GENETIC_W1, 8, T_Chase, nullptr, &s_ofs_chase3};
-statetype s_ofs_chase3  = {false, SPR_GENETIC_W3 - SPR_GENETIC_W1, 10, T_Chase, nullptr, &s_ofs_chase3s};
+statetype s_ofs_chase2  = {false, SPR_GENETIC_W2 - SPR_GENETIC_W1, 8, reinterpret_cast<void (*)()>(T_Chase), nullptr, &s_ofs_chase3};
+statetype s_ofs_chase3  = {false, SPR_GENETIC_W3 - SPR_GENETIC_W1, 10, reinterpret_cast<void (*)()>(T_Chase), nullptr, &s_ofs_chase3s};
 statetype s_ofs_chase3s = {false, SPR_GENETIC_W3 - SPR_GENETIC_W1, 5, nullptr, nullptr, &s_ofs_chase4};
-statetype s_ofs_chase4  = {false, SPR_GENETIC_W4 - SPR_GENETIC_W1, 8, T_Chase, nullptr, &s_ofs_chase1};
+statetype s_ofs_chase4  = {false, SPR_GENETIC_W4 - SPR_GENETIC_W1, 8, reinterpret_cast<void (*)()>(T_Chase), nullptr, &s_ofs_chase1};
 
 statetype s_ofs_pain = {false, SPR_GENETIC_OUCH - SPR_GENETIC_W1, 15, nullptr, nullptr, &s_ofs_chase1};
 
-statetype s_ofs_die1  = {false, SPR_GENETIC_OUCH - SPR_GENETIC_W1, 18, T_BlowBack, A_DeathScream, &s_ofs_die1s};
-statetype s_ofs_die1s = {false, SPR_GENETIC_DIE1 - SPR_GENETIC_W1, 20, T_BlowBack, nullptr, &s_ofs_die2};
-statetype s_ofs_die2  = {false, SPR_GENETIC_DIE2 - SPR_GENETIC_W1, 22, T_BlowBack, nullptr, &s_ofs_die3};
-statetype s_ofs_die3  = {false, SPR_GENETIC_DIE3 - SPR_GENETIC_W1, 20, T_BlowBack, nullptr, &s_ofs_die4};
-statetype s_ofs_die4  = {false, SPR_GENETIC_DIE4 - SPR_GENETIC_W1, 18, T_BlowBack, nullptr, &s_ofs_die5};
+statetype s_ofs_die1  = {false, SPR_GENETIC_OUCH - SPR_GENETIC_W1, 18, reinterpret_cast<void (*)()>(T_BlowBack), reinterpret_cast<void (*)()>(A_DeathScream), &s_ofs_die1s};
+statetype s_ofs_die1s = {false, SPR_GENETIC_DIE1 - SPR_GENETIC_W1, 20, reinterpret_cast<void (*)()>(T_BlowBack), nullptr, &s_ofs_die2};
+statetype s_ofs_die2  = {false, SPR_GENETIC_DIE2 - SPR_GENETIC_W1, 22, reinterpret_cast<void (*)()>(T_BlowBack), nullptr, &s_ofs_die3};
+statetype s_ofs_die3  = {false, SPR_GENETIC_DIE3 - SPR_GENETIC_W1, 20, reinterpret_cast<void (*)()>(T_BlowBack), nullptr, &s_ofs_die4};
+statetype s_ofs_die4  = {false, SPR_GENETIC_DIE4 - SPR_GENETIC_W1, 18, reinterpret_cast<void (*)()>(T_BlowBack), nullptr, &s_ofs_die5};
 statetype s_ofs_die5  = {false, SPR_GENETIC_DEAD - SPR_GENETIC_W1, 0, nullptr, nullptr, &s_ofs_die5};
 
 statetype s_ofs_attack1 = {false, SPR_GENETIC_SWING1 - SPR_GENETIC_W1, 20, nullptr, nullptr, &s_ofs_attack2};
-statetype s_ofs_attack2 = {false, SPR_GENETIC_SWING2 - SPR_GENETIC_W1, 20, nullptr, T_Hit, &s_ofs_attack3};
+statetype s_ofs_attack2 = {false, SPR_GENETIC_SWING2 - SPR_GENETIC_W1, 20, nullptr, reinterpret_cast<void (*)()>(T_Hit), &s_ofs_attack3};
 statetype s_ofs_attack3 = {false, SPR_GENETIC_SWING3 - SPR_GENETIC_W1, 30, nullptr, nullptr, &s_ofs_chase1};
 
 statetype s_ofs_spit1 = {false, SPR_GENETIC_SHOOT1 - SPR_GENETIC_W1, 20, nullptr, nullptr, &s_ofs_spit2};
-statetype s_ofs_spit2 = {false, SPR_GENETIC_SHOOT2 - SPR_GENETIC_W1, 20, nullptr, T_Shoot, &s_ofs_spit3};
-statetype s_ofs_spit3 = {false, SPR_GENETIC_SHOOT3 - SPR_GENETIC_W1, 10, nullptr, T_Shade, &s_ofs_chase1};
+statetype s_ofs_spit2 = {false, SPR_GENETIC_SHOOT2 - SPR_GENETIC_W1, 20, nullptr, reinterpret_cast<void (*)()>(T_Shoot), &s_ofs_spit3};
+statetype s_ofs_spit3 = {false, SPR_GENETIC_SHOOT3 - SPR_GENETIC_W1, 10, nullptr, reinterpret_cast<void (*)()>(T_Shade), &s_ofs_chase1};
 
 statetype s_ofs_shoot1 = {false, SPR_GENETIC_SWING1 - SPR_GENETIC_W1, 10, nullptr, nullptr, &s_ofs_shoot2};
-statetype s_ofs_shoot2 = {false, SPR_GENETIC_SWING2 - SPR_GENETIC_W1, 10, nullptr, T_Shoot, &s_ofs_shoot3};
-statetype s_ofs_shoot3 = {false, SPR_GENETIC_SWING3 - SPR_GENETIC_W1, 10, nullptr, T_Shade, &s_ofs_chase1};
+statetype s_ofs_shoot2 = {false, SPR_GENETIC_SWING2 - SPR_GENETIC_W1, 10, nullptr, reinterpret_cast<void (*)()>(T_Shoot), &s_ofs_shoot3};
+statetype s_ofs_shoot3 = {false, SPR_GENETIC_SWING3 - SPR_GENETIC_W1, 10, nullptr, reinterpret_cast<void (*)()>(T_Shade), &s_ofs_chase1};
 
 // General 'offset-object' states...
 //
 
 statetype s_ofs_pod_attack1  = {0, SPR_POD_ATTACK1 - SPR_POD_WALK1, 8, nullptr, nullptr, &s_ofs_pod_attack1a};
 statetype s_ofs_pod_attack1a = {0, SPR_POD_ATTACK2 - SPR_POD_WALK1, 8, nullptr, nullptr, &s_ofs_attack2};
-statetype s_ofs_pod_attack2  = {0, SPR_POD_ATTACK3 - SPR_POD_WALK1, 8, nullptr, T_Hit, &s_ofs_chase1};
+statetype s_ofs_pod_attack2  = {0, SPR_POD_ATTACK3 - SPR_POD_WALK1, 8, nullptr, reinterpret_cast<void (*)()>(T_Hit), &s_ofs_chase1};
 
 statetype s_ofs_pod_spit1 = {0, SPR_POD_SPIT1 - SPR_POD_WALK1, 8, nullptr, nullptr, &s_ofs_pod_spit2};
 statetype s_ofs_pod_spit2 = {0, SPR_POD_SPIT2 - SPR_POD_WALK1, 8, nullptr, nullptr, &s_ofs_pod_spit3};
-statetype s_ofs_pod_spit3 = {0, SPR_POD_SPIT3 - SPR_POD_WALK1, 8, nullptr, T_Shoot, &s_ofs_chase1};
+statetype s_ofs_pod_spit3 = {0, SPR_POD_SPIT3 - SPR_POD_WALK1, 8, nullptr, reinterpret_cast<void (*)()>(T_Shoot), &s_ofs_chase1};
 
 statetype s_ofs_pod_death1 = {0, 0, 60, nullptr, nullptr, &s_ofs_pod_death2};
 statetype s_ofs_pod_death2 = {0, 1, 30, nullptr, nullptr, &s_ofs_pod_death3};
@@ -431,15 +443,15 @@ statetype s_ofs_pod_death3 = {0, 2, 0, nullptr, nullptr, &s_ofs_pod_death3};
 
 statetype s_ofs_pod_ouch = {0, SPR_POD_OUCH - SPR_POD_WALK1, 11, nullptr, nullptr, &s_ofs_chase1};
 
-statetype s_ofs_bounce = {0, 0, 10, T_OfsBounce, T_OfsThink, &s_ofs_bounce};
+statetype s_ofs_bounce = {0, 0, 10, reinterpret_cast<void (*)()>(T_OfsBounce), reinterpret_cast<void (*)()>(T_OfsThink), &s_ofs_bounce};
 
-statetype s_ofs_ouch = {0, 0, 15, T_OfsBounce, nullptr, &s_ofs_bounce};
+statetype s_ofs_ouch = {0, 0, 15, reinterpret_cast<void (*)()>(T_OfsBounce), nullptr, &s_ofs_bounce};
 
-statetype s_ofs_esphere_death1 = {0, 0, 15, nullptr, A_DeathScream, &s_ofs_esphere_death2};
+statetype s_ofs_esphere_death1 = {0, 0, 15, nullptr, reinterpret_cast<void (*)()>(A_DeathScream), &s_ofs_esphere_death2};
 statetype s_ofs_esphere_death2 = {0, 1, 15, nullptr, nullptr, &s_ofs_esphere_death3};
 statetype s_ofs_esphere_death3 = {0, 2, 15, nullptr, nullptr, nullptr};
 
-statetype s_ofs_random = {0, 0, 1, T_OfsThink, nullptr, &s_ofs_random};
+statetype s_ofs_random = {0, 0, 1, reinterpret_cast<void (*)()>(T_OfsThink), nullptr, &s_ofs_random};
 
 statetype s_ofs_static = {0, 0, 1, nullptr, nullptr, &s_ofs_static};
 
@@ -472,13 +484,13 @@ void SpawnOffsetObj(enemy_t which, int tilex, int tiley)
     }
 
     SpawnNewObj(tilex, tiley, &s_ofs_stand);
-    new->flags |= FL_SHOOTABLE | FL_SOLID | FL_OFFSET_STATES;
-    new->obclass = rentacopobj + which;
+    new_->flags |= FL_SHOOTABLE | FL_SOLID | FL_OFFSET_STATES;
+    new_->obclass = static_cast<classtype>(rentacopobj + which);
 
     switch (which)
     {
     case en_final_boss2:
-        new->lighting = NO_SHADING;
+        new_->lighting = NO_SHADING;
     case en_spider_mutant:
     case en_breather_beast:
     case en_cyborg_warrior:
@@ -488,210 +500,210 @@ void SpawnOffsetObj(enemy_t which, int tilex, int tiley)
     case en_final_boss1:
     case en_final_boss3:
     case en_final_boss4:
-        new->temp1 = BossShapes[which - en_spider_mutant];
-        new->speed = ALIENSPEED;
-        new->ammo  = ALIENAMMOINIT;
-        new->flags |= FL_PROJ_TRANSPARENT;
-        new->flags2 = FL2_BFG_SHOOTABLE | FL2_BFGSHOT_SOLID;
+        new_->temp1 = BossShapes[which - en_spider_mutant];
+        new_->speed = ALIENSPEED;
+        new_->ammo  = ALIENAMMOINIT;
+        new_->flags |= FL_PROJ_TRANSPARENT;
+        new_->flags2 = FL2_BFG_SHOOTABLE | FL2_BFGSHOT_SOLID;
         break;
 
     case en_green_ooze:
-        InitSmartSpeedAnim(new, SPR_GREEN_OOZE1, US_RndT() % 3, 2, at_CYCLE, ad_FWD, 5 + (US_RndT() & 2));
-        new->flags &= ~(FL_SHOOTABLE | FL_SOLID);
+        InitSmartSpeedAnim(new_, SPR_GREEN_OOZE1, US_RndT() % 3, 2, at_CYCLE, ad_FWD, 5 + (US_RndT() & 2));
+        new_->flags &= ~(FL_SHOOTABLE | FL_SOLID);
         break;
 
     case en_black_ooze:
-        InitSmartSpeedAnim(new, SPR_BLACK_OOZE1, US_RndT() % 3, 2, at_CYCLE, ad_FWD, 5 + (US_RndT() & 2));
-        new->flags &= ~(FL_SHOOTABLE | FL_SOLID);
+        InitSmartSpeedAnim(new_, SPR_BLACK_OOZE1, US_RndT() % 3, 2, at_CYCLE, ad_FWD, 5 + (US_RndT() & 2));
+        new_->flags &= ~(FL_SHOOTABLE | FL_SOLID);
         break;
 
     case en_green2_ooze:
-        InitSmartSpeedAnim(new, SPR_GREEN2_OOZE1, US_RndT() % 3, 2, at_CYCLE, ad_FWD, 5 + (US_RndT() & 2));
-        new->flags &= ~(FL_SHOOTABLE | FL_SOLID);
+        InitSmartSpeedAnim(new_, SPR_GREEN2_OOZE1, US_RndT() % 3, 2, at_CYCLE, ad_FWD, 5 + (US_RndT() & 2));
+        new_->flags &= ~(FL_SHOOTABLE | FL_SOLID);
         break;
 
     case en_black2_ooze:
-        InitSmartSpeedAnim(new, SPR_BLACK2_OOZE1, US_RndT() % 3, 2, at_CYCLE, ad_FWD, 5 + (US_RndT() & 2));
-        new->flags &= ~(FL_SHOOTABLE | FL_SOLID);
+        InitSmartSpeedAnim(new_, SPR_BLACK2_OOZE1, US_RndT() % 3, 2, at_CYCLE, ad_FWD, 5 + (US_RndT() & 2));
+        new_->flags &= ~(FL_SHOOTABLE | FL_SOLID);
         break;
 
     case en_crate1:
     case en_crate2:
     case en_crate3:
-        new->temp1 = SPR_CRATE_1 + which - en_crate1;
-        new->flags |= FL_NO_SLIDE | FL_FAKE_STATIC;
+        new_->temp1 = SPR_CRATE_1 + which - en_crate1;
+        new_->flags |= FL_NO_SLIDE | FL_FAKE_STATIC;
 
         // NOTE : TEMP2 is modified in ScanInfoPlane to determine if
         //			 this object is a "blastable" or not.
         break;
 
     case en_rotating_cube:
-        InitSmartSpeedAnim(new, SPR_CUBE1, 0, 9, at_CYCLE, ad_FWD, 5);
-        new->flags2   = FL2_BFGSHOT_SOLID;
-        new->lighting = LAMP_ON_SHADING;
+        InitSmartSpeedAnim(new_, SPR_CUBE1, 0, 9, at_CYCLE, ad_FWD, 5);
+        new_->flags2   = FL2_BFGSHOT_SOLID;
+        new_->lighting = LAMP_ON_SHADING;
         break;
 
     case en_ventdrip:
         if (dir_which == en_bloodvent)
-            new->temp1 = SPR_BLOOD_DRIP1;
+            new_->temp1 = SPR_BLOOD_DRIP1;
         else
-            new->temp1 = SPR_WATER_DRIP1;
-        new->temp2 = 5 + (US_RndT() % 10);
-        new->temp3 = 0;
-        NewState(new, &s_ofs_random);
-        new->flags &= ~(FL_SHOOTABLE | FL_SOLID);
+            new_->temp1 = SPR_WATER_DRIP1;
+        new_->temp2 = 5 + (US_RndT() % 10);
+        new_->temp3 = 0;
+        NewState(new_, &s_ofs_random);
+        new_->flags &= ~(FL_SHOOTABLE | FL_SOLID);
         break;
 
     case en_plasma_detonator:
     case en_plasma_detonator_reserve:
-        NewState(new, &s_ofs_random);
-        new->temp1 = SPR_DOORBOMB;
-        new->temp3 = PLASMA_DETONATORS_DELAY;
-        new->flags &= ~(FL_SOLID | FL_SHOOTABLE);
+        NewState(new_, &s_ofs_random);
+        new_->temp1 = SPR_DOORBOMB;
+        new_->temp3 = PLASMA_DETONATORS_DELAY;
+        new_->flags &= ~(FL_SOLID | FL_SHOOTABLE);
         if (detonators_spawned++)
             ACT2_ERROR(TOO_MANY_DETONATORS);
         break;
 
     case en_flickerlight:
-        new->temp1 = SPR_DECO_ARC_1;
-        new->temp2 = (2 + (US_RndT() % 3)) * 60;
-        NewState(new, &s_ofs_random);
-        new->flags |= FL_NONMARK | FL_NEVERMARK;
-        new->flags &= ~(FL_SOLID | FL_SHOOTABLE);
-        new->lighting = LAMP_ON_SHADING;
+        new_->temp1 = SPR_DECO_ARC_1;
+        new_->temp2 = (2 + (US_RndT() % 3)) * 60;
+        NewState(new_, &s_ofs_random);
+        new_->flags |= FL_NONMARK | FL_NEVERMARK;
+        new_->flags &= ~(FL_SOLID | FL_SHOOTABLE);
+        new_->lighting = LAMP_ON_SHADING;
         break;
 
     case en_security_light:
-        new->flags &= ~(FL_SOLID | FL_SHOOTABLE); // ick - this is stupid...
-        NewState(new, &s_security_light);
+        new_->flags &= ~(FL_SOLID | FL_SHOOTABLE); // ick - this is stupid...
+        NewState(new_, &s_security_light);
         break;
 
     case en_electrosphere:
-        new->trydir = dir_which;
-        new->flags &= ~FL_SOLID;
-        new->temp1    = SPR_ELECTRO_SPHERE_ROAM1;
-        new->speed    = 3096;
-        new->lighting = NO_SHADING; // NO shading
-        NewState(new, &s_ofs_bounce);
-        SphereStartDir(new);
+        new_->trydir = static_cast<dirtype>(dir_which);
+        new_->flags &= ~FL_SOLID;
+        new_->temp1    = SPR_ELECTRO_SPHERE_ROAM1;
+        new_->speed    = 3096;
+        new_->lighting = NO_SHADING; // NO shading
+        NewState(new_, &s_ofs_bounce);
+        SphereStartDir(new_);
         break;
 
     case en_podegg:
-        new->temp1 = SPR_POD_EGG;
+        new_->temp1 = SPR_POD_EGG;
         if (scan_value == 0xffff)
-            new->temp2 = 60 * 5 + (60 * (US_RndT() % 20));
+            new_->temp2 = 60 * 5 + (60 * (US_RndT() % 20));
         else
-            new->temp2 = scan_value * 60;
-        new->speed = ALIENSPEED;
-        new->ammo  = ALIENAMMOINIT;
-        if (new->temp2 == 0xff * 60)
-            new->flags &= ~FL_SHOOTABLE;
-        new->flags |= FL_PROJ_TRANSPARENT | FL_NO_SLIDE | FL_FAKE_STATIC;
-        new->flags2 = FL2_BFGSHOT_SOLID | FL2_BFG_SHOOTABLE;
+            new_->temp2 = scan_value * 60;
+        new_->speed = ALIENSPEED;
+        new_->ammo  = ALIENAMMOINIT;
+        if (new_->temp2 == 0xff * 60)
+            new_->flags &= ~FL_SHOOTABLE;
+        new_->flags |= FL_PROJ_TRANSPARENT | FL_NO_SLIDE | FL_FAKE_STATIC;
+        new_->flags2 = FL2_BFGSHOT_SOLID | FL2_BFG_SHOOTABLE;
         break;
 
     case en_pod:
-        new->temp1 = SPR_POD_WALK1;
-        new->speed = SPDPATROL;
-        new->ammo  = -1;
-        new->flags |= FL_PROJ_TRANSPARENT | FL_NO_SLIDE;
-        new->flags2 = FL2_BFG_SHOOTABLE;
+        new_->temp1 = SPR_POD_WALK1;
+        new_->speed = SPDPATROL;
+        new_->ammo  = -1;
+        new_->flags |= FL_PROJ_TRANSPARENT | FL_NO_SLIDE;
+        new_->flags2 = FL2_BFG_SHOOTABLE;
         break;
 
     case en_genetic_guard:
-        new->temp1 = SPR_GENETIC_W1;
-        new->speed = ALIENSPEED;
-        new->ammo  = ALIENAMMOINIT;
-        new->flags |= FL_PROJ_TRANSPARENT | FL_NO_SLIDE;
-        new->flags2 = FL2_BFG_SHOOTABLE;
+        new_->temp1 = SPR_GENETIC_W1;
+        new_->speed = ALIENSPEED;
+        new_->ammo  = ALIENAMMOINIT;
+        new_->flags |= FL_PROJ_TRANSPARENT | FL_NO_SLIDE;
+        new_->flags2 = FL2_BFG_SHOOTABLE;
         break;
 
     case en_mutant_human1:
-        new->temp1 = SPR_MUTHUM1_W1;
-        new->speed = ALIENSPEED;
-        new->ammo  = ALIENAMMOINIT;
-        new->flags |= FL_PROJ_TRANSPARENT | FL_NO_SLIDE;
-        new->flags2 = FL2_BFGSHOT_SOLID | FL2_BFG_SHOOTABLE;
+        new_->temp1 = SPR_MUTHUM1_W1;
+        new_->speed = ALIENSPEED;
+        new_->ammo  = ALIENAMMOINIT;
+        new_->flags |= FL_PROJ_TRANSPARENT | FL_NO_SLIDE;
+        new_->flags2 = FL2_BFGSHOT_SOLID | FL2_BFG_SHOOTABLE;
         break;
 
     case en_mutant_human2:
-        new->temp1 = SPR_MUTHUM2_W1;
-        new->speed = ALIENSPEED;
-        new->ammo  = ALIENAMMOINIT;
-        new->flags |= FL_PROJ_TRANSPARENT | FL_NO_SLIDE;
-        new->flags2 = FL2_BFGSHOT_SOLID | FL2_BFG_SHOOTABLE;
+        new_->temp1 = SPR_MUTHUM2_W1;
+        new_->speed = ALIENSPEED;
+        new_->ammo  = ALIENAMMOINIT;
+        new_->flags |= FL_PROJ_TRANSPARENT | FL_NO_SLIDE;
+        new_->flags2 = FL2_BFGSHOT_SOLID | FL2_BFG_SHOOTABLE;
         break;
 
     case en_scan_wait_alien:
-        new->temp1 = SPR_SCAN_ALIEN_READY;
-        new->flags |= FL_STATIONARY | FL_NO_SLIDE | FL_FAKE_STATIC;
-        new->flags2 = FL2_BFGSHOT_SOLID | FL2_BFG_SHOOTABLE;
+        new_->temp1 = SPR_SCAN_ALIEN_READY;
+        new_->flags |= FL_STATIONARY | FL_NO_SLIDE | FL_FAKE_STATIC;
+        new_->flags2 = FL2_BFGSHOT_SOLID | FL2_BFG_SHOOTABLE;
         break;
 
     case en_lcan_wait_alien:
-        new->temp1 = SPR_LCAN_ALIEN_READY;
-        new->flags |= FL_STATIONARY | FL_NO_SLIDE | FL_FAKE_STATIC;
-        new->flags2 = FL2_BFGSHOT_SOLID | FL2_BFG_SHOOTABLE;
+        new_->temp1 = SPR_LCAN_ALIEN_READY;
+        new_->flags |= FL_STATIONARY | FL_NO_SLIDE | FL_FAKE_STATIC;
+        new_->flags2 = FL2_BFGSHOT_SOLID | FL2_BFG_SHOOTABLE;
         break;
 
     case en_morphing_spider_mutant:
     case en_morphing_reptilian_warrior:
     case en_morphing_mutanthuman2:
         if (scan_value == 0xffff)
-            new->temp2 = 0xffff; // set to max!			// 60*5+(60*(US_RndT()%20));
+            new_->temp2 = 0xffff; // set to max!			// 60*5+(60*(US_RndT()%20));
         else
-            new->temp2 = scan_value * 60;
+            new_->temp2 = scan_value * 60;
 
-        if (new->temp2 == 0xff * 60)
-            new->flags &= ~FL_SHOOTABLE;
+        if (new_->temp2 == 0xff * 60)
+            new_->flags &= ~FL_SHOOTABLE;
 
-        new->speed = ALIENSPEED;
-        new->ammo  = ALIENAMMOINIT;
-        new->temp1 = MorphShapes[which - en_morphing_spider_mutant];
-        new->flags |= FL_FAKE_STATIC;
-        new->flags2 = FL2_BFGSHOT_SOLID | FL2_BFG_SHOOTABLE;
-        NewState(new, &s_ofs_random);
+        new_->speed = ALIENSPEED;
+        new_->ammo  = ALIENAMMOINIT;
+        new_->temp1 = MorphShapes[which - en_morphing_spider_mutant];
+        new_->flags |= FL_FAKE_STATIC;
+        new_->flags2 = FL2_BFGSHOT_SOLID | FL2_BFG_SHOOTABLE;
+        NewState(new_, &s_ofs_random);
         break;
 
     case en_gurney_wait:
         if (scan_value == 0xffff)
-            new->temp3 = 0;
+            new_->temp3 = 0;
         else
-            new->temp3 = (scan_value & 0xff) * 60;
-        new->temp1 = SPR_GURNEY_MUT_READY;
-        new->flags |= FL_STATIONARY | FL_PROJ_TRANSPARENT | FL_NO_SLIDE | FL_FAKE_STATIC;
-        new->flags2 = FL2_BFGSHOT_SOLID | FL2_BFG_SHOOTABLE;
+            new_->temp3 = (scan_value & 0xff) * 60;
+        new_->temp1 = SPR_GURNEY_MUT_READY;
+        new_->flags |= FL_STATIONARY | FL_PROJ_TRANSPARENT | FL_NO_SLIDE | FL_FAKE_STATIC;
+        new_->flags2 = FL2_BFGSHOT_SOLID | FL2_BFG_SHOOTABLE;
         break;
 
     case en_lcan_alien: // Large Canister Alien - Out of can.
-        new->temp1 = SPR_LCAN_ALIEN_W1;
-        new->speed = ALIENSPEED;
-        new->ammo  = ALIENAMMOINIT;
-        new->flags |= FL_PROJ_TRANSPARENT | FL_NO_SLIDE;
-        new->flags2 = FL2_BFG_SHOOTABLE;
+        new_->temp1 = SPR_LCAN_ALIEN_W1;
+        new_->speed = ALIENSPEED;
+        new_->ammo  = ALIENAMMOINIT;
+        new_->flags |= FL_PROJ_TRANSPARENT | FL_NO_SLIDE;
+        new_->flags2 = FL2_BFG_SHOOTABLE;
         break;
 
     case en_scan_alien: // Small Canister Alien - Out of can.
-        new->temp1 = SPR_SCAN_ALIEN_W1;
-        new->speed = ALIENSPEED;
-        new->ammo  = ALIENAMMOINIT;
-        new->flags |= FL_PROJ_TRANSPARENT;
-        new->flags2 = FL2_BFG_SHOOTABLE;
+        new_->temp1 = SPR_SCAN_ALIEN_W1;
+        new_->speed = ALIENSPEED;
+        new_->ammo  = ALIENAMMOINIT;
+        new_->flags |= FL_PROJ_TRANSPARENT;
+        new_->flags2 = FL2_BFG_SHOOTABLE;
         break;
 
     case en_gurney: // Gurney Mutant - Off of gurney.
-        new->temp1 = SPR_GURNEY_MUT_W1;
-        new->speed = ALIENSPEED;
-        new->flags |= FL_PROJ_TRANSPARENT | FL_NO_SLIDE;
-        new->ammo   = ALIENAMMOINIT;
-        new->flags2 = FL2_BFG_SHOOTABLE;
+        new_->temp1 = SPR_GURNEY_MUT_W1;
+        new_->speed = ALIENSPEED;
+        new_->flags |= FL_PROJ_TRANSPARENT | FL_NO_SLIDE;
+        new_->ammo   = ALIENAMMOINIT;
+        new_->flags2 = FL2_BFG_SHOOTABLE;
         break;
     }
 
-    CheckForSpecialTile(new, tilex, tiley);
+    CheckForSpecialTile(new_, tilex, tiley);
 
     if (which < SPACER1_OBJ)
-        new->hitpoints = starthitpoints[gamestate.difficulty][which];
+        new_->hitpoints = starthitpoints[gamestate.difficulty][which];
 }
 
 //---------------------------------------------------------------------------
@@ -974,7 +986,7 @@ void SphereStartDir(objtype* ob)
     actorat[ob->tilex][ob->tiley] = nullptr;
     for (loop = 0; loop < 3; loop++)
     {
-        ob->dir = RandomSphereDir(en_vertsphere + ((ob->trydir - en_vertsphere + loop) % 3));
+        ob->dir = static_cast<dirtype>(RandomSphereDir(static_cast<enemy_t>(en_vertsphere + ((ob->trydir - en_vertsphere + loop) % 3))));
         if (!TryWalk(ob, true))
         {
             ob->dir = opposite[ob->dir];
@@ -997,12 +1009,12 @@ void CheckForcedMove(objtype* ob)
     short olddir;
 
     olddir  = ob->dir;
-    ob->dir = RandomSphereDir(ob->trydir);
+    ob->dir = static_cast<dirtype>(RandomSphereDir(static_cast<enemy_t>(ob->trydir)));
     if (!TryWalk(ob, false))
     {
         ob->dir = opposite[ob->dir];
         if (!TryWalk(ob, false))
-            ob->dir = olddir;
+            ob->dir = static_cast<dirtype>(olddir);
     }
 }
 
@@ -1090,7 +1102,7 @@ void T_OfsBounce(objtype* ob)
                     continue;
                 }
 
-                ob->dir = (ob->dir + 2) % 8; // Try 90 degrees to the left
+                ob->dir = static_cast<dirtype>((ob->dir + 2) % 8); // Try 90 degrees to the left
                 if (TryWalk(ob, false))
                     break;
 
@@ -1098,8 +1110,8 @@ void T_OfsBounce(objtype* ob)
                 if (TryWalk(ob, false))
                     break;
 
-                ob->dir = (ob->dir + 2) % 8; // Back to original direction..
-                                             // Must be in a corner...
+                ob->dir = static_cast<dirtype>((ob->dir + 2) % 8); // Back to original direction..
+                                                                   // Must be in a corner...
 
                 check_opposite = true;
                 break;
@@ -1182,13 +1194,13 @@ bool MoveTrappedDiag(objtype* ob)
     // Try changing directions.
     //
     if (ob->dir == north || ob->dir == south)
-        ob->trydir = en_horzsphere;
+        ob->trydir = static_cast<dirtype>(en_horzsphere);
     else
-        ob->trydir = en_vertsphere;
+        ob->trydir = static_cast<dirtype>(en_vertsphere);
 
     CheckForcedMove(ob);
 
-    ob->trydir = en_diagsphere;
+    ob->trydir = static_cast<dirtype>(en_diagsphere);
 
     return (TryWalk(ob, true));
 }
@@ -1200,7 +1212,7 @@ bool CheckTrappedDiag(objtype* ob)
 {
     dirtype orgdir = ob->dir;
 
-    for (ob->dir = northeast; ob->dir <= southeast; ob->dir += 2)
+    for (ob->dir = northeast; ob->dir <= southeast; ob->dir = static_cast<dirtype>(static_cast<int>(ob->dir) + 2))
         if (TryWalk(ob, false))
             break;
 
@@ -1265,11 +1277,11 @@ void SpawnHiddenOfs(enemy_t which, int tilex, int tiley)
 {
     nevermark = true;
     SpawnOffsetObj(which, tilex, tiley); // Spawn a reserve
-    nevermark  = false;
-    new->tilex = 0;
-    new->tiley = 0;
-    new->x     = TILEGLOBAL / 2;
-    new->y     = TILEGLOBAL / 2;
+    nevermark   = false;
+    new_->tilex = 0;
+    new_->tiley = 0;
+    new_->x     = TILEGLOBAL / 2;
+    new_->y     = TILEGLOBAL / 2;
 }
 
 //---------------------------------------------------------------------------
@@ -1403,8 +1415,8 @@ void InitAnim(objtype* obj, unsigned ShapeNum, unsigned char StartOfs, unsigned 
 // statetype s_ofs_smart_anim	= {false,0, 1, nullptr,T_SmartThought,&s_ofs_smart_anim};
 // statetype s_ofs_smart_anim2	= {false,0, 5, nullptr,T_SmartThought,&s_ofs_smart_anim2};
 
-statetype s_ofs_smart_anim  = {false, 0, 1, T_SmartThought, nullptr, &s_ofs_smart_anim};
-statetype s_ofs_smart_anim2 = {false, 0, 1, T_SmartThought, nullptr, &s_ofs_smart_anim2};
+statetype s_ofs_smart_anim  = {false, 0, 1, reinterpret_cast<void (*)()>(T_SmartThought), nullptr, &s_ofs_smart_anim};
+statetype s_ofs_smart_anim2 = {false, 0, 1, reinterpret_cast<void (*)()>(T_SmartThought), nullptr, &s_ofs_smart_anim2};
 
 //
 // Functions
@@ -1483,7 +1495,7 @@ void T_SmartThought(objtype* obj)
                 dx         = obj->obclass - morphing_spider_mutantobj;
                 obj->temp1 = MorphEndShapes[dx];
                 PlaySoundLocActor(MorphSounds[dx], obj);
-                obj->obclass   = MorphClass[dx];
+                obj->obclass   = static_cast<classtype>(MorphClass[dx]);
                 obj->hitpoints = starthitpoints[gamestate.difficulty][MorphClass[dx] - rentacopobj];
                 obj->flags &= ~FL_FAKE_STATIC;
                 obj->flags |= FL_PROJ_TRANSPARENT | FL_SHOOTABLE;
@@ -1635,11 +1647,11 @@ void T_SmartThought(objtype* obj)
                     {
                         usedummy = true;
                         SpawnOffsetObj(en_green_ooze, obj->tilex, obj->tiley);
-                        new->x     = obj->x + (US_RndT() << 7);
-                        new->y     = obj->y + (US_RndT() << 7);
-                        new->tilex = new->x >> TILESHIFT;
-                        new->tiley = new->y >> TILESHIFT;
-                        usedummy   = false;
+                        new_->x     = obj->x + (US_RndT() << 7);
+                        new_->y     = obj->y + (US_RndT() << 7);
+                        new_->tilex = new_->x >> TILESHIFT;
+                        new_->tiley = new_->y >> TILESHIFT;
+                        usedummy    = false;
                     }
                 }
 
@@ -2091,10 +2103,10 @@ extern statetype s_barrier_transition;
 void             T_BarrierTransition(objtype* obj);
 void             T_BarrierShutdown(objtype* obj);
 
-statetype s_barrier_transition = {0, 0, 15, T_BarrierTransition, nullptr, &s_barrier_transition};
-statetype s_vpost_barrier      = {0, SPR_VPOST1, 15, T_BarrierTransition, nullptr, &s_vpost_barrier};
-statetype s_spike_barrier      = {0, SPR_VSPIKE1, 15, T_BarrierTransition, nullptr, &s_spike_barrier};
-statetype s_barrier_shutdown   = {0, 0, 15, T_BarrierShutdown, nullptr, &s_barrier_shutdown};
+statetype s_barrier_transition = {0, 0, 15, reinterpret_cast<void (*)()>(T_BarrierTransition), nullptr, &s_barrier_transition};
+statetype s_vpost_barrier      = {0, SPR_VPOST1, 15, reinterpret_cast<void (*)()>(T_BarrierTransition), nullptr, &s_vpost_barrier};
+statetype s_spike_barrier      = {0, SPR_VSPIKE1, 15, reinterpret_cast<void (*)()>(T_BarrierTransition), nullptr, &s_spike_barrier};
+statetype s_barrier_shutdown   = {0, 0, 15, reinterpret_cast<void (*)()>(T_BarrierShutdown), nullptr, &s_barrier_shutdown};
 
 //---------------------------------------------------------------------------
 // SpawnBarrier()
@@ -2108,65 +2120,65 @@ void SpawnBarrier(enemy_t which, int tilex, int tiley, bool OnOff)
     nevermark = false;
 
     if (OnOff)
-        new->flags = FL_OFFSET_STATES | FL_BARRIER | FL_FAKE_STATIC | FL_SOLID;
+        new_->flags = FL_OFFSET_STATES | FL_BARRIER | FL_FAKE_STATIC | FL_SOLID;
     else
-        new->flags = FL_OFFSET_STATES | FL_BARRIER;
+        new_->flags = FL_OFFSET_STATES | FL_BARRIER;
 
-    new->obclass = rentacopobj + which;
-    new->ammo    = OnOff;
-    new->temp2   = ScanBarrierTable(tilex, tiley);
-    new->flags2  = FL2_BFGSHOT_SOLID;
+    new_->obclass = static_cast<classtype>(rentacopobj + which);
+    new_->ammo    = OnOff;
+    new_->temp2   = ScanBarrierTable(tilex, tiley);
+    new_->flags2  = FL2_BFGSHOT_SOLID;
 
     switch (which)
     {
     case en_arc_barrier:
-        new->flags2 |= FL2_BFG_SHOOTABLE;
+        new_->flags2 |= FL2_BFG_SHOOTABLE;
         if (OnOff)
         {
-            InitSmartSpeedAnim(new, SPR_ELEC_ARC1, US_RndT() % 3, 2, at_CYCLE, ad_FWD, 3 + (US_RndT() & 3));
-            new->lighting = LAMP_ON_SHADING;
-            //         	new->flags |= FL_SHOOTABLE;
+            InitSmartSpeedAnim(new_, SPR_ELEC_ARC1, US_RndT() % 3, 2, at_CYCLE, ad_FWD, 3 + (US_RndT() & 3));
+            new_->lighting = LAMP_ON_SHADING;
+            //         	new_->flags |= FL_SHOOTABLE;
         }
         else
         {
-            NewState(new, &s_barrier_transition);
-            new->temp3 = 0;
-            new->flags &= ~(FL_SOLID | FL_FAKE_STATIC);
-            new->flags |= (FL_NEVERMARK | FL_NONMARK);
-            new->lighting      = 0;
-            BARRIER_STATE(new) = bt_OFF;
-            new->temp1         = SPR_ELEC_ARC4;
+            NewState(new_, &s_barrier_transition);
+            new_->temp3 = 0;
+            new_->flags &= ~(FL_SOLID | FL_FAKE_STATIC);
+            new_->flags |= (FL_NEVERMARK | FL_NONMARK);
+            new_->lighting      = 0;
+            BARRIER_STATE(new_) = bt_OFF;
+            new_->temp1         = SPR_ELEC_ARC4;
         }
         break;
 
     case en_post_barrier:
         if (OnOff)
         {
-            InitSmartSpeedAnim(new, SPR_ELEC_POST1, US_RndT() % 3, 2, at_CYCLE, ad_FWD, 3 + (US_RndT() & 3));
-            new->lighting = LAMP_ON_SHADING;
+            InitSmartSpeedAnim(new_, SPR_ELEC_POST1, US_RndT() % 3, 2, at_CYCLE, ad_FWD, 3 + (US_RndT() & 3));
+            new_->lighting = LAMP_ON_SHADING;
         }
         else
         {
-            NewState(new, &s_barrier_transition);
-            new->temp3 = 0;
-            new->flags &= ~(FL_SOLID | FL_FAKE_STATIC);
-            new->flags |= (FL_NEVERMARK | FL_NONMARK);
-            new->lighting      = 0;
-            BARRIER_STATE(new) = bt_OFF;
-            new->temp1         = SPR_ELEC_POST4;
+            NewState(new_, &s_barrier_transition);
+            new_->temp3 = 0;
+            new_->flags &= ~(FL_SOLID | FL_FAKE_STATIC);
+            new_->flags |= (FL_NEVERMARK | FL_NONMARK);
+            new_->lighting      = 0;
+            BARRIER_STATE(new_) = bt_OFF;
+            new_->temp1         = SPR_ELEC_POST4;
         }
         break;
 
     case en_vpost_barrier:
-        NewState(new, &s_vpost_barrier);
+        NewState(new_, &s_vpost_barrier);
         if (OnOff)
-            new->temp1 = SPR_VPOST8 - SPR_VPOST1;
+            new_->temp1 = SPR_VPOST8 - SPR_VPOST1;
         break;
 
     case en_vspike_barrier:
-        NewState(new, &s_spike_barrier);
+        NewState(new_, &s_spike_barrier);
         if (OnOff)
-            new->temp1 = SPR_VSPIKE8 - SPR_VSPIKE1;
+            new_->temp1 = SPR_VSPIKE8 - SPR_VSPIKE1;
         break;
     }
 }
@@ -2514,32 +2526,32 @@ extern statetype s_rent_die3;
 extern statetype s_rent_die3s;
 extern statetype s_rent_die4;
 
-statetype s_rent_stand = {true, SPR_RENT_S_1, 0, T_Stand, nullptr, &s_rent_stand};
+statetype s_rent_stand = {true, SPR_RENT_S_1, 0, reinterpret_cast<void (*)()>(T_Stand), nullptr, &s_rent_stand};
 
-statetype s_rent_path1  = {true, SPR_RENT_W1_1, 20, T_Path, nullptr, &s_rent_path1s};
+statetype s_rent_path1  = {true, SPR_RENT_W1_1, 20, reinterpret_cast<void (*)()>(T_Path), nullptr, &s_rent_path1s};
 statetype s_rent_path1s = {true, SPR_RENT_W1_1, 5, nullptr, nullptr, &s_rent_path2};
-statetype s_rent_path2  = {true, SPR_RENT_W2_1, 15, T_Path, nullptr, &s_rent_path3};
-statetype s_rent_path3  = {true, SPR_RENT_W3_1, 20, T_Path, nullptr, &s_rent_path3s};
+statetype s_rent_path2  = {true, SPR_RENT_W2_1, 15, reinterpret_cast<void (*)()>(T_Path), nullptr, &s_rent_path3};
+statetype s_rent_path3  = {true, SPR_RENT_W3_1, 20, reinterpret_cast<void (*)()>(T_Path), nullptr, &s_rent_path3s};
 statetype s_rent_path3s = {true, SPR_RENT_W3_1, 5, nullptr, nullptr, &s_rent_path4};
-statetype s_rent_path4  = {true, SPR_RENT_W4_1, 15, T_Path, nullptr, &s_rent_path1};
+statetype s_rent_path4  = {true, SPR_RENT_W4_1, 15, reinterpret_cast<void (*)()>(T_Path), nullptr, &s_rent_path1};
 
 statetype s_rent_pain = {2, SPR_RENT_PAIN_1, 15, nullptr, nullptr, &s_rent_chase1};
 
 statetype s_rent_shoot1 = {false, SPR_RENT_SHOOT1, 20, nullptr, nullptr, &s_rent_shoot2};
-statetype s_rent_shoot2 = {false, SPR_RENT_SHOOT2, 20, nullptr, T_Shoot, &s_rent_shoot3};
-statetype s_rent_shoot3 = {false, SPR_RENT_SHOOT3, 20, nullptr, T_Shade, &s_rent_chase1};
+statetype s_rent_shoot2 = {false, SPR_RENT_SHOOT2, 20, nullptr, reinterpret_cast<void (*)()>(T_Shoot), &s_rent_shoot3};
+statetype s_rent_shoot3 = {false, SPR_RENT_SHOOT3, 20, nullptr, reinterpret_cast<void (*)()>(T_Shade), &s_rent_chase1};
 
-statetype s_rent_chase1  = {true, SPR_RENT_W1_1, 10, T_Chase, nullptr, &s_rent_chase1s};
+statetype s_rent_chase1  = {true, SPR_RENT_W1_1, 10, reinterpret_cast<void (*)()>(T_Chase), nullptr, &s_rent_chase1s};
 statetype s_rent_chase1s = {true, SPR_RENT_W1_1, 3, nullptr, nullptr, &s_rent_chase2};
-statetype s_rent_chase2  = {true, SPR_RENT_W2_1, 8, T_Chase, nullptr, &s_rent_chase3};
-statetype s_rent_chase3  = {true, SPR_RENT_W3_1, 10, T_Chase, nullptr, &s_rent_chase3s};
+statetype s_rent_chase2  = {true, SPR_RENT_W2_1, 8, reinterpret_cast<void (*)()>(T_Chase), nullptr, &s_rent_chase3};
+statetype s_rent_chase3  = {true, SPR_RENT_W3_1, 10, reinterpret_cast<void (*)()>(T_Chase), nullptr, &s_rent_chase3s};
 statetype s_rent_chase3s = {true, SPR_RENT_W3_1, 3, nullptr, nullptr, &s_rent_chase4};
-statetype s_rent_chase4  = {true, SPR_RENT_W4_1, 8, T_Chase, nullptr, &s_rent_chase1};
+statetype s_rent_chase4  = {true, SPR_RENT_W4_1, 8, reinterpret_cast<void (*)()>(T_Chase), nullptr, &s_rent_chase1};
 
-statetype s_rent_die1  = {false, SPR_RENT_DIE_1, 17, T_BlowBack, A_DeathScream, &s_rent_die2};
-statetype s_rent_die2  = {false, SPR_RENT_DIE_2, 21, T_BlowBack, nullptr, &s_rent_die3};
-statetype s_rent_die3  = {false, SPR_RENT_DIE_3, 16, T_BlowBack, nullptr, &s_rent_die3s};
-statetype s_rent_die3s = {false, SPR_RENT_DIE_4, 13, T_BlowBack, nullptr, &s_rent_die4};
+statetype s_rent_die1  = {false, SPR_RENT_DIE_1, 17, reinterpret_cast<void (*)()>(T_BlowBack), reinterpret_cast<void (*)()>(A_DeathScream), &s_rent_die2};
+statetype s_rent_die2  = {false, SPR_RENT_DIE_2, 21, reinterpret_cast<void (*)()>(T_BlowBack), nullptr, &s_rent_die3};
+statetype s_rent_die3  = {false, SPR_RENT_DIE_3, 16, reinterpret_cast<void (*)()>(T_BlowBack), nullptr, &s_rent_die3s};
+statetype s_rent_die3s = {false, SPR_RENT_DIE_4, 13, reinterpret_cast<void (*)()>(T_BlowBack), nullptr, &s_rent_die4};
 statetype s_rent_die4  = {false, SPR_RENT_DEAD, 0, nullptr, nullptr, &s_rent_die4};
 
 //
@@ -2577,32 +2589,32 @@ extern statetype s_ofcdie3;
 extern statetype s_ofcdie4;
 extern statetype s_ofcdie5;
 
-statetype s_ofcstand = {true, SPR_OFC_S_1, 0, T_Stand, nullptr, &s_ofcstand};
+statetype s_ofcstand = {true, SPR_OFC_S_1, 0, reinterpret_cast<void (*)()>(T_Stand), nullptr, &s_ofcstand};
 
-statetype s_ofcpath1  = {true, SPR_OFC_W1_1, 20, T_Path, nullptr, &s_ofcpath1s};
+statetype s_ofcpath1  = {true, SPR_OFC_W1_1, 20, reinterpret_cast<void (*)()>(T_Path), nullptr, &s_ofcpath1s};
 statetype s_ofcpath1s = {true, SPR_OFC_W1_1, 5, nullptr, nullptr, &s_ofcpath2};
-statetype s_ofcpath2  = {true, SPR_OFC_W2_1, 15, T_Path, nullptr, &s_ofcpath3};
-statetype s_ofcpath3  = {true, SPR_OFC_W3_1, 20, T_Path, nullptr, &s_ofcpath3s};
+statetype s_ofcpath2  = {true, SPR_OFC_W2_1, 15, reinterpret_cast<void (*)()>(T_Path), nullptr, &s_ofcpath3};
+statetype s_ofcpath3  = {true, SPR_OFC_W3_1, 20, reinterpret_cast<void (*)()>(T_Path), nullptr, &s_ofcpath3s};
 statetype s_ofcpath3s = {true, SPR_OFC_W3_1, 5, nullptr, nullptr, &s_ofcpath4};
-statetype s_ofcpath4  = {true, SPR_OFC_W4_1, 15, T_Path, nullptr, &s_ofcpath1};
+statetype s_ofcpath4  = {true, SPR_OFC_W4_1, 15, reinterpret_cast<void (*)()>(T_Path), nullptr, &s_ofcpath1};
 
 statetype s_ofcpain = {2, SPR_OFC_PAIN_1, 15, nullptr, nullptr, &s_ofcchase1};
 
 statetype s_ofcshoot1 = {false, SPR_OFC_SHOOT1, 6, nullptr, nullptr, &s_ofcshoot2};
-statetype s_ofcshoot2 = {false, SPR_OFC_SHOOT2, 20, nullptr, T_Shoot, &s_ofcshoot3};
-statetype s_ofcshoot3 = {false, SPR_OFC_SHOOT3, 10, nullptr, T_Shade, &s_ofcchase1};
+statetype s_ofcshoot2 = {false, SPR_OFC_SHOOT2, 20, nullptr, reinterpret_cast<void (*)()>(T_Shoot), &s_ofcshoot3};
+statetype s_ofcshoot3 = {false, SPR_OFC_SHOOT3, 10, nullptr, reinterpret_cast<void (*)()>(T_Shade), &s_ofcchase1};
 
-statetype s_ofcchase1  = {true, SPR_OFC_W1_1, 10, T_Chase, nullptr, &s_ofcchase1s};
+statetype s_ofcchase1  = {true, SPR_OFC_W1_1, 10, reinterpret_cast<void (*)()>(T_Chase), nullptr, &s_ofcchase1s};
 statetype s_ofcchase1s = {true, SPR_OFC_W1_1, 3, nullptr, nullptr, &s_ofcchase2};
-statetype s_ofcchase2  = {true, SPR_OFC_W2_1, 8, T_Chase, nullptr, &s_ofcchase3};
-statetype s_ofcchase3  = {true, SPR_OFC_W3_1, 10, T_Chase, nullptr, &s_ofcchase3s};
+statetype s_ofcchase2  = {true, SPR_OFC_W2_1, 8, reinterpret_cast<void (*)()>(T_Chase), nullptr, &s_ofcchase3};
+statetype s_ofcchase3  = {true, SPR_OFC_W3_1, 10, reinterpret_cast<void (*)()>(T_Chase), nullptr, &s_ofcchase3s};
 statetype s_ofcchase3s = {true, SPR_OFC_W3_1, 3, nullptr, nullptr, &s_ofcchase4};
-statetype s_ofcchase4  = {true, SPR_OFC_W4_1, 8, T_Chase, nullptr, &s_ofcchase1};
+statetype s_ofcchase4  = {true, SPR_OFC_W4_1, 8, reinterpret_cast<void (*)()>(T_Chase), nullptr, &s_ofcchase1};
 
-statetype s_ofcdie1 = {false, SPR_OFC_DIE_1, 15, T_BlowBack, A_DeathScream, &s_ofcdie2};
-statetype s_ofcdie2 = {false, SPR_OFC_DIE_2, 15, T_BlowBack, nullptr, &s_ofcdie3};
-statetype s_ofcdie3 = {false, SPR_OFC_DIE_3, 15, T_BlowBack, nullptr, &s_ofcdie4};
-statetype s_ofcdie4 = {false, SPR_OFC_DIE_4, 15, T_BlowBack, nullptr, &s_ofcdie5};
+statetype s_ofcdie1 = {false, SPR_OFC_DIE_1, 15, reinterpret_cast<void (*)()>(T_BlowBack), reinterpret_cast<void (*)()>(A_DeathScream), &s_ofcdie2};
+statetype s_ofcdie2 = {false, SPR_OFC_DIE_2, 15, reinterpret_cast<void (*)()>(T_BlowBack), nullptr, &s_ofcdie3};
+statetype s_ofcdie3 = {false, SPR_OFC_DIE_3, 15, reinterpret_cast<void (*)()>(T_BlowBack), nullptr, &s_ofcdie4};
+statetype s_ofcdie4 = {false, SPR_OFC_DIE_4, 15, reinterpret_cast<void (*)()>(T_BlowBack), nullptr, &s_ofcdie5};
 statetype s_ofcdie5 = {false, SPR_OFC_DEAD, 0, nullptr, nullptr, &s_ofcdie5};
 
 //
@@ -2653,46 +2665,46 @@ extern statetype s_swatdie3;
 extern statetype s_swatdie4;
 extern statetype s_swatdie5;
 
-statetype s_swatstand = {true, SPR_SWAT_S_1, 0, T_Stand, nullptr, &s_swatstand};
+statetype s_swatstand = {true, SPR_SWAT_S_1, 0, reinterpret_cast<void (*)()>(T_Stand), nullptr, &s_swatstand};
 
-statetype s_swatpath1  = {true, SPR_SWAT_W1_1, 20, T_Path, nullptr, &s_swatpath1s};
+statetype s_swatpath1  = {true, SPR_SWAT_W1_1, 20, reinterpret_cast<void (*)()>(T_Path), nullptr, &s_swatpath1s};
 statetype s_swatpath1s = {true, SPR_SWAT_W1_1, 5, nullptr, nullptr, &s_swatpath2};
-statetype s_swatpath2  = {true, SPR_SWAT_W2_1, 15, T_Path, nullptr, &s_swatpath3};
-statetype s_swatpath3  = {true, SPR_SWAT_W3_1, 20, T_Path, nullptr, &s_swatpath3s};
+statetype s_swatpath2  = {true, SPR_SWAT_W2_1, 15, reinterpret_cast<void (*)()>(T_Path), nullptr, &s_swatpath3};
+statetype s_swatpath3  = {true, SPR_SWAT_W3_1, 20, reinterpret_cast<void (*)()>(T_Path), nullptr, &s_swatpath3s};
 statetype s_swatpath3s = {true, SPR_SWAT_W3_1, 5, nullptr, nullptr, &s_swatpath4};
-statetype s_swatpath4  = {true, SPR_SWAT_W4_1, 15, T_Path, nullptr, &s_swatpath1};
+statetype s_swatpath4  = {true, SPR_SWAT_W4_1, 15, reinterpret_cast<void (*)()>(T_Path), nullptr, &s_swatpath1};
 
 statetype s_swatpain = {2, SPR_SWAT_PAIN_1, 15, nullptr, nullptr, &s_swatshoot1};
 
 statetype s_swatshoot1 = {false, SPR_SWAT_SHOOT1, 10, nullptr, nullptr, &s_swatshoot2};
-statetype s_swatshoot2 = {false, SPR_SWAT_SHOOT2, 20, nullptr, T_Shoot, &s_swatshoot3};
-statetype s_swatshoot3 = {false, SPR_SWAT_SHOOT3, 10, nullptr, T_Shade, &s_swatshoot4};
-statetype s_swatshoot4 = {false, SPR_SWAT_SHOOT2, 10, nullptr, T_Shoot, &s_swatshoot5};
-statetype s_swatshoot5 = {false, SPR_SWAT_SHOOT3, 10, nullptr, T_Shade, &s_swatshoot6};
-statetype s_swatshoot6 = {false, SPR_SWAT_SHOOT2, 10, nullptr, T_Shoot, &s_swatshoot7};
-statetype s_swatshoot7 = {false, SPR_SWAT_SHOOT3, 10, nullptr, T_Shade, &s_swatchase1};
+statetype s_swatshoot2 = {false, SPR_SWAT_SHOOT2, 20, nullptr, reinterpret_cast<void (*)()>(T_Shoot), &s_swatshoot3};
+statetype s_swatshoot3 = {false, SPR_SWAT_SHOOT3, 10, nullptr, reinterpret_cast<void (*)()>(T_Shade), &s_swatshoot4};
+statetype s_swatshoot4 = {false, SPR_SWAT_SHOOT2, 10, nullptr, reinterpret_cast<void (*)()>(T_Shoot), &s_swatshoot5};
+statetype s_swatshoot5 = {false, SPR_SWAT_SHOOT3, 10, nullptr, reinterpret_cast<void (*)()>(T_Shade), &s_swatshoot6};
+statetype s_swatshoot6 = {false, SPR_SWAT_SHOOT2, 10, nullptr, reinterpret_cast<void (*)()>(T_Shoot), &s_swatshoot7};
+statetype s_swatshoot7 = {false, SPR_SWAT_SHOOT3, 10, nullptr, reinterpret_cast<void (*)()>(T_Shade), &s_swatchase1};
 
-statetype s_swatchase1  = {true, SPR_SWAT_W1_1, 10, T_Chase, nullptr, &s_swatchase1s};
+statetype s_swatchase1  = {true, SPR_SWAT_W1_1, 10, reinterpret_cast<void (*)()>(T_Chase), nullptr, &s_swatchase1s};
 statetype s_swatchase1s = {true, SPR_SWAT_W1_1, 3, nullptr, nullptr, &s_swatchase2};
-statetype s_swatchase2  = {true, SPR_SWAT_W2_1, 8, T_Chase, nullptr, &s_swatchase3};
-statetype s_swatchase3  = {true, SPR_SWAT_W3_1, 10, T_Chase, nullptr, &s_swatchase3s};
+statetype s_swatchase2  = {true, SPR_SWAT_W2_1, 8, reinterpret_cast<void (*)()>(T_Chase), nullptr, &s_swatchase3};
+statetype s_swatchase3  = {true, SPR_SWAT_W3_1, 10, reinterpret_cast<void (*)()>(T_Chase), nullptr, &s_swatchase3s};
 statetype s_swatchase3s = {true, SPR_SWAT_W3_1, 3, nullptr, nullptr, &s_swatchase4};
-statetype s_swatchase4  = {true, SPR_SWAT_W4_1, 8, T_Chase, nullptr, &s_swatchase1};
+statetype s_swatchase4  = {true, SPR_SWAT_W4_1, 8, reinterpret_cast<void (*)()>(T_Chase), nullptr, &s_swatchase1};
 
 statetype s_swatwounded1 = {false, SPR_SWAT_WOUNDED1, 10, nullptr, nullptr, &s_swatwounded2};
 statetype s_swatwounded2 = {false, SPR_SWAT_WOUNDED2, 10, nullptr, nullptr, &s_swatwounded3};
 statetype s_swatwounded3 = {false, SPR_SWAT_WOUNDED3, 10, nullptr, nullptr, &s_swatwounded4};
-statetype s_swatwounded4 = {false, SPR_SWAT_WOUNDED4, 10, T_SwatWound, nullptr, &s_swatwounded4};
+statetype s_swatwounded4 = {false, SPR_SWAT_WOUNDED4, 10, reinterpret_cast<void (*)()>(T_SwatWound), nullptr, &s_swatwounded4};
 
 statetype s_swatunwounded1 = {false, SPR_SWAT_WOUNDED4, 10, nullptr, nullptr, &s_swatunwounded2};
 statetype s_swatunwounded2 = {false, SPR_SWAT_WOUNDED3, 10, nullptr, nullptr, &s_swatunwounded3};
 statetype s_swatunwounded3 = {false, SPR_SWAT_WOUNDED2, 10, nullptr, nullptr, &s_swatunwounded4};
-statetype s_swatunwounded4 = {false, SPR_SWAT_WOUNDED1, 10, nullptr, T_SwatWound, &s_swatchase1};
+statetype s_swatunwounded4 = {false, SPR_SWAT_WOUNDED1, 10, nullptr, reinterpret_cast<void (*)()>(T_SwatWound), &s_swatchase1};
 
-statetype s_swatdie1 = {false, SPR_SWAT_DIE_1, 20, T_BlowBack, A_DeathScream, &s_swatdie2};
-statetype s_swatdie2 = {false, SPR_SWAT_DIE_2, 20, T_BlowBack, nullptr, &s_swatdie3};
-statetype s_swatdie3 = {false, SPR_SWAT_DIE_3, 20, T_BlowBack, nullptr, &s_swatdie4};
-statetype s_swatdie4 = {false, SPR_SWAT_DIE_4, 20, T_BlowBack, nullptr, &s_swatdie5};
+statetype s_swatdie1 = {false, SPR_SWAT_DIE_1, 20, reinterpret_cast<void (*)()>(T_BlowBack), reinterpret_cast<void (*)()>(A_DeathScream), &s_swatdie2};
+statetype s_swatdie2 = {false, SPR_SWAT_DIE_2, 20, reinterpret_cast<void (*)()>(T_BlowBack), nullptr, &s_swatdie3};
+statetype s_swatdie3 = {false, SPR_SWAT_DIE_3, 20, reinterpret_cast<void (*)()>(T_BlowBack), nullptr, &s_swatdie4};
+statetype s_swatdie4 = {false, SPR_SWAT_DIE_4, 20, reinterpret_cast<void (*)()>(T_BlowBack), nullptr, &s_swatdie5};
 statetype s_swatdie5 = {false, SPR_SWAT_DEAD, 0, nullptr, nullptr, &s_swatdie5};
 
 //
@@ -2734,40 +2746,40 @@ extern statetype s_prodie3;
 extern statetype s_prodie3a;
 extern statetype s_prodie4;
 
-statetype s_prostand = {true, SPR_PRO_S_1, 0, T_Stand, nullptr, &s_prostand};
+statetype s_prostand = {true, SPR_PRO_S_1, 0, reinterpret_cast<void (*)()>(T_Stand), nullptr, &s_prostand};
 
-statetype s_propath1  = {true, SPR_PRO_W1_1, 20, T_Path, nullptr, &s_propath1s};
+statetype s_propath1  = {true, SPR_PRO_W1_1, 20, reinterpret_cast<void (*)()>(T_Path), nullptr, &s_propath1s};
 statetype s_propath1s = {true, SPR_PRO_W1_1, 5, nullptr, nullptr, &s_propath2};
-statetype s_propath2  = {true, SPR_PRO_W2_1, 15, T_Path, nullptr, &s_propath3};
-statetype s_propath3  = {true, SPR_PRO_W3_1, 20, T_Path, nullptr, &s_propath3s};
+statetype s_propath2  = {true, SPR_PRO_W2_1, 15, reinterpret_cast<void (*)()>(T_Path), nullptr, &s_propath3};
+statetype s_propath3  = {true, SPR_PRO_W3_1, 20, reinterpret_cast<void (*)()>(T_Path), nullptr, &s_propath3s};
 statetype s_propath3s = {true, SPR_PRO_W3_1, 5, nullptr, nullptr, &s_propath4};
-statetype s_propath4  = {true, SPR_PRO_W4_1, 15, T_Path, nullptr, &s_propath1};
+statetype s_propath4  = {true, SPR_PRO_W4_1, 15, reinterpret_cast<void (*)()>(T_Path), nullptr, &s_propath1};
 
 statetype s_propain = {2, SPR_PRO_PAIN_1, 15, nullptr, nullptr, &s_prochase1};
 
 statetype s_proshoot1  = {false, SPR_PRO_SHOOT1, 20, nullptr, nullptr, &s_proshoot2};
-statetype s_proshoot2  = {false, SPR_PRO_SHOOT2, 20, nullptr, T_Shoot, &s_proshoot3};
-statetype s_proshoot3  = {false, SPR_PRO_SHOOT3, 10, nullptr, T_Shade, &s_proshoot4};
-statetype s_proshoot4  = {false, SPR_PRO_SHOOT2, 10, nullptr, T_Shoot, &s_proshoot5};
-statetype s_proshoot5  = {false, SPR_PRO_SHOOT3, 10, nullptr, T_Shade, &s_proshoot6};
-statetype s_proshoot6  = {false, SPR_PRO_SHOOT2, 10, nullptr, T_Shoot, &s_proshoot6a};
-statetype s_proshoot6a = {false, SPR_PRO_SHOOT3, 10, nullptr, T_Shade, &s_prochase1};
+statetype s_proshoot2  = {false, SPR_PRO_SHOOT2, 20, nullptr, reinterpret_cast<void (*)()>(T_Shoot), &s_proshoot3};
+statetype s_proshoot3  = {false, SPR_PRO_SHOOT3, 10, nullptr, reinterpret_cast<void (*)()>(T_Shade), &s_proshoot4};
+statetype s_proshoot4  = {false, SPR_PRO_SHOOT2, 10, nullptr, reinterpret_cast<void (*)()>(T_Shoot), &s_proshoot5};
+statetype s_proshoot5  = {false, SPR_PRO_SHOOT3, 10, nullptr, reinterpret_cast<void (*)()>(T_Shade), &s_proshoot6};
+statetype s_proshoot6  = {false, SPR_PRO_SHOOT2, 10, nullptr, reinterpret_cast<void (*)()>(T_Shoot), &s_proshoot6a};
+statetype s_proshoot6a = {false, SPR_PRO_SHOOT3, 10, nullptr, reinterpret_cast<void (*)()>(T_Shade), &s_prochase1};
 
 // statetype s_proshoot7  	= {false,SPR_PRO_SHOOT3,10,nullptr,nullptr,&s_proshoot8};
 // statetype s_proshoot8  	= {false,SPR_PRO_SHOOT2,10,nullptr,T_Shoot,&s_proshoot9};
 // statetype s_proshoot9  	= {false,SPR_PRO_SHOOT3,10,nullptr,T_Shade,&s_prochase1};
 
-statetype s_prochase1  = {true, SPR_PRO_W1_1, 10, T_Chase, nullptr, &s_prochase1s};
+statetype s_prochase1  = {true, SPR_PRO_W1_1, 10, reinterpret_cast<void (*)()>(T_Chase), nullptr, &s_prochase1s};
 statetype s_prochase1s = {true, SPR_PRO_W1_1, 3, nullptr, nullptr, &s_prochase2};
-statetype s_prochase2  = {true, SPR_PRO_W2_1, 8, T_Chase, nullptr, &s_prochase3};
-statetype s_prochase3  = {true, SPR_PRO_W3_1, 10, T_Chase, nullptr, &s_prochase3s};
+statetype s_prochase2  = {true, SPR_PRO_W2_1, 8, reinterpret_cast<void (*)()>(T_Chase), nullptr, &s_prochase3};
+statetype s_prochase3  = {true, SPR_PRO_W3_1, 10, reinterpret_cast<void (*)()>(T_Chase), nullptr, &s_prochase3s};
 statetype s_prochase3s = {true, SPR_PRO_W3_1, 3, nullptr, nullptr, &s_prochase4};
-statetype s_prochase4  = {true, SPR_PRO_W4_1, 8, T_Chase, nullptr, &s_prochase1};
+statetype s_prochase4  = {true, SPR_PRO_W4_1, 8, reinterpret_cast<void (*)()>(T_Chase), nullptr, &s_prochase1};
 
-statetype s_prodie1  = {false, SPR_PRO_DIE_1, 20, T_BlowBack, A_DeathScream, &s_prodie2};
-statetype s_prodie2  = {false, SPR_PRO_DIE_2, 20, T_BlowBack, nullptr, &s_prodie3};
-statetype s_prodie3  = {false, SPR_PRO_DIE_3, 20, T_BlowBack, nullptr, &s_prodie3a};
-statetype s_prodie3a = {false, SPR_PRO_DIE_4, 20, T_BlowBack, nullptr, &s_prodie4};
+statetype s_prodie1  = {false, SPR_PRO_DIE_1, 20, reinterpret_cast<void (*)()>(T_BlowBack), reinterpret_cast<void (*)()>(A_DeathScream), &s_prodie2};
+statetype s_prodie2  = {false, SPR_PRO_DIE_2, 20, reinterpret_cast<void (*)()>(T_BlowBack), nullptr, &s_prodie3};
+statetype s_prodie3  = {false, SPR_PRO_DIE_3, 20, reinterpret_cast<void (*)()>(T_BlowBack), nullptr, &s_prodie3a};
+statetype s_prodie3a = {false, SPR_PRO_DIE_4, 20, reinterpret_cast<void (*)()>(T_BlowBack), nullptr, &s_prodie4};
 statetype s_prodie4  = {false, SPR_PRO_DEAD, 0, nullptr, nullptr, &s_prodie4};
 
 extern statetype s_electro_appear1;
@@ -2805,24 +2817,24 @@ statetype s_electro_appear1 = {0, SPR_ELEC_APPEAR1, 14, nullptr, nullptr, &s_ele
 statetype s_electro_appear2 = {0, SPR_ELEC_APPEAR2, 14, nullptr, nullptr, &s_electro_appear3};
 statetype s_electro_appear3 = {0, SPR_ELEC_APPEAR3, 14, nullptr, nullptr, &s_electro_chase1};
 
-statetype s_electro_chase1 = {0, SPR_ELEC_WALK1, 14, T_Chase, nullptr, &s_electro_chase2};
+statetype s_electro_chase1 = {0, SPR_ELEC_WALK1, 14, reinterpret_cast<void (*)()>(T_Chase), nullptr, &s_electro_chase2};
 statetype s_electro_chase2 = {0, SPR_ELEC_WALK2, 14, nullptr, nullptr, &s_electro_chase3};
-statetype s_electro_chase3 = {0, SPR_ELEC_WALK3, 14, T_Chase, nullptr, &s_electro_chase4};
+statetype s_electro_chase3 = {0, SPR_ELEC_WALK3, 14, reinterpret_cast<void (*)()>(T_Chase), nullptr, &s_electro_chase4};
 statetype s_electro_chase4 = {0, SPR_ELEC_WALK4, 14, nullptr, nullptr, &s_electro_chase1};
 
 statetype s_electro_ouch = {0, SPR_ELEC_OUCH, 14, nullptr, nullptr, &s_electro_chase1};
 
 statetype s_electro_shoot1 = {0, SPR_ELEC_SHOOT1, 14, nullptr, nullptr, &s_electro_shoot2};
-statetype s_electro_shoot2 = {0, SPR_ELEC_SHOOT2, 14, T_Shoot, nullptr, &s_electro_shoot3};
+statetype s_electro_shoot2 = {0, SPR_ELEC_SHOOT2, 14, reinterpret_cast<void (*)()>(T_Shoot), nullptr, &s_electro_shoot3};
 statetype s_electro_shoot3 = {0, SPR_ELEC_SHOOT3, 14, nullptr, nullptr, &s_electro_chase1};
 
-statetype s_electro_shot1 = {0, SPR_ELEC_SHOT1, 1, T_Projectile, nullptr, &s_electro_shot2};
-statetype s_electro_shot2 = {0, SPR_ELEC_SHOT2, 1, T_Projectile, nullptr, &s_electro_shot1};
+statetype s_electro_shot1 = {0, SPR_ELEC_SHOT1, 1, reinterpret_cast<void (*)()>(T_Projectile), nullptr, &s_electro_shot2};
+statetype s_electro_shot2 = {0, SPR_ELEC_SHOT2, 1, reinterpret_cast<void (*)()>(T_Projectile), nullptr, &s_electro_shot1};
 
-statetype s_ofs_shot1 = {0, 0, 1, T_Projectile, nullptr, &s_ofs_shot2};
-statetype s_ofs_shot2 = {0, 1, 1, T_Projectile, nullptr, &s_ofs_shot1};
+statetype s_ofs_shot1 = {0, 0, 1, reinterpret_cast<void (*)()>(T_Projectile), nullptr, &s_ofs_shot2};
+statetype s_ofs_shot2 = {0, 1, 1, reinterpret_cast<void (*)()>(T_Projectile), nullptr, &s_ofs_shot1};
 
-statetype s_electro_die1 = {0, SPR_ELEC_DIE1, 14, nullptr, A_DeathScream, &s_electro_die2};
+statetype s_electro_die1 = {0, SPR_ELEC_DIE1, 14, nullptr, reinterpret_cast<void (*)()>(A_DeathScream), &s_electro_die2};
 statetype s_electro_die2 = {0, SPR_ELEC_DIE2, 14, nullptr, nullptr, &s_electro_die3};
 statetype s_electro_die3 = {0, SPR_ELEC_DIE3, 14, nullptr, nullptr, nullptr};
 
@@ -2864,16 +2876,16 @@ void T_LiquidStand_Check(objtype* obj);
 void T_LiquidMove(objtype* obj);
 void T_Solid(objtype* obj);
 
-statetype s_liquid_wait = {0, SPR_LIQUID_M1, 14, T_Stand, nullptr, &s_liquid_wait};
+statetype s_liquid_wait = {0, SPR_LIQUID_M1, 14, reinterpret_cast<void (*)()>(T_Stand), nullptr, &s_liquid_wait};
 
-statetype s_liquid_move = {0, SPR_LIQUID_M1, 14, T_LiquidMove, T_ChangeShape, &s_liquid_move};
+statetype s_liquid_move = {0, SPR_LIQUID_M1, 14, reinterpret_cast<void (*)()>(T_LiquidMove), reinterpret_cast<void (*)()>(T_ChangeShape), &s_liquid_move};
 
 statetype s_liquid_rise1 = {0, SPR_LIQUID_R1, 12, nullptr, nullptr, &s_liquid_rise2};
 statetype s_liquid_rise2 = {0, SPR_LIQUID_R2, 12, nullptr, nullptr, &s_liquid_rise3};
-statetype s_liquid_rise3 = {0, SPR_LIQUID_R3, 12, nullptr, T_Solid, &s_liquid_shoot1};
+statetype s_liquid_rise3 = {0, SPR_LIQUID_R3, 12, nullptr, reinterpret_cast<void (*)()>(T_Solid), &s_liquid_shoot1};
 // statetype s_liquid_rise4 = {0,SPR_LIQUID_R4,12,nullptr,nullptr,&s_liquid_stand};
 
-statetype s_liquid_stand = {0, SPR_LIQUID_R4, 40, T_LiquidStand, nullptr, &s_liquid_stand};
+statetype s_liquid_stand = {0, SPR_LIQUID_R4, 40, reinterpret_cast<void (*)()>(T_LiquidStand), nullptr, &s_liquid_stand};
 
 statetype s_liquid_fall1 = {0, SPR_LIQUID_R3, 15, nullptr, nullptr, &s_liquid_fall2};
 statetype s_liquid_fall2 = {0, SPR_LIQUID_R2, 15, nullptr, nullptr, &s_liquid_fall3};
@@ -2881,17 +2893,17 @@ statetype s_liquid_fall3 = {0, SPR_LIQUID_R1, 15, nullptr, nullptr, &s_liquid_mo
 
 statetype s_liquid_shoot1 = {0, SPR_LIQUID_S1, 12, nullptr, nullptr, &s_liquid_shoot2};
 statetype s_liquid_shoot2 = {0, SPR_LIQUID_S2, 12, nullptr, nullptr, &s_liquid_shoot3};
-statetype s_liquid_shoot3 = {0, SPR_LIQUID_S3, 12, nullptr, T_Shoot, &s_liquid_stand};
+statetype s_liquid_shoot3 = {0, SPR_LIQUID_S3, 12, nullptr, reinterpret_cast<void (*)()>(T_Shoot), &s_liquid_stand};
 
 statetype s_liquid_ouch = {0, SPR_LIQUID_OUCH, 7, nullptr, nullptr, &s_liquid_shoot1};
 
-statetype s_liquid_die1 = {0, SPR_LIQUID_DIE_1, 20, nullptr, A_DeathScream, &s_liquid_die2};
+statetype s_liquid_die1 = {0, SPR_LIQUID_DIE_1, 20, nullptr, reinterpret_cast<void (*)()>(A_DeathScream), &s_liquid_die2};
 statetype s_liquid_die2 = {0, SPR_LIQUID_DIE_2, 20, nullptr, nullptr, &s_liquid_die3};
 statetype s_liquid_die3 = {0, SPR_LIQUID_DIE_3, 20, nullptr, nullptr, &s_liquid_die4};
 statetype s_liquid_die4 = {0, SPR_LIQUID_DIE_4, 20, nullptr, nullptr, &s_liquid_dead};
 statetype s_liquid_dead = {0, SPR_LIQUID_DEAD, 20, nullptr, nullptr, nullptr};
 
-statetype s_liquid_shot = {0, 0, 10, T_Projectile, T_ChangeShape, &s_liquid_shot};
+statetype s_liquid_shot = {0, 0, 10, reinterpret_cast<void (*)()>(T_Projectile), reinterpret_cast<void (*)()>(T_ChangeShape), &s_liquid_shot};
 
 statetype s_blake1 = {0, SPR_BLAKE_W1, 12, nullptr, nullptr, &s_blake2};
 statetype s_blake2 = {0, SPR_BLAKE_W2, 12, nullptr, nullptr, &s_blake3};
@@ -3037,116 +3049,116 @@ void SpawnStand(enemy_t which, int tilex, int tiley, int dir)
     {
     case en_goldstern:
         SpawnNewObj(tilex, tiley, &s_goldwarp_in1);
-        new->flags  = FL_SHOOTABLE | FL_SOLID;
-        new->flags2 = FL2_BFG_SHOOTABLE;
-        new->speed  = SPDPATROL;
+        new_->flags  = FL_SHOOTABLE | FL_SOLID;
+        new_->flags2 = FL2_BFG_SHOOTABLE;
+        new_->speed  = SPDPATROL;
         if (gamestate.mapon == 9)
-            new->hitpoints = starthitpoints[gamestate.difficulty][which] * 15;
+            new_->hitpoints = starthitpoints[gamestate.difficulty][which] * 15;
         ammo = 25;
         break;
 
     case en_electro_alien:
         SpawnNewObj(tilex, tiley, &s_electro_appear1);
-        new->flags    = FL_SHOOTABLE | FL_SOLID | FL_PROJ_TRANSPARENT;
-        new->speed    = SPDPATROL;
-        new->lighting = NO_SHADING; // no shading
+        new_->flags    = FL_SHOOTABLE | FL_SOLID | FL_PROJ_TRANSPARENT;
+        new_->speed    = SPDPATROL;
+        new_->lighting = NO_SHADING; // no shading
         break;
 
     case en_liquid:
         SpawnNewObj(tilex, tiley, &s_liquid_wait);
-        new->flags  = FL_OFFSET_STATES | FL_PROJ_TRANSPARENT;
-        new->flags2 = FL2_BFG_SHOOTABLE;
-        new->speed  = SPDPATROL * 3;
+        new_->flags  = FL_OFFSET_STATES | FL_PROJ_TRANSPARENT;
+        new_->flags2 = FL2_BFG_SHOOTABLE;
+        new_->speed  = SPDPATROL * 3;
         break;
 
     case en_rentacop:
         SpawnNewObj(tilex, tiley, &s_rent_stand);
-        new->flags  = FL_SHOOTABLE | FL_SOLID;
-        new->flags2 = FL2_BFG_SHOOTABLE;
-        new->speed  = SPDPATROL;
+        new_->flags  = FL_SHOOTABLE | FL_SOLID;
+        new_->flags2 = FL2_BFG_SHOOTABLE;
+        new_->speed  = SPDPATROL;
         break;
 
     case en_gen_scientist:
         SpawnNewObj(tilex, tiley, &s_ofcstand);
-        new->flags  = FL_SHOOTABLE | FL_SOLID | FL_FRIENDLY | FL_RANDOM_TURN;
-        new->flags2 = FL2_BFG_SHOOTABLE;
+        new_->flags  = FL_SHOOTABLE | FL_SOLID | FL_FRIENDLY | FL_RANDOM_TURN;
+        new_->flags2 = FL2_BFG_SHOOTABLE;
         if (US_RndT() & 1)
-            new->flags |= FL_INFORMANT;
-        new->speed = SPDPATROL;
+            new_->flags |= FL_INFORMANT;
+        new_->speed = SPDPATROL;
         break;
 
     case en_swat:
         SpawnNewObj(tilex, tiley, &s_swatstand);
-        new->flags  = FL_SHOOTABLE | FL_SOLID;
-        new->flags2 = FL2_BFG_SHOOTABLE;
-        new->speed  = SPDPATROL;
-        ammo        = 30;
+        new_->flags  = FL_SHOOTABLE | FL_SOLID;
+        new_->flags2 = FL2_BFG_SHOOTABLE;
+        new_->speed  = SPDPATROL;
+        ammo         = 30;
         if (scan_value == 0xffff)
-            new->temp1 = US_RndT() & 1;
+            new_->temp1 = US_RndT() & 1;
         else
-            new->temp1 = scan_value;
+            new_->temp1 = scan_value;
         break;
 
     case en_proguard:
         SpawnNewObj(tilex, tiley, &s_prostand);
-        new->flags  = FL_SHOOTABLE | FL_SOLID;
-        new->flags2 = FL2_BFG_SHOOTABLE;
-        new->speed  = SPDPATROL;
-        ammo        = 25;
+        new_->flags  = FL_SHOOTABLE | FL_SOLID;
+        new_->flags2 = FL2_BFG_SHOOTABLE;
+        new_->speed  = SPDPATROL;
+        ammo         = 25;
         break;
 
     case en_hang_terrot:
         SpawnNewObj(tilex, tiley, &s_terrot_wait);
-        new->flags = FL_SHOOTABLE | FL_NONMARK | FL_NEVERMARK;
-        new->speed = SPDPATROL;
+        new_->flags = FL_SHOOTABLE | FL_NONMARK | FL_NEVERMARK;
+        new_->speed = SPDPATROL;
         break;
 
     case en_floatingbomb:
         SpawnNewObj(tilex, tiley, &s_scout_stand);
-        new->speed  = SPDPATROL;
-        new->temp1  = SPR_FSCOUT_W1_1;
-        new->flags2 = FL2_BFGSHOT_SOLID | FL2_BFG_SHOOTABLE;
-        new->flags  = FL_SHOOTABLE | FL_SOLID | FL_OFFSET_STATES | FL_FAKE_STATIC;
+        new_->speed  = SPDPATROL;
+        new_->temp1  = SPR_FSCOUT_W1_1;
+        new_->flags2 = FL2_BFGSHOT_SOLID | FL2_BFG_SHOOTABLE;
+        new_->flags  = FL_SHOOTABLE | FL_SOLID | FL_OFFSET_STATES | FL_FAKE_STATIC;
         break;
 
     case en_volatiletransport:
         SpawnNewObj(tilex, tiley, &s_scout_stand);
-        new->speed  = SPDPATROL;
-        new->temp1  = SPR_GSCOUT_W1_1;
-        new->flags  = FL_SHOOTABLE | FL_SOLID | FL_OFFSET_STATES | FL_STATIONARY | FL_FAKE_STATIC;
-        new->flags2 = FL2_BFGSHOT_SOLID | FL2_BFG_SHOOTABLE;
+        new_->speed  = SPDPATROL;
+        new_->temp1  = SPR_GSCOUT_W1_1;
+        new_->flags  = FL_SHOOTABLE | FL_SOLID | FL_OFFSET_STATES | FL_STATIONARY | FL_FAKE_STATIC;
+        new_->flags2 = FL2_BFGSHOT_SOLID | FL2_BFG_SHOOTABLE;
         break;
 
     case en_steamgrate:
         SpawnNewObj(tilex, tiley, &s_steamgrate);
-        new->flags = FL_OFFSET_STATES;
-        new->temp1 = SPR_GRATE;
-        new->temp2 = 60 * 4;
+        new_->flags = FL_OFFSET_STATES;
+        new_->temp1 = SPR_GRATE;
+        new_->temp2 = 60 * 4;
         break;
 
     case en_steampipe:
         nevermark = true;
         SpawnNewObj(tilex, tiley, &s_steamgrate);
-        nevermark  = false;
-        new->flags = FL_OFFSET_STATES | FL_NONMARK | FL_NEVERMARK;
-        new->temp1 = SPR_STEAM_PIPE;
-        new->temp2 = 60 * 4;
+        nevermark   = false;
+        new_->flags = FL_OFFSET_STATES | FL_NONMARK | FL_NEVERMARK;
+        new_->temp1 = SPR_STEAM_PIPE;
+        new_->temp2 = 60 * 4;
         break;
     }
 
-    CheckForSpecialTile(new, tilex, tiley);
+    CheckForSpecialTile(new_, tilex, tiley);
 
-    new->ammo    = ammo;
-    new->obclass = rentacopobj + which;
-    new->hitpoints += starthitpoints[gamestate.difficulty][which];
-    new->dir = dir << 1;
+    new_->ammo    = ammo;
+    new_->obclass = static_cast<classtype>(rentacopobj + which);
+    new_->hitpoints += starthitpoints[gamestate.difficulty][which];
+    new_->dir = static_cast<dirtype>(dir << 1);
 
-    if (new->flags & FL_INFORMANT)
+    if (new_->flags & FL_INFORMANT)
     {
-        new->hitpoints = 1;
-        new->ammo      = 0;
-        new->flags |= FL_HAS_AMMO | FL_HAS_TOKENS;
-        new->s_tilex = new->s_tiley = 0xff;
+        new_->hitpoints = 1;
+        new_->ammo      = 0;
+        new_->flags |= FL_HAS_AMMO | FL_HAS_TOKENS;
+        new_->s_tilex = new_->s_tiley = 0xff;
     }
 }
 
@@ -3187,9 +3199,9 @@ void CheckForSpecialTile(objtype* obj, unsigned tilex, unsigned tiley)
         break;
 
     case DETONATOR_TILE:
-        old_new = new;
+        old_new = new_;
         SpawnHiddenOfs(en_plasma_detonator_reserve, tilex, tiley);
-        new = old_new;
+        new_ = old_new;
         obj->flags &= ~FL_INFORMANT;
     case RKEY_TILE:
     case YKEY_TILE:
@@ -3252,119 +3264,119 @@ void SpawnPatrol(enemy_t which, int tilex, int tiley, int dir)
     {
     case en_blake:
         SpawnNewObj(tilex, tiley, &s_blake1);
-        new->speed = SPDPATROL * 2;
+        new_->speed = SPDPATROL * 2;
         break;
 
     case en_rentacop:
         SpawnNewObj(tilex, tiley, &s_rent_path1);
-        new->flags2 = FL2_BFG_SHOOTABLE;
-        new->speed  = SPDPATROL;
+        new_->flags2 = FL2_BFG_SHOOTABLE;
+        new_->speed  = SPDPATROL;
         break;
 
     case en_gen_scientist:
         SpawnNewObj(tilex, tiley, &s_ofcpath1);
-        new->flags  = FL_FRIENDLY | FL_RANDOM_TURN;
-        new->flags2 = FL2_BFG_SHOOTABLE;
+        new_->flags  = FL_FRIENDLY | FL_RANDOM_TURN;
+        new_->flags2 = FL2_BFG_SHOOTABLE;
         if (US_RndT() & 1)
-            new->flags |= FL_INFORMANT;
-        new->speed = SPDPATROL;
+            new_->flags |= FL_INFORMANT;
+        new_->speed = SPDPATROL;
         break;
 
     case en_proguard:
         SpawnNewObj(tilex, tiley, &s_propath1);
-        new->speed  = SPDPATROL;
-        new->flags2 = FL2_BFG_SHOOTABLE;
-        ammo        = 25;
+        new_->speed  = SPDPATROL;
+        new_->flags2 = FL2_BFG_SHOOTABLE;
+        ammo         = 25;
         break;
 
     case en_swat:
         SpawnNewObj(tilex, tiley, &s_swatpath1);
-        new->speed = SPDPATROL;
-        ammo       = 30;
+        new_->speed = SPDPATROL;
+        ammo        = 30;
         if (scan_value == 0xffff)
-            new->temp1 = US_RndT() & 1;
+            new_->temp1 = US_RndT() & 1;
         else
-            new->temp1 = scan_value;
-        new->flags2 = FL2_BFG_SHOOTABLE;
+            new_->temp1 = scan_value;
+        new_->flags2 = FL2_BFG_SHOOTABLE;
         break;
 
     case en_floatingbomb:
         SpawnNewObj(tilex, tiley, &s_scout_path1);
-        new->speed  = SPDPATROL;
-        new->temp1  = SPR_FSCOUT_W1_1;
-        new->flags  = FL_OFFSET_STATES;
-        new->flags2 = FL2_BFGSHOT_SOLID | FL2_BFG_SHOOTABLE;
+        new_->speed  = SPDPATROL;
+        new_->temp1  = SPR_FSCOUT_W1_1;
+        new_->flags  = FL_OFFSET_STATES;
+        new_->flags2 = FL2_BFGSHOT_SOLID | FL2_BFG_SHOOTABLE;
         break;
 
     case en_volatiletransport:
         SpawnNewObj(tilex, tiley, &s_scout_path1);
-        new->speed  = SPDPATROL;
-        new->temp1  = SPR_GSCOUT_W1_1;
-        new->flags  = FL_OFFSET_STATES;
-        new->flags2 = FL2_BFGSHOT_SOLID | FL2_BFG_SHOOTABLE;
+        new_->speed  = SPDPATROL;
+        new_->temp1  = SPR_GSCOUT_W1_1;
+        new_->flags  = FL_OFFSET_STATES;
+        new_->flags2 = FL2_BFGSHOT_SOLID | FL2_BFG_SHOOTABLE;
         break;
     }
 
-    new->ammo      = ammo;
-    new->obclass   = rentacopobj + which;
-    new->dir       = dir << 1;
-    new->hitpoints = starthitpoints[gamestate.difficulty][which];
-    new->distance  = 0;
-    if (new->obclass != blakeobj)
-        new->flags |= FL_SHOOTABLE | FL_SOLID;
-    new->active = true;
-    if (new->flags & FL_INFORMANT)
+    new_->ammo      = ammo;
+    new_->obclass   = static_cast<classtype>(rentacopobj + which);
+    new_->dir       = static_cast<dirtype>(dir << 1);
+    new_->hitpoints = starthitpoints[gamestate.difficulty][which];
+    new_->distance  = 0;
+    if (new_->obclass != blakeobj)
+        new_->flags |= FL_SHOOTABLE | FL_SOLID;
+    new_->active = static_cast<activetype>(true);
+    if (new_->flags & FL_INFORMANT)
     {
-        new->hitpoints = 1;
-        new->ammo      = 0;
-        new->flags |= FL_HAS_AMMO | FL_HAS_TOKENS;
-        new->s_tilex = new->s_tiley = 0xff;
+        new_->hitpoints = 1;
+        new_->ammo      = 0;
+        new_->flags |= FL_HAS_AMMO | FL_HAS_TOKENS;
+        new_->s_tilex = new_->s_tiley = 0xff;
     }
 
-    CheckForSpecialTile(new, tilex, tiley);
+    CheckForSpecialTile(new_, tilex, tiley);
 
-    actorat[new->tilex][new->tiley] = nullptr; // don't use original spot
+    actorat[new_->tilex][new_->tiley] = nullptr; // don't use original spot
 
 #if IN_DEVELOPMENT
-    oldx = new->tilex;
-    oldy = new->tiley;
+    oldx = new_->tilex;
+    oldy = new_->tiley;
 #endif
 
 #if 1
-    TryWalk(new, true);
+    TryWalk(new_, true);
 #else
     switch (dir)
     {
     case 0:
-        new->tilex++;
+        new_->tilex++;
         break;
 
     case 1:
-        new->tiley--;
+        new_->tiley--;
         break;
 
     case 2:
-        new->tilex--;
+        new_->tilex--;
         break;
 
     case 3:
-        new->tiley++;
+        new_->tiley++;
         break;
     }
 #endif
 
 #if IN_DEVELOPMENT
-    if (new->obclass != blakeobj)
+    if (new_->obclass != blakeobj)
     {
-        if ((unsigned)actorat[new->tilex][new->tiley] == 1)
+        if ((unsigned)actorat[new_->tilex][new_->tiley] == 1)
             Quit("Actor spawned toward a solid static at %d %d", oldx, oldy);
 
-        if (GetAreaNumber(new->tilex, new->tiley) >= NUMAREAS)
+        if (GetAreaNumber(new_->tilex, new_->tiley) >= NUMAREAS)
             Quit("Actor spawned toward wall at %d %d", oldx, oldy);
     }
 #endif
 
-    actorat[new->tilex][new->tiley] = new;
+    actorat[new_->tilex][new_->tiley] = new_;
 }
 
 /*
@@ -3777,7 +3789,7 @@ void T_Chase(objtype* ob)
             // waiting for a door to open
             //
             OpenDoor(-ob->distance - 1);
-            if (doorobjlist[-ob->distance - 1].action != dr_open)
+            if (doorobjlist[-ob->distance - 1].action != doorstruct::dr_open)
                 return;
             ob->distance = TILEGLOBAL; // go ahead, the door is now opoen
         }
@@ -3965,7 +3977,7 @@ dirtype SelectPathDir(objtype* ob)
     //
     spot = MAPSPOT(ob->tilex, ob->tiley, 1) - ICONARROWS;
     if (spot < 8)
-        ob->dir = spot;
+        ob->dir = static_cast<dirtype>(spot);
 
     // Reset move distance and try to walk/turn.
     //
@@ -3988,25 +4000,25 @@ dirtype SelectPathDir(objtype* ob)
         // Either: path is blocked   OR   actor is randomly turning.
         //
         if (ob->trydir == nodir)
-            ob->trydir |= US_RndT() & 128;
+            ob->trydir = static_cast<dirtype>(ob->trydir | (US_RndT() & 128));
         else
-            ob->dir = ob->trydir & 127;
+            ob->dir = static_cast<dirtype>(ob->trydir & 127);
 
         // Turn this actor
         //
         if (ob->trydir & 128)
         {
-            ob->dir--; // turn clockwise
+            ob->dir = static_cast<dirtype>(static_cast<int>(ob->dir) - 1); // turn clockwise
             if (ob->dir < east)
-                ob->dir = nodir - 1;
+                ob->dir = static_cast<dirtype>(nodir - 1);
         }
         else
         {
-            ob->dir++; // turn counter-clockwise
+            ob->dir = static_cast<dirtype>(static_cast<int>(ob->dir) + 1); // turn counter-clockwise
             if (ob->dir >= nodir)
                 ob->dir = east;
         }
-        ob->trydir = (ob->trydir & 128) | ob->dir;
+        ob->trydir = static_cast<dirtype>((ob->trydir & 128) | ob->dir);
 
         // Walk into new direction?
         //
@@ -4093,7 +4105,7 @@ void T_Path(objtype* ob)
             // Actor waiting for door to open
             //
             OpenDoor(-ob->distance - 1);
-            if (doorobjlist[-ob->distance - 1].action != dr_open)
+            if (doorobjlist[-ob->distance - 1].action != doorstruct::dr_open)
                 return;
             ob->distance = TILEGLOBAL; // go ahead, the door is now opoen
         }
@@ -4191,7 +4203,7 @@ void T_Shoot(objtype* ob)
 
     case spider_mutantobj:
     case acid_dragonobj:
-        SpawnProjectile(ob, spider_mutantshotobj + (ob->obclass - spider_mutantobj));
+        SpawnProjectile(ob, static_cast<classtype>(spider_mutantshotobj + (ob->obclass - spider_mutantobj)));
         //			SpawnProjectile(ob,spider_mutantshotobj+(ob->obclass-spider_mutantobj));
         break;
 
@@ -4427,52 +4439,52 @@ extern statetype s_goldmorphwait2;
 
 extern void T_GoldMorphWait(objtype* obj);
 
-statetype s_goldstand = {true, SPR_GOLD_S_1, 20, T_Stand, nullptr, &s_goldpath1};
+statetype s_goldstand = {true, SPR_GOLD_S_1, 20, reinterpret_cast<void (*)()>(T_Stand), nullptr, &s_goldpath1};
 
-statetype s_goldpath1  = {true, SPR_GOLD_W1_1, 20, T_Path, nullptr, &s_goldpath1s};
+statetype s_goldpath1  = {true, SPR_GOLD_W1_1, 20, reinterpret_cast<void (*)()>(T_Path), nullptr, &s_goldpath1s};
 statetype s_goldpath1s = {true, SPR_GOLD_W1_1, 5, nullptr, nullptr, &s_goldpath2};
-statetype s_goldpath2  = {true, SPR_GOLD_W2_1, 15, T_Path, nullptr, &s_goldpath3};
-statetype s_goldpath3  = {true, SPR_GOLD_W3_1, 20, T_Path, nullptr, &s_goldpath3s};
+statetype s_goldpath2  = {true, SPR_GOLD_W2_1, 15, reinterpret_cast<void (*)()>(T_Path), nullptr, &s_goldpath3};
+statetype s_goldpath3  = {true, SPR_GOLD_W3_1, 20, reinterpret_cast<void (*)()>(T_Path), nullptr, &s_goldpath3s};
 statetype s_goldpath3s = {true, SPR_GOLD_W3_1, 5, nullptr, nullptr, &s_goldpath4};
-statetype s_goldpath4  = {true, SPR_GOLD_W4_1, 15, T_Path, nullptr, &s_goldpath1};
+statetype s_goldpath4  = {true, SPR_GOLD_W4_1, 15, reinterpret_cast<void (*)()>(T_Path), nullptr, &s_goldpath1};
 
 statetype s_goldpain = {0, SPR_GOLD_PAIN_1, 15, nullptr, nullptr, &s_goldchase1};
 
 statetype s_goldshoot1 = {false, SPR_GOLD_SHOOT1, 20, nullptr, nullptr, &s_goldshoot2};
-statetype s_goldshoot2 = {false, SPR_GOLD_SHOOT2, 20, nullptr, T_Shoot, &s_goldshoot3};
-statetype s_goldshoot3 = {false, SPR_GOLD_SHOOT3, 10, nullptr, T_Shade, &s_goldshoot4};
-statetype s_goldshoot4 = {false, SPR_GOLD_SHOOT2, 10, nullptr, T_Shoot, &s_goldshoot5};
-statetype s_goldshoot5 = {false, SPR_GOLD_SHOOT3, 10, nullptr, T_Shade, &s_goldshoot6};
-statetype s_goldshoot6 = {false, SPR_GOLD_SHOOT2, 10, nullptr, T_Shoot, &s_goldshoot7};
-statetype s_goldshoot7 = {false, SPR_GOLD_SHOOT3, 10, nullptr, T_Shade, &s_goldchase1};
+statetype s_goldshoot2 = {false, SPR_GOLD_SHOOT2, 20, nullptr, reinterpret_cast<void (*)()>(T_Shoot), &s_goldshoot3};
+statetype s_goldshoot3 = {false, SPR_GOLD_SHOOT3, 10, nullptr, reinterpret_cast<void (*)()>(T_Shade), &s_goldshoot4};
+statetype s_goldshoot4 = {false, SPR_GOLD_SHOOT2, 10, nullptr, reinterpret_cast<void (*)()>(T_Shoot), &s_goldshoot5};
+statetype s_goldshoot5 = {false, SPR_GOLD_SHOOT3, 10, nullptr, reinterpret_cast<void (*)()>(T_Shade), &s_goldshoot6};
+statetype s_goldshoot6 = {false, SPR_GOLD_SHOOT2, 10, nullptr, reinterpret_cast<void (*)()>(T_Shoot), &s_goldshoot7};
+statetype s_goldshoot7 = {false, SPR_GOLD_SHOOT3, 10, nullptr, reinterpret_cast<void (*)()>(T_Shade), &s_goldchase1};
 
-statetype s_goldchase1  = {true, SPR_GOLD_W1_1, 10, T_Chase, nullptr, &s_goldchase1s};
+statetype s_goldchase1  = {true, SPR_GOLD_W1_1, 10, reinterpret_cast<void (*)()>(T_Chase), nullptr, &s_goldchase1s};
 statetype s_goldchase1s = {true, SPR_GOLD_W1_1, 3, nullptr, nullptr, &s_goldchase2};
-statetype s_goldchase2  = {true, SPR_GOLD_W2_1, 8, T_Chase, nullptr, &s_goldchase3};
-statetype s_goldchase3  = {true, SPR_GOLD_W3_1, 10, T_Chase, nullptr, &s_goldchase3s};
+statetype s_goldchase2  = {true, SPR_GOLD_W2_1, 8, reinterpret_cast<void (*)()>(T_Chase), nullptr, &s_goldchase3};
+statetype s_goldchase3  = {true, SPR_GOLD_W3_1, 10, reinterpret_cast<void (*)()>(T_Chase), nullptr, &s_goldchase3s};
 statetype s_goldchase3s = {true, SPR_GOLD_W3_1, 3, nullptr, nullptr, &s_goldchase4};
-statetype s_goldchase4  = {true, SPR_GOLD_W4_1, 8, T_Chase, nullptr, &s_goldchase1};
+statetype s_goldchase4  = {true, SPR_GOLD_W4_1, 8, reinterpret_cast<void (*)()>(T_Chase), nullptr, &s_goldchase1};
 
-statetype s_goldwarp_it  = {false, SPR_GOLD_S_1, 45, nullptr, A_Laugh, &s_goldwarp_it1};
+statetype s_goldwarp_it  = {false, SPR_GOLD_S_1, 45, nullptr, reinterpret_cast<void (*)()>(A_Laugh), &s_goldwarp_it1};
 statetype s_goldwarp_it1 = {false, SPR_GOLD_WRIST_1, 25, nullptr, nullptr, &s_goldwarp_it2};
-statetype s_goldwarp_it2 = {false, SPR_GOLD_WRIST_2, 25, nullptr, A_Beep, &s_goldwarp_it3};
+statetype s_goldwarp_it2 = {false, SPR_GOLD_WRIST_2, 25, nullptr, reinterpret_cast<void (*)()>(A_Beep), &s_goldwarp_it3};
 statetype s_goldwarp_it3 = {false, SPR_GOLD_WRIST_1, 15, nullptr, nullptr, &s_goldwarp_it4};
-statetype s_goldwarp_it4 = {false, SPR_GOLD_WRIST_2, 25, nullptr, A_Beep, &s_goldwarp_it5};
+statetype s_goldwarp_it4 = {false, SPR_GOLD_WRIST_2, 25, nullptr, reinterpret_cast<void (*)()>(A_Beep), &s_goldwarp_it5};
 statetype s_goldwarp_it5 = {false, SPR_GOLD_S_1, 15, nullptr, nullptr, &s_goldwarp_out1};
 
-statetype s_goldwarp_out1 = {false, SPR_GOLD_WARP1, 30, nullptr, A_WarpOut, &s_goldwarp_out2};
+statetype s_goldwarp_out1 = {false, SPR_GOLD_WARP1, 30, nullptr, reinterpret_cast<void (*)()>(A_WarpOut), &s_goldwarp_out2};
 statetype s_goldwarp_out2 = {false, SPR_GOLD_WARP2, 30, nullptr, nullptr, &s_goldwarp_out3};
 statetype s_goldwarp_out3 = {false, SPR_GOLD_WARP3, 30, nullptr, nullptr, &s_goldwarp_out4};
 statetype s_goldwarp_out4 = {false, SPR_GOLD_WARP4, 30, nullptr, nullptr, &s_goldwarp_out5};
 statetype s_goldwarp_out5 = {false, SPR_GOLD_WARP5, 40, nullptr, nullptr, nullptr};
 
-statetype s_goldwarp_in1 = {false, SPR_GOLD_WARP5, 15, nullptr, A_WarpIn, &s_goldwarp_in2};
+statetype s_goldwarp_in1 = {false, SPR_GOLD_WARP5, 15, nullptr, reinterpret_cast<void (*)()>(A_WarpIn), &s_goldwarp_in2};
 statetype s_goldwarp_in2 = {false, SPR_GOLD_WARP4, 15, nullptr, nullptr, &s_goldwarp_in3};
 statetype s_goldwarp_in3 = {false, SPR_GOLD_WARP3, 15, nullptr, nullptr, &s_goldwarp_in4};
 statetype s_goldwarp_in4 = {false, SPR_GOLD_WARP2, 15, nullptr, nullptr, &s_goldwarp_in5};
 statetype s_goldwarp_in5 = {false, SPR_GOLD_WARP1, 15, nullptr, nullptr, &s_goldpath1};
 
-statetype s_goldmorphwait1 = {false, SPR_GOLD_WRIST_1, 10, nullptr, T_GoldMorphWait, &s_goldmorphwait1};
+statetype s_goldmorphwait1 = {false, SPR_GOLD_WRIST_1, 10, nullptr, reinterpret_cast<void (*)()>(T_GoldMorphWait), &s_goldmorphwait1};
 
 statetype s_goldmorph1 = {false, SPR_GOLD_MORPH1, 10, nullptr, nullptr, &s_goldmorph2};
 statetype s_goldmorph2 = {false, SPR_GOLD_MORPH2, 10, nullptr, nullptr, &s_goldmorph3};
@@ -4481,17 +4493,17 @@ statetype s_goldmorph4 = {false, SPR_GOLD_MORPH4, 10, nullptr, nullptr, &s_goldm
 statetype s_goldmorph5 = {false, SPR_GOLD_MORPH5, 10, nullptr, nullptr, &s_goldmorph6};
 statetype s_goldmorph6 = {false, SPR_GOLD_MORPH6, 10, nullptr, nullptr, &s_goldmorph7};
 statetype s_goldmorph7 = {false, SPR_GOLD_MORPH7, 10, nullptr, nullptr, &s_goldmorph8};
-statetype s_goldmorph8 = {false, SPR_GOLD_MORPH8, 10, nullptr, T_GoldMorph, &s_mgold_chase1};
+statetype s_goldmorph8 = {false, SPR_GOLD_MORPH8, 10, nullptr, reinterpret_cast<void (*)()>(T_GoldMorph), &s_mgold_chase1};
 
-statetype s_mgold_chase1 = {false, SPR_MGOLD_WALK1, 10, T_Chase, nullptr, &s_mgold_chase2};
+statetype s_mgold_chase1 = {false, SPR_MGOLD_WALK1, 10, reinterpret_cast<void (*)()>(T_Chase), nullptr, &s_mgold_chase2};
 statetype s_mgold_chase2 = {false, SPR_MGOLD_WALK2, 8, nullptr, nullptr, &s_mgold_chase3};
-statetype s_mgold_chase3 = {false, SPR_MGOLD_WALK3, 10, T_Chase, nullptr, &s_mgold_chase4};
+statetype s_mgold_chase3 = {false, SPR_MGOLD_WALK3, 10, reinterpret_cast<void (*)()>(T_Chase), nullptr, &s_mgold_chase4};
 statetype s_mgold_chase4 = {false, SPR_MGOLD_WALK4, 8, nullptr, nullptr, &s_mgold_chase1};
 
 statetype s_mgold_shoot1 = {false, SPR_MGOLD_ATTACK1, 10, nullptr, nullptr, &s_mgold_shoot2};
 statetype s_mgold_shoot2 = {false, SPR_MGOLD_ATTACK2, 20, nullptr, nullptr, &s_mgold_shoot3};
-statetype s_mgold_shoot3 = {false, SPR_MGOLD_ATTACK3, 14, T_Shoot, nullptr, &s_mgold_shoot4};
-statetype s_mgold_shoot4 = {false, SPR_MGOLD_ATTACK4, 12, T_Shade, nullptr, &s_mgold_chase1};
+statetype s_mgold_shoot3 = {false, SPR_MGOLD_ATTACK3, 14, reinterpret_cast<void (*)()>(T_Shoot), nullptr, &s_mgold_shoot4};
+statetype s_mgold_shoot4 = {false, SPR_MGOLD_ATTACK4, 12, reinterpret_cast<void (*)()>(T_Shade), nullptr, &s_mgold_chase1};
 
 statetype s_mgold_pain = {false, SPR_MGOLD_OUCH, 25, nullptr, nullptr, &s_mgold_chase1};
 
@@ -4559,7 +4571,7 @@ void A_Beep(objtype* obj)
 //--------------------------------------------------------------------------
 void InitGoldsternInfo(void)
 {
-    _fmemset(&GoldsternInfo, 0, sizeof(GoldsternInfo));
+    memset(&GoldsternInfo, 0, sizeof(GoldsternInfo));
     GoldsternInfo.LastIndex = GOLDIE_MAX_SPAWNS;
 }
 
@@ -4582,7 +4594,7 @@ void T_FlipShape(objtype* obj)
     }
 }
 
-statetype s_security_light = {false, SPR_SECURITY_NORMAL, 20, T_Security, T_FlipShape, &s_security_light};
+statetype s_security_light = {false, SPR_SECURITY_NORMAL, 20, reinterpret_cast<void (*)()>(T_Security), reinterpret_cast<void (*)()>(T_FlipShape), &s_security_light};
 
 //---------------------------------------------------------------------------
 // T_Security()
@@ -4625,17 +4637,17 @@ extern statetype s_scout_run4;
 
 extern statetype s_scout_dead;
 
-statetype s_scout_stand = {true, SPR_GSCOUT_W1_1 - SPR_GSCOUT_W1_1, 20, T_Stand, nullptr, &s_scout_stand};
+statetype s_scout_stand = {true, SPR_GSCOUT_W1_1 - SPR_GSCOUT_W1_1, 20, reinterpret_cast<void (*)()>(T_Stand), nullptr, &s_scout_stand};
 
-statetype s_scout_path1 = {true, SPR_GSCOUT_W1_1 - SPR_GSCOUT_W1_1, 15, T_Path, nullptr, &s_scout_path1};
-statetype s_scout_path2 = {true, SPR_GSCOUT_W2_1 - SPR_GSCOUT_W1_1, 15, T_Path, nullptr, &s_scout_path2};
-statetype s_scout_path3 = {true, SPR_GSCOUT_W3_1 - SPR_GSCOUT_W1_1, 15, T_Path, nullptr, &s_scout_path3};
-statetype s_scout_path4 = {true, SPR_GSCOUT_W4_1 - SPR_GSCOUT_W1_1, 15, T_Path, nullptr, &s_scout_path4};
+statetype s_scout_path1 = {true, SPR_GSCOUT_W1_1 - SPR_GSCOUT_W1_1, 15, reinterpret_cast<void (*)()>(T_Path), nullptr, &s_scout_path1};
+statetype s_scout_path2 = {true, SPR_GSCOUT_W2_1 - SPR_GSCOUT_W1_1, 15, reinterpret_cast<void (*)()>(T_Path), nullptr, &s_scout_path2};
+statetype s_scout_path3 = {true, SPR_GSCOUT_W3_1 - SPR_GSCOUT_W1_1, 15, reinterpret_cast<void (*)()>(T_Path), nullptr, &s_scout_path3};
+statetype s_scout_path4 = {true, SPR_GSCOUT_W4_1 - SPR_GSCOUT_W1_1, 15, reinterpret_cast<void (*)()>(T_Path), nullptr, &s_scout_path4};
 
-statetype s_scout_run  = {true, SPR_GSCOUT_W1_1 - SPR_GSCOUT_W1_1, 10, T_Chase, nullptr, &s_scout_run};
-statetype s_scout_run2 = {true, SPR_GSCOUT_W2_1 - SPR_GSCOUT_W1_1, 10, T_Chase, nullptr, &s_scout_run2};
-statetype s_scout_run3 = {true, SPR_GSCOUT_W3_1 - SPR_GSCOUT_W1_1, 10, T_Chase, nullptr, &s_scout_run3};
-statetype s_scout_run4 = {true, SPR_GSCOUT_W4_1 - SPR_GSCOUT_W1_1, 10, T_Chase, nullptr, &s_scout_run4};
+statetype s_scout_run  = {true, SPR_GSCOUT_W1_1 - SPR_GSCOUT_W1_1, 10, reinterpret_cast<void (*)()>(T_Chase), nullptr, &s_scout_run};
+statetype s_scout_run2 = {true, SPR_GSCOUT_W2_1 - SPR_GSCOUT_W1_1, 10, reinterpret_cast<void (*)()>(T_Chase), nullptr, &s_scout_run2};
+statetype s_scout_run3 = {true, SPR_GSCOUT_W3_1 - SPR_GSCOUT_W1_1, 10, reinterpret_cast<void (*)()>(T_Chase), nullptr, &s_scout_run3};
+statetype s_scout_run4 = {true, SPR_GSCOUT_W4_1 - SPR_GSCOUT_W1_1, 10, reinterpret_cast<void (*)()>(T_Chase), nullptr, &s_scout_run4};
 
 statetype s_scout_dead = {false, SPR_GSCOUT_W1_1 - SPR_GSCOUT_W1_1, 20, nullptr, nullptr, &s_scout_dead};
 
@@ -4758,14 +4770,14 @@ void SpawnCusExplosion(fixed x, fixed y, unsigned StartFrame, unsigned NumFrames
     usedummy = nevermark = true;
     SpawnNewObj(tilex, tiley, &s_ofs_smart_anim);
     usedummy = nevermark = false;
-    new->x               = x;
-    new->y               = y;
-    new->flags           = FL_OFFSET_STATES | FL_NONMARK | FL_NEVERMARK;
-    new->obclass         = Class;
-    new->lighting        = NO_SHADING;
-    InitAnim(new, StartFrame, 0, NumFrames, at_ONCE, ad_FWD, (US_RndT() & 0x7), Delay);
-    A_DeathScream(new);
-    MakeAlertNoise(new);
+    new_->x              = x;
+    new_->y              = y;
+    new_->flags          = FL_OFFSET_STATES | FL_NONMARK | FL_NEVERMARK;
+    new_->obclass        = static_cast<classtype>(Class);
+    new_->lighting       = NO_SHADING;
+    InitAnim(new_, StartFrame, 0, NumFrames, at_ONCE, ad_FWD, (US_RndT() & 0x7), Delay);
+    A_DeathScream(new_);
+    MakeAlertNoise(new_);
 }
 
 //---------------------------------------------------------------------------
@@ -4790,9 +4802,9 @@ extern statetype s_steamrelease4;
 extern statetype s_steamrelease5;
 extern statetype s_steamrelease6;
 
-statetype s_steamgrate = {false, 0, 1, T_SteamObj, nullptr, &s_steamgrate};
+statetype s_steamgrate = {false, 0, 1, reinterpret_cast<void (*)()>(T_SteamObj), nullptr, &s_steamgrate};
 
-statetype s_steamrelease1 = {false, 1, 1, nullptr, A_DeathScream, &s_steamrelease2};
+statetype s_steamrelease1 = {false, 1, 1, nullptr, reinterpret_cast<void (*)()>(A_DeathScream), &s_steamrelease2};
 statetype s_steamrelease2 = {false, 2, 14, nullptr, nullptr, &s_steamrelease3};
 statetype s_steamrelease3 = {false, 3, 14, nullptr, nullptr, &s_steamrelease4};
 statetype s_steamrelease4 = {false, 2, 14, nullptr, nullptr, &s_steamrelease5};
@@ -4875,21 +4887,21 @@ extern statetype s_terrot_die3;
 extern statetype s_terrot_die4;
 extern statetype s_terrot_die5;
 
-statetype s_terrot_wait  = {true, SPR_TERROT_1, 1, T_Seek, nullptr, &s_terrot_wait};
-statetype s_terrot_found = {false, SPR_TERROT_1, 0, T_Seek, nullptr, &s_terrot_found};
+statetype s_terrot_wait  = {true, SPR_TERROT_1, 1, reinterpret_cast<void (*)()>(T_Seek), nullptr, &s_terrot_wait};
+statetype s_terrot_found = {false, SPR_TERROT_1, 0, reinterpret_cast<void (*)()>(T_Seek), nullptr, &s_terrot_found};
 
-statetype s_terrot_shoot1 = {false, SPR_TERROT_FIRE_1, 10, nullptr, T_Shoot, &s_terrot_shoot2};
-statetype s_terrot_shoot2 = {false, SPR_TERROT_FIRE_2, 20, nullptr, T_Shade, &s_terrot_shoot3};
-statetype s_terrot_shoot3 = {false, SPR_TERROT_FIRE_1, 10, nullptr, T_Shoot, &s_terrot_shoot4};
-statetype s_terrot_shoot4 = {false, SPR_TERROT_FIRE_2, 20, nullptr, T_Shade, &s_terrot_seek1};
+statetype s_terrot_shoot1 = {false, SPR_TERROT_FIRE_1, 10, nullptr, reinterpret_cast<void (*)()>(T_Shoot), &s_terrot_shoot2};
+statetype s_terrot_shoot2 = {false, SPR_TERROT_FIRE_2, 20, nullptr, reinterpret_cast<void (*)()>(T_Shade), &s_terrot_shoot3};
+statetype s_terrot_shoot3 = {false, SPR_TERROT_FIRE_1, 10, nullptr, reinterpret_cast<void (*)()>(T_Shoot), &s_terrot_shoot4};
+statetype s_terrot_shoot4 = {false, SPR_TERROT_FIRE_2, 20, nullptr, reinterpret_cast<void (*)()>(T_Shade), &s_terrot_seek1};
 
-statetype s_terrot_seek1  = {true, SPR_TERROT_1, 10, T_Seek, nullptr, &s_terrot_seek1s};
+statetype s_terrot_seek1  = {true, SPR_TERROT_1, 10, reinterpret_cast<void (*)()>(T_Seek), nullptr, &s_terrot_seek1s};
 statetype s_terrot_seek1s = {true, SPR_TERROT_1, 3, nullptr, nullptr, &s_terrot_seek1};
 
-statetype s_terrot_die1 = {false, SPR_TERROT_DIE_1, 15, nullptr, A_DeathScream, &s_terrot_die2};
+statetype s_terrot_die1 = {false, SPR_TERROT_DIE_1, 15, nullptr, reinterpret_cast<void (*)()>(A_DeathScream), &s_terrot_die2};
 statetype s_terrot_die2 = {false, SPR_TERROT_DIE_2, 15, nullptr, nullptr, &s_terrot_die3};
 statetype s_terrot_die3 = {false, SPR_TERROT_DIE_3, 15, nullptr, nullptr, &s_terrot_die4};
-statetype s_terrot_die4 = {false, SPR_TERROT_DIE_4, 15, nullptr, T_Shade, &s_terrot_die5};
+statetype s_terrot_die4 = {false, SPR_TERROT_DIE_4, 15, nullptr, reinterpret_cast<void (*)()>(T_Shade), &s_terrot_die5};
 
 statetype s_terrot_die5 = {false, SPR_TERROT_DEAD, 0, nullptr, nullptr, &s_terrot_die5};
 
@@ -4951,7 +4963,7 @@ void T_Seek(objtype* ob)
         {
             NewState(ob, &s_terrot_seek1);
 
-            ob->dir++;
+            // ob->dir++; !!! error: cannot increment expression of enum type 'dirtype'
             ob->temp2 = SEEK_TURN_DELAY;
             if (ob->dir == nodir)
                 ob->dir = east;
@@ -4962,7 +4974,7 @@ void T_Seek(objtype* ob)
 //---------------------------------------------------------------------------
 // SpawnProjectile()
 //---------------------------------------------------------------------------
-void SpawnProjectile(objtype* shooter, classtype class)
+void SpawnProjectile(objtype* shooter, classtype ct)
 {
     short    angle_adj = 0;
     unsigned temp      = 0;
@@ -4972,18 +4984,18 @@ void SpawnProjectile(objtype* shooter, classtype class)
     y = shooter->y;
 
     usedummy = nevermark = true;
-    switch (class)
+    switch (ct)
     {
     case spider_mutantshotobj:
     case acid_dragonshotobj:
     case final_boss4shotobj:
         SpawnNewObj(x >> TILESHIFT, y >> TILESHIFT, &s_ofs_random);
-        PlaySoundLocActor(SPITATTACKSND, new);
-        new->speed = SPDPROJ;
-        angle_adj  = 1 - (US_RndT() & 3);
-        new->temp1 = BossShotShapes[class - spider_mutantshotobj];
-        new->flags = FL_OFFSET_STATES | FL_PROJ_CHECK_TRANSPARENT | FL_STORED_OBJPTR;
-        new->temp3 = (unsigned)shooter;
+        PlaySoundLocActor(SPITATTACKSND, new_);
+        new_->speed = SPDPROJ;
+        angle_adj   = 1 - (US_RndT() & 3);
+        new_->temp1 = BossShotShapes[ct - spider_mutantshotobj];
+        new_->flags = FL_OFFSET_STATES | FL_PROJ_CHECK_TRANSPARENT | FL_STORED_OBJPTR;
+        // new_->temp3 = (unsigned)shooter; !!! cast from pointer to smaller type 'unsigned int' loses information
         break;
 
     case mut_hum1shotobj:
@@ -4991,20 +5003,20 @@ void SpawnProjectile(objtype* shooter, classtype class)
     case electroshotobj:
     case final_boss2shotobj:
         SpawnNewObj(x >> TILESHIFT, y >> TILESHIFT, &s_ofs_shot1);
-        PlaySoundLocActor(ELECTSHOTSND, new);
-        new->speed = SPDPROJ;
-        angle_adj  = 1 - (US_RndT() & 3);
-        new->temp1 = SPR_ELEC_SHOT1;
-        new->flags = FL_OFFSET_STATES | FL_PROJ_CHECK_TRANSPARENT | FL_STORED_OBJPTR;
-        new->temp3 = (unsigned)shooter;
-        switch (class)
+        PlaySoundLocActor(ELECTSHOTSND, new_);
+        new_->speed = SPDPROJ;
+        angle_adj   = 1 - (US_RndT() & 3);
+        new_->temp1 = SPR_ELEC_SHOT1;
+        new_->flags = FL_OFFSET_STATES | FL_PROJ_CHECK_TRANSPARENT | FL_STORED_OBJPTR;
+        // new_->temp3 = (unsigned)shooter; !!! error: cast from pointer to smaller type 'unsigned int' loses information
+        switch (ct)
         {
         case final_boss2shotobj:
         case goldmorphshotobj:
-            new->temp1 = SPR_MGOLD_SHOT1;
+            new_->temp1 = SPR_MGOLD_SHOT1;
 
         case electroshotobj:
-            new->lighting = NO_SHADING;
+            new_->lighting = NO_SHADING;
         }
         break;
 
@@ -5015,91 +5027,91 @@ void SpawnProjectile(objtype* shooter, classtype class)
     case scanshotobj:
     case dogshotobj:
         SpawnNewObj(x >> TILESHIFT, y >> TILESHIFT, &s_liquid_shot);
-        PlaySoundLocActor(SPITATTACKSND, new);
-        new->temp2 = SPR_SPIT1_1 + temp;
-        new->flags = FL_OFFSET_STATES | FL_PROJ_CHECK_TRANSPARENT | FL_STORED_OBJPTR;
-        new->speed = SPDPROJ + US_RndT();
-        angle_adj  = 2 - (US_RndT() % 5);
-        new->temp3 = (unsigned)shooter;
+        PlaySoundLocActor(SPITATTACKSND, new_);
+        new_->temp2 = SPR_SPIT1_1 + temp;
+        new_->flags = FL_OFFSET_STATES | FL_PROJ_CHECK_TRANSPARENT | FL_STORED_OBJPTR;
+        new_->speed = SPDPROJ + US_RndT();
+        angle_adj   = 2 - (US_RndT() % 5);
+        // new_->temp3 = (unsigned)shooter; !!! cast from pointer to smaller type 'unsigned int' loses information
         break;
 
     case liquidshotobj:
         SpawnNewObj(x >> TILESHIFT, y >> TILESHIFT, &s_liquid_shot);
-        new->temp2   = SPR_LIQUID_SHOT_FLY_1;
-        new->flags   = FL_OFFSET_STATES | FL_PROJ_CHECK_TRANSPARENT | FL_STORED_OBJPTR;
-        new->speed   = SPDPROJ + US_RndT();
-        angle_adj    = 2 - (US_RndT() % 5);
-        new->s_tilex = new->s_tiley = 0;
-        new->temp3                  = (unsigned)shooter;
+        new_->temp2   = SPR_LIQUID_SHOT_FLY_1;
+        new_->flags   = FL_OFFSET_STATES | FL_PROJ_CHECK_TRANSPARENT | FL_STORED_OBJPTR;
+        new_->speed   = SPDPROJ + US_RndT();
+        angle_adj     = 2 - (US_RndT() % 5);
+        new_->s_tilex = new_->s_tiley = 0;
+        // new_->temp3                   = (unsigned)shooter; !!! error: cast from pointer to smaller type 'unsigned int' loses information
         break;
 
     case grenadeobj:
         SpawnNewObj(x >> TILESHIFT, y >> TILESHIFT, &s_ofs_random);
-        new->speed    = SPDPROJ + Random(SPDPROJ >> 1);
-        new->angle    = player->angle + 1 - (US_RndT() & 3);
-        new->temp1    = grenade_shapes[0];
-        new->flags    = FL_OFFSET_STATES; //|FL_PROJ_CHECK_TRANSPARENT;
-        new->lighting = NO_SHADING;       // no shading
+        new_->speed    = SPDPROJ + Random(SPDPROJ >> 1);
+        new_->angle    = player->angle + 1 - (US_RndT() & 3);
+        new_->temp1    = grenade_shapes[0];
+        new_->flags    = FL_OFFSET_STATES; //|FL_PROJ_CHECK_TRANSPARENT;
+        new_->lighting = NO_SHADING;       // no shading
 
         // Store off start tile x & y
 
-        new->s_tilex = x >> TILESHIFT;
-        new->s_tiley = y >> TILESHIFT;
+        new_->s_tilex = x >> TILESHIFT;
+        new_->s_tiley = y >> TILESHIFT;
         break;
 
     case bfg_shotobj:
         SpawnNewObj(x >> TILESHIFT, y >> TILESHIFT, &s_ofs_random);
-        new->speed    = SPDPROJ + Random(SPDPROJ);
-        new->angle    = player->angle + 1 - (US_RndT() & 3);
-        new->temp1    = SPR_BFG_WEAPON_SHOT2;
-        new->flags    = FL_OFFSET_STATES;
-        new->lighting = NO_SHADING;
+        new_->speed    = SPDPROJ + Random(SPDPROJ);
+        new_->angle    = player->angle + 1 - (US_RndT() & 3);
+        new_->temp1    = SPR_BFG_WEAPON_SHOT2;
+        new_->flags    = FL_OFFSET_STATES;
+        new_->lighting = NO_SHADING;
 
         // Store off start tile x & y
 
-        new->s_tilex = x >> TILESHIFT;
-        new->s_tiley = y >> TILESHIFT;
+        new_->s_tilex = x >> TILESHIFT;
+        new_->s_tiley = y >> TILESHIFT;
         break;
     }
 
     usedummy = nevermark = false;
-    if (new == &dummyobj)
+    if (new_ == &dummyobj)
         return;
 
-    //	new->flags2 = shooter->flags2 & FL2_CLOAKED;
-    new->x       = x;
-    new->y       = y;
-    new->active  = true;
-    new->obclass = class;
-    if (class != grenadeobj && class != bfg_shotobj)
-        new->angle = CalcAngle(new, player) + angle_adj;
+    //	new_->flags2 = shooter->flags2 & FL2_CLOAKED;
+    new_->x       = x;
+    new_->y       = y;
+    new_->active  = static_cast<activetype>(true);
+    new_->obclass = ct;
+    if (ct != grenadeobj && ct != bfg_shotobj)
+        new_->angle = CalcAngle(new_, player) + angle_adj;
 
     if (shooter->obclass == gold_morphobj)
-        new->angle += morph_angle_adj;
+        new_->angle += morph_angle_adj;
 
-    if (new->angle <= 0)
-        new->angle += 359;
-    else if (new->angle > 359)
-        new->angle -= 359;
+    if (new_->angle <= 0)
+        new_->angle += 359;
+    else if (new_->angle > 359)
+        new_->angle -= 359;
 
-    new->flags |= (FL_NONMARK | FL_NEVERMARK);
+    new_->flags |= (FL_NONMARK | FL_NEVERMARK);
 
     // Move grenade slightly in front of player so you can see instant
     // explosions (ie: when you're face up against a wall).
     //
-    if (class == grenadeobj || class == bfg_shotobj)
+    if (ct == grenadeobj || ct == bfg_shotobj)
     {
         long deltax, deltay;
 
-        deltax = FixedByFrac(mindist + (mindist >> 3), costable[new->angle]);
-        deltay = -FixedByFrac(mindist + (mindist >> 3), sintable[new->angle]);
+        deltax = FixedByFrac(mindist + (mindist >> 3), costable[new_->angle]);
+        deltay = -FixedByFrac(mindist + (mindist >> 3), sintable[new_->angle]);
 
-        new->x += deltax;
-        new->y += deltay;
+        new_->x += deltax;
+        new_->y += deltay;
     }
 
-    //   if (actorat[new->tilex][new->tiley]==new);
-    //		actorat[new->tilex][new->tiley]=nullptr;
+    //   if (actorat[new_->tilex][new_->tiley]==new_);
+    //		actorat[new_->tilex][new_->tiley]=nullptr;
 }
 
 objtype*      proj_check;
@@ -5166,10 +5178,10 @@ bool ProjectileTryMove(objtype* ob, fixed deltax, fixed deltay)
 
                             if ((unsigned)xdist < PROJCHECKSIZE && (unsigned)ydist < PROJCHECKSIZE)
                             {
-                                proj_check = false;
-                                proj_wall  = nullptr;
-                                ob->tilex  = ob->x >> TILESHIFT;
-                                ob->tiley  = ob->y >> TILESHIFT;
+                                // proj_check = false; !!! error: incompatible integer to pointer conversion assigning to 'objtype *' (aka 'objstruct *') from 'bool'
+                                // proj_wall  = nullptr; !!! error: assigning to 'unsigned char' from incompatible type 'std::nullptr_t'
+                                ob->tilex = ob->x >> TILESHIFT;
+                                ob->tiley = ob->y >> TILESHIFT;
                                 return (false);
                             }
                         }
@@ -5177,10 +5189,10 @@ bool ProjectileTryMove(objtype* ob, fixed deltax, fixed deltay)
                         {
                             // We have a wall!
 
-                            proj_wall  = (unsigned char)proj_check;
-                            proj_check = false;
-                            ob->tilex  = ob->x >> TILESHIFT;
-                            ob->tiley  = ob->y >> TILESHIFT;
+                            // proj_wall  = (unsigned char)proj_check; !!! cast from pointer to smaller type 'unsigned char' loses information
+                            // proj_check = false; !!! error: incompatible integer to pointer conversion assigning to 'objtype *' (aka 'objstruct *') from 'bool'
+                            ob->tilex = ob->x >> TILESHIFT;
+                            ob->tiley = ob->y >> TILESHIFT;
                             return (false);
                         }
                     }
@@ -5225,7 +5237,7 @@ void T_Projectile(objtype* ob)
 //
 #pragma warn - rch
 
-    proj_check = false;
+    // proj_check = false; !!! error: incompatible integer to pointer conversion assigning to 'objtype *' (aka 'objstruct *') from 'bool'
 
     if (!ProjectileTryMove(ob, deltax, deltay))
     {
@@ -5597,7 +5609,7 @@ void ExplodeFill(char tx, char ty)
 
     door = tilemap[tx][ty];
     if (door & 0x80)
-        no_wall = doorobjlist[door & 0x7f].action != dr_closed;
+        no_wall = doorobjlist[door & 0x7f].action != doorstruct::dr_closed;
     else
         no_wall = !tilemap[tx][ty];
 
@@ -5611,7 +5623,7 @@ void ExplodeFill(char tx, char ty)
 
     door = tilemap[tx][ty];
     if (door & 0x80)
-        no_wall = doorobjlist[door & 0x7f].action != dr_closed;
+        no_wall = doorobjlist[door & 0x7f].action != doorstruct::dr_closed;
     else
         no_wall = !tilemap[tx][ty];
 
@@ -5627,7 +5639,7 @@ void ExplodeFill(char tx, char ty)
 
     door = tilemap[tx][ty];
     if (door & 0x80)
-        no_wall = doorobjlist[door & 0x7f].action != dr_closed;
+        no_wall = doorobjlist[door & 0x7f].action != doorstruct::dr_closed;
     else
         no_wall = !tilemap[tx][ty];
 
@@ -5641,7 +5653,7 @@ void ExplodeFill(char tx, char ty)
 
     door = tilemap[tx][ty];
     if (door & 0x80)
-        no_wall = doorobjlist[door & 0x7f].action != dr_closed;
+        no_wall = doorobjlist[door & 0x7f].action != doorstruct::dr_closed;
     else
         no_wall = !tilemap[tx][ty];
 
@@ -5792,9 +5804,9 @@ void T_BlowBack(objtype* obj)
         obj->angle = CalcAngle(killer, obj);
 
         if ((killer = (objtype*)SLIDE_TEMP(obj)) == player)
-            SLIDE_TEMP(obj) = dist_table[gamestate.weapon];
+            obj->hitpoints = dist_table[gamestate.weapon];
         else
-            SLIDE_TEMP(obj) = dist_table[wp_grenade];
+            obj->hitpoints = dist_table[wp_grenade];
 
         obj->flags |= FL_SLIDE_INIT;
     }
@@ -5802,7 +5814,7 @@ void T_BlowBack(objtype* obj)
     if (SLIDE_TEMP(obj) > SLIDE_SPEED)
     {
         dist = SLIDE_SPEED;
-        SLIDE_TEMP(obj) -= SLIDE_SPEED;
+        obj->hitpoints -= SLIDE_SPEED;
     }
     else
     {
@@ -5830,4 +5842,3 @@ void T_BlowBack(objtype* obj)
         }
     }
 }
-

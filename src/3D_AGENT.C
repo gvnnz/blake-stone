@@ -1,6 +1,8 @@
 // 3D_AGENT.C
 
+#include "3d_agent.hpp"
 #include "3d_def.hpp"
+
 #pragma hdrstop
 
 #include <ctype.h>
