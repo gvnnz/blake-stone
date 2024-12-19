@@ -1,8 +1,17 @@
 // 3D_DEBUG.C
 
 #include "3d_def.hpp"
+#include <cstdlib>
+#include <cstring>
+
 #pragma hdrstop
-#include <BIOS.H>
+
+extern void VH_UpdateScreen();
+extern void TakeDamage(int points, objtype* attacker);
+extern void HealSelf(int points);
+extern void SetPlaneViewSize();
+extern void GiveWeapon(int weapon);
+extern void DrawScore();
 
 /*
 =============================================================================
@@ -215,7 +224,7 @@ void DebugMemory(void)
         US_PrintUnsigned(shade_max);
     }
 
-    VW_UpdateScreen();
+    VH_UpdateScreen();
     IN_Ack();
 
     temp       = bufferofs;
