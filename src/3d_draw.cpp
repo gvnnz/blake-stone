@@ -1,13 +1,25 @@
 // 3D_DRAW.C
 
 #include "3d_def.hpp"
+#include <cassert>
 #include <time.h>
+
 #pragma hdrstop
 
 // #define DEBUGWALLS
 // #define DEBUGTICS
 
 // #define WOLFDOORS
+
+extern void GetBonus(statobj_t*);
+extern void ScaleLSShape(int xcenter, int shapenum, unsigned height, char lighting);
+extern void DrawAmmoPic();
+extern void DrawScoreNum();
+extern void DrawWeaponPic();
+extern void DrawAmmoNum();
+extern void DrawKeyPics();
+extern void DrawHealthNum();
+extern void UpdateRadarGuage();
 
 #define MASKABLE_DOORS (false)
 #define MASKABLE_POSTS (false | MASKABLE_DOORS)
@@ -158,6 +170,9 @@ void NoWallAsmRefresh(void); // in 3D_DR_A.ASM
 
 fixed FixedByFrac(fixed a, fixed b)
 {
+    assert(false);
+    return 0;
+#if 0
     //
     // setup
     //
@@ -197,6 +212,7 @@ fixed FixedByFrac(fixed a, fixed b)
                        0
 
                        ansok:;
+#endif
 }
 
 #pragma warn + rvl
@@ -267,6 +283,8 @@ void TransformActor(objtype* ob)
 
     ob->viewx = centerx + ny * scale / nx; // DEBUG: use assembly divide
 
+    assert(false);
+#if 0
     //
     // calculate height (heightnumerator/(nx>>8))
     //
@@ -275,6 +293,7 @@ void TransformActor(objtype* ob)
         ax asm mov[WORD PTR temp + 2], dx
 
                                            ob->viewheight = temp;
+#endif
 }
 
 //==========================================================================
@@ -339,11 +358,14 @@ bool TransformTile(int tx, int ty, int* dispx, int* dispheight)
     //
     // calculate height (heightnumerator/(nx>>8))
     //
+    assert(false);
+#if 0
     asm mov ax, [WORD PTR heightnumerator] asm mov dx, [WORD PTR heightnumerator + 2] asm idiv[WORD PTR nx + 1] // nx>>8
         asm mov[WORD PTR temp],
         ax asm mov[WORD PTR temp + 2], dx
 
                                            *dispheight = temp;
+#endif
 
     //
     // see if it should be grabbed
@@ -390,11 +412,14 @@ int CalcHeight(void)
     if (nx < mindist)
         nx = mindist; // don't let divide overflow
 
+    assert(false);
+#if 0
     asm mov ax, [WORD PTR heightnumerator] asm mov dx, [WORD PTR heightnumerator + 2] asm idiv[WORD PTR nx + 1] // nx>>8
         asm cmp                     ax,
         8 asm jge exit_func asm mov ax, 8
 
         exit_func:
+#endif
 }
 
 //==========================================================================
@@ -417,6 +442,8 @@ extern byte* lightsource;
 
 void ScalePost(void) // VGA version
 {
+    assert(false);
+#if 0
     int  height;
     long i;
     byte ofs;
@@ -471,6 +498,7 @@ void ScalePost(void) // VGA version
         outp(SC_INDEX + 1, msk);
         DrawPost();
     }
+#endif
 }
 
 void FarScalePost() // just so other files can call
@@ -547,9 +575,9 @@ void HitVertWall(void)
         else
         {
             ScalePost();
-            (unsigned)postsource = texture;
-            postwidth            = 1;
-            postx                = pixx;
+            postsource = texture;
+            postwidth  = 1;
+            postx      = pixx;
         }
     }
     else
@@ -581,8 +609,9 @@ void HitVertWall(void)
         else
             wallpic = vertwall[tilehit];
 
-        *(((unsigned*)&postsource) + 1) = (unsigned)PM_GetPage(wallpic);
-        (unsigned)postsource            = texture;
+        assert(false);
+        // *(((unsigned*)&postsource) + 1) = (unsigned)PM_GetPage(wallpic); !!! error: cast from pointer to smaller type 'unsigned int' loses information
+        postsource                      = texture;
     }
 }
 
@@ -622,9 +651,9 @@ void HitHorizWall(void)
         else
         {
             ScalePost();
-            (unsigned)postsource = texture;
-            postwidth            = 1;
-            postx                = pixx;
+            postsource = texture;
+            postwidth  = 1;
+            postx      = pixx;
         }
     }
     else
@@ -654,8 +683,9 @@ void HitHorizWall(void)
         else
             wallpic = horizwall[tilehit];
 
-        *(((unsigned*)&postsource) + 1) = (unsigned)PM_GetPage(wallpic);
-        (unsigned)postsource            = texture;
+        assert(false);
+        // *(((unsigned*)&postsource) + 1) = (unsigned)PM_GetPage(wallpic); !!! error: cast from pointer to smaller type 'unsigned int' loses information
+        postsource                      = texture;
     }
 }
 
@@ -676,7 +706,7 @@ void HitHorizDoor(void)
 
     doornum = tilehit & 0x7f;
 
-    if (doorobjlist[doornum].action == dr_jammed)
+    if (doorobjlist[doornum].action == doorstruct::dr_jammed)
         return;
 
 #ifdef WOLFDOORS
@@ -711,9 +741,9 @@ void HitHorizDoor(void)
 #else
             ScalePost();
 #endif
-            (unsigned)postsource = texture;
-            postwidth            = 1;
-            postx                = pixx;
+            postsource = texture;
+            postwidth  = 1;
+            postx      = pixx;
         }
     }
     else
@@ -792,8 +822,9 @@ void HitHorizDoor(void)
         if (lockable && doorobjlist[doornum].lock == kt_none)
             doorpage += UL_METAL;
 
-        *(((unsigned*)&postsource) + 1) = (unsigned)PM_GetPage(doorpage);
-        (unsigned)postsource            = texture;
+        assert(false);
+        // *(((unsigned*)&postsource) + 1) = (unsigned)PM_GetPage(doorpage); !!! error: cast from pointer to smaller type 'unsigned int' loses information
+        postsource                      = texture;
     }
 }
 
@@ -814,7 +845,7 @@ void HitVertDoor(void)
 
     doornum = tilehit & 0x7f;
 
-    if (doorobjlist[doornum].action == dr_jammed)
+    if (doorobjlist[doornum].action == doorstruct::dr_jammed)
         return;
 
 #ifdef WOLFDOORS
@@ -847,9 +878,9 @@ void HitVertDoor(void)
 #else
             ScalePost();
 #endif
-            (unsigned)postsource = texture;
-            postwidth            = 1;
-            postx                = pixx;
+            postsource = texture;
+            postwidth  = 1;
+            postx      = pixx;
         }
     }
     else
@@ -928,8 +959,9 @@ void HitVertDoor(void)
         if (lockable && doorobjlist[doornum].lock == kt_none)
             doorpage += UL_METAL;
 
-        *(((unsigned*)&postsource) + 1) = (unsigned)PM_GetPage(doorpage);
-        (unsigned)postsource            = texture;
+        assert(false);
+        // *(((unsigned*)&postsource) + 1) = (unsigned)PM_GetPage(doorpage); !!! error: cast from pointer to smaller type 'unsigned int' loses information
+        postsource                      = texture;
     }
 }
 
@@ -975,9 +1007,9 @@ void HitHorizPWall(void)
         else
         {
             ScalePost();
-            (unsigned)postsource = texture;
-            postwidth            = 1;
-            postx                = pixx;
+            postsource = texture;
+            postwidth  = 1;
+            postx      = pixx;
         }
     }
     else
@@ -992,8 +1024,9 @@ void HitHorizPWall(void)
 
         wallpic = horizwall[tilehit & 63];
 
-        *(((unsigned*)&postsource) + 1) = (unsigned)PM_GetPage(wallpic);
-        (unsigned)postsource            = texture;
+        assert(false);
+        // *(((unsigned*)&postsource) + 1) = (unsigned)PM_GetPage(wallpic); !!! error: cast from pointer to smaller type 'unsigned int' loses information
+        postsource                      = texture;
     }
 }
 
@@ -1037,9 +1070,9 @@ void HitVertPWall(void)
         else
         {
             ScalePost();
-            (unsigned)postsource = texture;
-            postwidth            = 1;
-            postx                = pixx;
+            postsource = texture;
+            postwidth  = 1;
+            postx      = pixx;
         }
     }
     else
@@ -1054,8 +1087,9 @@ void HitVertPWall(void)
 
         wallpic = vertwall[tilehit & 63];
 
-        *(((unsigned*)&postsource) + 1) = (unsigned)PM_GetPage(wallpic);
-        (unsigned)postsource            = texture;
+        assert(false);
+        // *(((unsigned*)&postsource) + 1) = (unsigned)PM_GetPage(wallpic); !!! error: cast from pointer to smaller type 'unsigned int' loses information
+        postsource                      = texture;
     }
 }
 
@@ -1144,6 +1178,8 @@ asm	out	dx,al
 
 void VGAClearScreen(void)
 {
+    assert(false);
+#if 0
     viewflags = gamestate.flags;
 
     //
@@ -1218,6 +1254,7 @@ void VGAClearScreen(void)
                                                     dx asm dec bh asm jnz bottomloop
 
                                                         exit_mofo:
+#endif
 }
 #endif
 
@@ -1242,7 +1279,7 @@ int CalcRotate(objtype* ob)
     viewangle = player->angle + (centerx - ob->viewx) / 8;
 
     if (dir == nodir)
-        dir = ob->trydir & 127;
+        dir = static_cast<dirtype>(ob->trydir & 127);
     angle = (viewangle - 180) - dirangle[dir];
 
     angle += ANGLES / 16;
@@ -1351,7 +1388,7 @@ void DrawScaleds(void)
 
         if (*visspot || (*(visspot - 1) && !*(tilespot - 1)) || (*(visspot + 1) && !*(tilespot + 1)) || (*(visspot - 65) && !*(tilespot - 65)) || (*(visspot - 64) && !*(tilespot - 64)) || (*(visspot - 63) && !*(tilespot - 63)) || (*(visspot + 65) && !*(tilespot + 65)) || (*(visspot + 64) && !*(tilespot + 64)) || (*(visspot + 63) && !*(tilespot + 63)))
         {
-            obj->active = true;
+            obj->active = static_cast<activetype>(true);
 
             TransformActor(obj);
 
@@ -1696,6 +1733,8 @@ void MapLSRow();
 
 void ThreeDRefresh(void)
 {
+    assert(false);
+#if 0
     int tracedir;
 
     // this wouldn't need to be done except for my debugger/video wierdness
@@ -1822,6 +1861,7 @@ void ThreeDRefresh(void)
 
     frameon++;
     PM_NextFrame();
+#endif
 }
 
 //--------------------------------------------------------------------------
@@ -1829,6 +1869,8 @@ void ThreeDRefresh(void)
 //--------------------------------------------------------------------------
 int NextBuffer()
 {
+    assert(false);
+#if 0
     displayofs = bufferofs;
 
 #ifdef PAGEFLIP
@@ -1843,6 +1885,7 @@ int NextBuffer()
                                                      bufferofs += SCREENSIZE;
     if (bufferofs > PAGE3START)
         bufferofs = PAGE1START;
+#endif
 }
 
 byte TravelTable[MAPSIZE][MAPSIZE];
@@ -1852,11 +1895,14 @@ byte TravelTable[MAPSIZE][MAPSIZE];
 //--------------------------------------------------------------------------
 void UpdateTravelTable()
 {
+    assert(false);
+#if 0
     asm mov si, OFFSET[spotvis] asm mov ax, SEG[TravelTable] asm mov es, ax asm mov di, OFFSET[TravelTable] asm mov cx, 00800h // HARDCODED for 64x64 / 2!!
 
         loop1 : asm mov                           ax,
                 [si] asm inc si asm inc           si asm or [es : di],
                 ax asm inc di asm inc di asm loop loop1
+#endif
 }
 
 extern short an_offset[];
@@ -1896,6 +1942,8 @@ unsigned tc_time;
 //--------------------------------------------------------------------------
 void ShowOverhead(short bx, short by, short radius, short zoom, unsigned flags)
 {
+    assert(false);
+#if 0
 #define PLAYER_COLOR 0xf1
 #define UNMAPPED_COLOR 0x52
 #define MAPPED_COLOR 0x55
@@ -2102,4 +2150,5 @@ void ShowOverhead(short bx, short by, short radius, short zoom, unsigned flags)
     }
 
     VGAMAPMASK(15);
+#endif
 }

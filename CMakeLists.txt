@@ -9,7 +9,7 @@ list(APPEND SOURCES
     src/3d_agent.hpp
     src/3d_debug.cpp
     src/3d_def.hpp
-    src/3D_DRAW.C
+    src/3d_draw.cpp
     src/3D_DRAW2.C
     src/3D_GAME.C
     src/3D_INTER.C
