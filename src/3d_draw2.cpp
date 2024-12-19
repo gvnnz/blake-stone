@@ -1,6 +1,7 @@
 // WOLFHACK.C
 
 #include "3d_def.hpp"
+#include <cassert>
 
 #define MAXVIEWHEIGHT 200
 #define GAMESTATE_TEST (true)
@@ -83,12 +84,14 @@ void DrawSpans(int x1, int x2, int height)
         prestep            = viewwidth / 2 - x1;
         do
         {
-            outportb(SC_INDEX + 1, 1 << plane);
+            assert(false);
+            // outportb(SC_INDEX + 1, 1 << plane); !!! DOS function
             mr_xfrac = startxfrac - (mr_xstep >> 2) * prestep;
             mr_yfrac = startyfrac - (mr_ystep >> 2) * prestep;
 
             startx   = x1 >> 2;
-            mr_dest  = (unsigned)toprow + startx;
+            assert(false);
+            //mr_dest  = (unsigned)toprow + startx; !!! Cast from pointer to smaller type 'unsigned int' loses information
             mr_count = ((x2 - plane) >> 2) - startx + 1;
             x1++;
             prestep--;
@@ -110,12 +113,14 @@ void DrawSpans(int x1, int x2, int height)
         prestep            = viewwidth / 2 - x1;
         do
         {
-            outportb(SC_INDEX + 1, 1 << plane);
+            assert(false);
+            // outportb(SC_INDEX + 1, 1 << plane); !!! DOS function
             mr_xfrac = startxfrac - (mr_xstep >> 2) * prestep;
             mr_yfrac = startyfrac - (mr_ystep >> 2) * prestep;
 
             startx   = x1 >> 2;
-            mr_dest  = (unsigned)toprow + startx;
+            assert(false);
+            // mr_dest  = (unsigned)toprow + startx; !!! Cast from pointer to smaller type 'unsigned int' loses information
             mr_count = ((x2 - plane) >> 2) - startx + 1;
             x1++;
             prestep--;
@@ -159,15 +164,15 @@ void SetPlaneViewSize(void)
             basedist[y] = GLOBAL1 / 2 * scale / y;
     }
 
-    src  = PM_GetPage(CeilingTile);
-    dest = planepics;
+    src  = static_cast<byte*>(PM_GetPage(CeilingTile));
+    dest = reinterpret_cast<byte*>(planepics);
     for (x = 0; x < 4096; x++)
     {
         *dest = *src++;
         dest += 2;
     }
-    src  = PM_GetPage(FloorTile);
-    dest = planepics + 1;
+    src  = static_cast<byte*>(PM_GetPage(FloorTile));
+    dest = reinterpret_cast<byte*>(planepics + 1);
     for (x = 0; x < 4096; x++)
     {
         *dest = *src++;
