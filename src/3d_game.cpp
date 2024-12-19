@@ -1,11 +1,39 @@
 // 3D_GAME.C
 
 #include "3d_def.hpp"
+#include <cassert>
+#include <cstdio>
+#include <cstring>
+
 #pragma hdrstop
 
 #ifdef MYPROFILE
 #include <TIME.H>
 #endif
+
+extern void InitGoldsternInfo();
+extern void InitDoorList();
+extern void InitStaticList();
+extern void ConnectBarriers();
+extern void DrawHealth();
+extern void DrawKeys();
+extern void DrawWeapon();
+extern void DrawScore();
+extern void InitInfoArea();
+extern void ForceUpdateStatusBar();
+extern void UpdateStatusBar();
+extern bool LoadLevel(short levelnum);
+extern void SetPlaneViewSize();
+extern int  CalcAngle(objtype* from_obj, objtype* to_obj);
+extern void FinishPaletteShifts();
+extern void CA_CacheScreen(int chunk);
+extern void DoActor(objtype* ob);
+extern void CheckHighScore(long score, word other);
+extern int  NextBuffer();
+extern bool SaveLevel(short levelnum);
+extern void PreloadGraphics();
+extern void PreloadUpdate(unsigned current, unsigned total);
+extern bool LevelInPlaytemp(char levelnum);
 
 /*
 =============================================================================
@@ -206,7 +234,7 @@ void PlaySoundLocGlobal(word s, fixed gx, fixed gy)
 {
     SetSoundLoc(gx, gy);
     SD_PositionSound(leftchannel, rightchannel);
-    if (SD_PlaySound(s))
+    if (SD_PlaySound(static_cast<soundnames>(s)))
     {
         globalsoundx = gx;
         globalsoundy = gy;
@@ -236,9 +264,12 @@ void UpdateSoundLoc(void)
 
 void ClearMemory(void)
 {
+    assert(false);
+#if 0
     PM_UnlockMainMem();
     SD_StopDigitized();
     MM_SortMem();
+#endif
 }
 
 #if 0
@@ -295,7 +326,7 @@ void ScanInfoPlane(void)
     memset(numEnemy, 0, sizeof(numEnemy));
 #endif
 
-    new   = NULL;
+    new_  = nullptr;
     start = mapsegs[1];
     for (y = 0; y < mapheight; y++)
         for (x = 0; x < mapwidth; x++)
@@ -459,8 +490,9 @@ void ScanInfoPlane(void)
                 if (tile >= 468)
                 {
                     SpawnOffsetObj(en_crate3, x, y);
-                    new->temp2 = ExpCrateShapes[tile - 468];
-                    new->temp3 = (unsigned)ReserveStatic();
+                    new_->temp2 = ExpCrateShapes[tile - 468];
+                    assert(false);
+                    // new_->temp3 = (unsigned)ReserveStatic(); !!! Cast from pointer to smaller type 'unsigned int' loses information
 
                     if ((tile >= 475) && (tile <= 478))
                         tile = (tile - 475) + bo_money_bag;
@@ -470,8 +502,9 @@ void ScanInfoPlane(void)
                 else if (tile >= 450)
                 {
                     SpawnOffsetObj(en_crate2, x, y);
-                    new->temp2 = ExpCrateShapes[tile - 450];
-                    new->temp3 = (unsigned)ReserveStatic();
+                    new_->temp2 = ExpCrateShapes[tile - 450];
+                    assert(false);
+                    // new_->temp3 = (unsigned)ReserveStatic(); !!! Cast from pointer to smaller type 'unsigned int' loses information
 
                     if ((tile >= 457) && (tile <= 460))
                         tile = (tile - 457) + bo_money_bag;
@@ -490,8 +523,9 @@ void ScanInfoPlane(void)
                     if (tile >= 432)
                 {
                     SpawnOffsetObj(en_crate1, x, y);
-                    new->temp2 = ExpCrateShapes[tile - 432];
-                    new->temp3 = (unsigned)ReserveStatic();
+                    new_->temp2 = ExpCrateShapes[tile - 432];
+                    assert(false);
+                    // new_->temp3 = (unsigned)ReserveStatic(); !!! Cast from pointer to smaller type 'unsigned int' loses information
 
                     if ((tile >= 439) && (tile <= 442))
                         tile = (tile - 439) + bo_money_bag;
@@ -689,7 +723,7 @@ void ScanInfoPlane(void)
 
             case 81:
             case 82:
-                SpawnOffsetObj(en_bloodvent + tile - 81, x, y);
+                SpawnOffsetObj(static_cast<enemy_t>(en_bloodvent + tile - 81), x, y);
                 break;
 
                 //
@@ -724,7 +758,7 @@ void ScanInfoPlane(void)
                 //
             case 79:
                 SpawnOffsetObj(en_flickerlight, x, y);
-                new->lighting = LAMP_ON_SHADING;
+                new_->lighting = LAMP_ON_SHADING;
                 break;
 
                 // Arc Barrier
@@ -862,7 +896,7 @@ void ScanInfoPlane(void)
 
                     SpawnStand(en_goldstern, x, y, 0);
                     GoldsternInfo.GoldSpawned = true;
-                    new                       = NULL;
+                    new_                      = nullptr;
                 }
                 break;
 
@@ -887,7 +921,7 @@ void ScanInfoPlane(void)
 
             case 177:
                 SpawnOffsetObj(en_rotating_cube, x, y);
-                new = NULL;
+                new_ = nullptr;
                 break;
 
                 //
@@ -961,10 +995,10 @@ void ScanInfoPlane(void)
             case 118:
             case 119:
                 SpawnStand(en_gen_scientist, x, y, tile - 116);
-                if (new->flags & FL_INFORMANT)
+                if (new_->flags & FL_INFORMANT)
                 {
                     AddTotalInformants(1);
-                    new = NULL;
+                    new_ = nullptr;
                 }
                 break;
 
@@ -987,10 +1021,10 @@ void ScanInfoPlane(void)
             case 122:
             case 123:
                 SpawnPatrol(en_gen_scientist, x, y, tile - 120);
-                if (new->flags & FL_INFORMANT)
+                if (new_->flags & FL_INFORMANT)
                 {
                     AddTotalInformants(1);
-                    new = NULL;
+                    new_ = nullptr;
                 }
                 break;
 
@@ -1049,7 +1083,7 @@ void ScanInfoPlane(void)
 
             case 310:
                 SpawnStand(en_electro_alien, x, y, 0);
-                new = NULL;
+                new_ = nullptr;
                 break;
 
                 //
@@ -1075,7 +1109,7 @@ void ScanInfoPlane(void)
             case 330:
             case 331:
                 SpawnStand(en_floatingbomb, x, y, tile - 328);
-                new->flags |= FL_STATIONARY;
+                new_->flags |= FL_STATIONARY;
                 break;
 
                 //
@@ -1545,7 +1579,7 @@ void ScanInfoPlane(void)
             case 306:
                 SpawnOffsetObj(en_podegg, x, y);
                 if (scan_value == 0xff)
-                    new->obclass = deadobj;
+                    new_->obclass = deadobj;
                 else
                 {
                     AddTotalPoints(actor_points[podobj - rentacopobj]);
@@ -1576,7 +1610,7 @@ void ScanInfoPlane(void)
                     AddTotalEnemy(1);
                     SpawnOffsetObj(en_morphing_spider_mutant, x, y);
 #ifdef TRACK_ENEMY_COUNT
-                    numEnemy[new->obclass]++;
+                    numEnemy[new_->obclass]++;
 #endif
                 }
                 scan_value = 0xffff;
@@ -1601,7 +1635,7 @@ void ScanInfoPlane(void)
                     AddTotalEnemy(1);
                     SpawnOffsetObj(en_morphing_reptilian_warrior, x, y);
 #ifdef TRACK_ENEMY_COUNT
-                    numEnemy[new->obclass]++;
+                    numEnemy[new_->obclass]++;
 #endif
                 }
                 scan_value = 0xffff;
@@ -1626,7 +1660,7 @@ void ScanInfoPlane(void)
                     AddTotalEnemy(1);
                     SpawnOffsetObj(en_morphing_mutanthuman2, x, y);
 #ifdef TRACK_ENEMY_COUNT
-                    numEnemy[new->obclass]++;
+                    numEnemy[new_->obclass]++;
 #endif
                 }
                 scan_value = 0xffff;
@@ -1760,7 +1794,7 @@ void ScanInfoPlane(void)
             case 226:
             case 227:
                 SpawnStand(en_hang_terrot, x, y, tile - 224);
-                new->flags |= FL_STATIONARY;
+                new_->flags |= FL_STATIONARY;
                 break;
 
                 //
@@ -1813,7 +1847,7 @@ void ScanInfoPlane(void)
             case 506:
             case 507:
                 SpawnPatrol(en_swat, x, y, tile - 504);
-                new->flags &= ~FL_RANDOM_TURN;
+                new_->flags &= ~FL_RANDOM_TURN;
                 break;
 
                 //
@@ -1839,7 +1873,7 @@ void ScanInfoPlane(void)
             case 514:
             case 515:
                 SpawnPatrol(en_volatiletransport, x, y, tile - 512);
-                new->flags &= ~FL_RANDOM_TURN;
+                new_->flags &= ~FL_RANDOM_TURN;
                 break;
 
                 //
@@ -1865,7 +1899,7 @@ void ScanInfoPlane(void)
             case 510:
             case 511:
                 SpawnPatrol(en_floatingbomb, x, y, tile - 508);
-                new->flags &= ~FL_RANDOM_TURN;
+                new_->flags &= ~FL_RANDOM_TURN;
                 break;
 
                 //
@@ -1891,7 +1925,7 @@ void ScanInfoPlane(void)
             case 560:
             case 561:
                 SpawnPatrol(en_proguard, x, y, tile - 558);
-                new->flags &= ~FL_RANDOM_TURN;
+                new_->flags &= ~FL_RANDOM_TURN;
                 break;
 
                 //
@@ -1917,7 +1951,7 @@ void ScanInfoPlane(void)
             case 518:
             case 519:
                 SpawnPatrol(en_rentacop, x, y, tile - 516);
-                new->flags &= ~FL_RANDOM_TURN;
+                new_->flags &= ~FL_RANDOM_TURN;
                 break;
 
                 //-----------------------
@@ -1928,33 +1962,33 @@ void ScanInfoPlane(void)
             case 631: // FINAL BOSS 2
             case 632: // FINAL BOSS 3
             case 633: // FINAL BOSS 4
-                SpawnOffsetObj(en_final_boss1 + tile - 630, x, y);
+                SpawnOffsetObj(static_cast<enemy_t>(en_final_boss1 + tile - 630), x, y);
                 break;
             }
 
-            // If "new" is an object that gives points, add those points to level total...
+            // If "new_" is an object that gives points, add those points to level total...
             //
-            // "new" is cleared to keep from re-adding points from the previous actor!
+            // "new_" is cleared to keep from re-adding points from the previous actor!
             //
-            if (new && (new->obclass >= rentacopobj) && (new->obclass < crate1obj))
+            if (new_ && (new_->obclass >= rentacopobj) && (new_->obclass < crate1obj))
             {
-                classtype obclass = new->obclass;
+                classtype obclass = new_->obclass;
 
                 switch (obclass)
                 {
                 case lcan_wait_alienobj:
                 case scan_wait_alienobj:
                 case gurney_waitobj:
-                    obclass++;
+                    obclass = static_cast<classtype>(static_cast<int>(obclass) + 1);
                     break;
                 }
 
                 AddTotalPoints(actor_points[obclass - rentacopobj]);
                 AddTotalEnemy(1);
 #ifdef TRACK_ENEMY_COUNT
-                numEnemy[new->obclass]++;
+                numEnemy[new_->obclass]++;
 #endif
-                new = NULL;
+                new_ = nullptr;
             }
 
             // Skip past FA code...
@@ -2060,9 +2094,9 @@ void SetupGameLevel(void)
     //
     // copy the wall data to a data segment array
     //
-    _fmemset(TravelTable, 0, sizeof(TravelTable));
-    _fmemset(gamestate.barrier_table, 0xff, sizeof(gamestate.barrier_table));
-    _fmemset(gamestate.old_barrier_table, 0xff, sizeof(gamestate.old_barrier_table));
+    memset(TravelTable, 0, sizeof(TravelTable));
+    memset(gamestate.barrier_table, 0xff, sizeof(gamestate.barrier_table));
+    memset(gamestate.old_barrier_table, 0xff, sizeof(gamestate.old_barrier_table));
     memset(tilemap, 0, sizeof(tilemap));
     memset(actorat, 0, sizeof(actorat));
     memset(wallheight, 0, sizeof(wallheight));
@@ -2098,7 +2132,8 @@ void SetupGameLevel(void)
                     break;
 
                 default:
-                    (unsigned)actorat[x][y] = tile;
+                    assert(false);
+                    // (unsigned)actorat[x][y] = tile; !!! Cast from pointer to smaller type 'unsigned int' loses information
                     break;
                 }
             }
@@ -2123,13 +2158,13 @@ void SetupGameLevel(void)
     map  = mapsegs[0];
     map1 = mapsegs[1];
 
-    LastInfoAttacker = alerted = NumEAWalls = 0;
+    LastInfoAttacker = static_cast<classtype>(alerted = NumEAWalls = 0);
 
     for (y = 0; y < mapheight; y++)
         for (x = 0; x < mapwidth; x++)
         {
             tile = *map++;
-            lock = *map1;
+            lock = static_cast<keytype>(*map1);
 
             if (*map == 30)
             {
@@ -2147,7 +2182,7 @@ void SetupGameLevel(void)
                 {
                 case 55:
                 case 56:
-                    lock  = kt_red + lock - 55;
+                    lock  = static_cast<keytype>(kt_red + lock - 55);
                     *map1 = 0;
                     break;
 
@@ -2196,7 +2231,7 @@ void SetupGameLevel(void)
                 case 99:  // oneway up    - Horz
                 case 100: // oneway right - Vert
                 case 101: // oneway down  - Horz
-                    SpawnDoor(x, y, !(tile % 2), lock, dr_oneway_left + (tile - 98));
+                    SpawnDoor(x, y, !(tile % 2), lock, static_cast<door_t>(dr_oneway_left + (tile - 98)));
                     break;
 
                 case 102:
@@ -2293,8 +2328,9 @@ void SetupGameLevel(void)
             case LINC_TILE:
             case CLOAK_AMBUSH_TILE:
                 tilemap[x][y] = 0;
-                if ((unsigned)actorat[x][y] == AMBUSHTILE)
-                    actorat[x][y] = NULL;
+                assert(false);
+                // if ((unsigned)actorat[x][y] == AMBUSHTILE) !!! Cast from pointer to smaller type 'unsigned int' loses information
+                //     actorat[x][y] = nullptr;
                 *(map - 1) = GetAreaNumber(x, y);
                 break;
             }
@@ -2322,7 +2358,7 @@ void LoadLocationText(short textNum)
     char* temp;
 
     LoadMsg(LocationText, LEVEL_DESCS, textNum + 1, MAX_LOCATION_DESC_LEN);
-    temp = _fstrstr(LocationText, "^XX");
+    temp = strstr(LocationText, "^XX");
     if (temp)
         *temp = 0;
 }
@@ -2407,6 +2443,8 @@ void BMAmsg(char* msg)
 //----------------------------------------------------------------------
 void CacheBMAmsg(unsigned MsgNum)
 {
+    assert(false);
+#if 0
     char *string, *pos;
 
     CA_CacheGrChunk(MsgNum);
@@ -2418,6 +2456,7 @@ void CacheBMAmsg(unsigned MsgNum)
     BMAmsg(string);
 
     UNCACHEGRCHUNK(MsgNum);
+#endif
 }
 
 //--------------------------------------------------------------------------
@@ -2477,17 +2516,22 @@ void ShadowPrintLocationText(sp_type type)
         else
         {
             ShPrint(" AREA: ", 0, false);
+            assert(false);
+#if 0
             if (!type)
                 ShPrint(itoa(gamestate.mapon + 1, str, 10), 0, false);
+#endif
         }
 
         // Print LIVES info...
         //
         px = 267;
         ShPrint("LIVES: ", 0, false);
+        assert(false);
+#if 0
         if (!type)
             ShPrint(itoa(gamestate.lives, str, 10), 0, false);
-
+#endif
         // Print location text
         //
 
@@ -2717,7 +2761,7 @@ void FinishDemoRecord(void)
     US_Print(" Demo number (0-9):");
     VW_UpdateScreen();
 
-    if (US_LineInput(px, py, str, NULL, true, 2, 0))
+    if (US_LineInput(px, py, str, nullptr, true, 2, 0))
     {
         level = atoi(str);
         if (level >= 0 && level <= 9)
@@ -2793,7 +2837,7 @@ void RecordDemo(void)
     US_Print("  Demo which level(0-23):");
     VW_UpdateScreen();
     VW_FadeIn();
-    esc = !US_LineInput(px, py, str, NULL, true, 2, 0);
+    esc = !US_LineInput(px, py, str, nullptr, true, 2, 0);
     if (esc)
         return;
 
@@ -2867,7 +2911,7 @@ void PlayDemo(int demonumber)
 #endif
 
     CA_CacheGrChunk(dems[demonumber]);
-    demoptr = grsegs[dems[demonumber]];
+    demoptr = reinterpret_cast<char*>(grsegs[dems[demonumber]]);
 #else
     demoname[4] = '0' + demonumber;
     IO_LoadFile(demoname, &demobuffer);
@@ -2878,7 +2922,8 @@ void PlayDemo(int demonumber)
     NewGame(1, 0);
     gamestate.mapon      = *demoptr++;
     gamestate.difficulty = gd_easy;
-    length               = *((unsigned*)demoptr)++;
+    assert(false);
+    // length               = *((unsigned*)demoptr)++; !!! Assignment to cast is illegal, lvalue casts are not supported
     demoptr++;
     lastdemoptr = demoptr - 4 + length;
 
@@ -2905,8 +2950,11 @@ void PlayDemo(int demonumber)
     fizzlein = true;
 
 #ifndef DEMOS_EXTERN
+    assert(false);
+#if 0
     off     = FP_OFF(demoptr);
-    demoptr = grsegs[dems[demonumber]];
+#endif
+    demoptr = reinterpret_cast<char*>(grsegs[dems[demonumber]]);
     demoptr += off;
 #endif
 
@@ -3023,10 +3071,11 @@ void LoseScreen(void)
     StopMusic();
 
     CA_CacheScreen(LOSEPIC);
-    VW_UpdateScreen();
+    assert(false);
+    // VW_UpdateScreen();
 
 #ifdef ID_CACHE_LOSE
-    TP_LoadScript(NULL, &pi, LOSETEXT);
+    TP_LoadScript(nullptr, &pi, LOSETEXT);
 #else
     TP_LoadScript("LOSE.TXT", &pi, 0);
 #endif
@@ -3130,7 +3179,7 @@ void RotateView(int DestAngle, unsigned char RotSpeed)
     }
 
     controlx    = 0;
-    player->dir = ((player->angle + 22) % 360) / 45;
+    player->dir = static_cast<dirtype>(((player->angle + 22) % 360) / 45);
     godmode     = old_godmode;
 }
 
@@ -3181,14 +3230,16 @@ restart:
 
             if (Confirm(string))
             {
-                playstate = 0;
+                playstate = static_cast<exit_t>(0);
                 DrawPlayBorder();
-                VW_UpdateScreen();
+                assert(false);
+                // VW_UpdateScreen();
                 US_ControlPanel(sc_F9);
             }
 
             DrawPlayBorder();
-            VW_UpdateScreen();
+            assert(false);
+            // VW_UpdateScreen();
         }
 
         if (!sqActive)
@@ -3207,7 +3258,7 @@ restart:
             gamestate.ammo              = gamestate.old_ammo;
             gamestate.plasma_detonators = gamestate.old_plasma_detonators;
             gamestate.boss_key_dropped  = gamestate.old_boss_key_dropped;
-            _fmemcpy(&gamestuff.level[0], gamestuff.old_levelinfo, sizeof(gamestuff.old_levelinfo));
+            memcpy(&gamestuff.level[0], gamestuff.old_levelinfo, sizeof(gamestuff.old_levelinfo));
             DrawKeys();
             DrawScore();
         }
@@ -3320,7 +3371,7 @@ restart:
             gamestate.old_weapons[2]       = gamestate.chosenweapon;
             gamestate.old_ammo             = gamestate.ammo;
             gamestate.old_boss_key_dropped = gamestate.boss_key_dropped;
-            _fmemcpy(gamestuff.old_levelinfo, &gamestuff.level[0], sizeof(gamestuff.old_levelinfo));
+            memcpy(gamestuff.old_levelinfo, &gamestuff.level[0], sizeof(gamestuff.old_levelinfo));
 
 #if 0
 			if (gamestate.mapon == 9)
@@ -3352,8 +3403,8 @@ restart:
         case ex_victorious:
             MainMenu[MM_SAVE_MISSION].active = AT_DISABLED;
 #pragma warn - sus
-            MainMenu[MM_VIEW_SCORES].routine = &CP_ViewScores;
-            _fstrcpy(MainMenu[MM_VIEW_SCORES].string, "HIGH SCORES");
+            MainMenu[MM_VIEW_SCORES].routine = reinterpret_cast<void (*)(int)>(&CP_ViewScores);
+            strcpy(MainMenu[MM_VIEW_SCORES].string, "HIGH SCORES");
 #pragma warn + sus
 
             if (playstate == ex_victorious)
