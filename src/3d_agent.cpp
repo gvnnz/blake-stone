@@ -2,15 +2,31 @@
 
 #include "3d_agent.hpp"
 #include "3d_def.hpp"
+#include <cstring>
 
 #pragma hdrstop
 
+#include <cassert>
+#include <cstdio>
+#include <cstdlib>
 #include <ctype.h>
 
 #include "jm_tp.hpp"
 
 void InitWeaponBounce(void);
 void HandleWeaponBounce(void);
+
+extern void VL_LatchToScreen(unsigned source, int width, int height, int x, int y);
+extern void StartDamageFlash(int damage);
+extern void StartBonusFlash();
+extern int  CalcAngle(objtype* from_obj, objtype* to_obj);
+extern void PushWall(int checkx, int checky, int dir);
+extern void OperateDoor(int door);
+extern void TryDropPlasmaDetonator();
+extern void ClearMemory();
+extern void InitAreas();
+extern void FirstSighting(objtype*);
+extern void OpenDoor(int door);
 
 /*
 =============================================================================
@@ -124,8 +140,8 @@ byte LevelCompleted(void);
 void T_Player(objtype* ob);
 void T_Attack(objtype* ob);
 
-statetype s_player = {0, 0, 0, &T_Player, NULL, NULL};
-statetype s_attack = {0, 0, 0, &T_Attack, NULL, NULL};
+statetype s_player = {0, 0, 0, reinterpret_cast<void (*)()>(&T_Player), nullptr, nullptr};
+statetype s_attack = {0, 0, 0, reinterpret_cast<void (*)()>(&T_Attack), nullptr, nullptr};
 
 long playerxmove, playerymove;
 
@@ -394,7 +410,7 @@ void ControlMovement(objtype* ob)
     else if (bounceOk)
         bounceOk--;
 
-    ob->dir = ((ob->angle + 22) % 360) / 45;
+    ob->dir = static_cast<dirtype>(((ob->angle + 22) % 360) / 45);
 
     //
     // calculate total move
@@ -474,7 +490,8 @@ void LatchNumber(int x, int y, int width, long number)
     unsigned length, wide = 0, c;
     char     str[20];
 
-    ltoa(number, str, 10);
+    assert(false);
+    // ltoa(number, str, 10); // !!! undeclared identifier 'ltoa'
 
     length = strlen(str);
 
@@ -515,7 +532,8 @@ void DrawHealth(void)
 {
     char* ptr = gamestate.health_str;
 
-    itoa(gamestate.health, gamestate.health_str, 10);
+    assert(false);
+    // itoa(gamestate.health, gamestate.health_str, 10); // !!! undeclared identifier 'ltoa'
     while (*ptr)
         *ptr++ -= '0';
 
@@ -934,7 +952,8 @@ void DrawGAmmoNum(void)
 
     px = PrintX;
     py = PrintY;
-    VW_DrawPropString(ultoa(gamestate.ammo, buffer, 10));
+    assert(false);
+    // VW_DrawPropString(ultoa(gamestate.ammo, buffer, 10));  // !!! undeclared identifier 'ultoa'
     VW_DrawPropString("%");
 }
 
@@ -1273,7 +1292,7 @@ bool DisplayInfoMsg(char* Msg, msg_priorities Priority, short DisplayTime, short
 
         DrawInfoArea_COUNT = InitInfoArea_COUNT = 3;
 
-        LastMsgType = MsgType;
+        LastMsgType = static_cast<infomsg_type>(MsgType);
 
         if (LastMsgType != MT_ATTACK)
             LastInfoAttacker_Cloaked = 0;
@@ -1560,7 +1579,9 @@ char* HandleControlCodes(char* first_ch)
     *(first_ch + 1) = toupper(*(first_ch + 1));
 #endif
 
-    switch (*((unsigned*)first_ch)++)
+    assert(false);
+#if 0
+    switch (*((unsigned*)first_ch)++) !!! Assignment to cast is illegal, lvalue casts are not supported
     {
 
         // INIT ANIMATION ---------------------------------------------------
@@ -1568,7 +1589,7 @@ char* HandleControlCodes(char* first_ch)
     case TP_CNVT_CODE('A', 'N'):
         shapenum = TP_VALUE(first_ch, 2);
         first_ch += 2;
-        _fmemcpy(&piAnimList[InfoAreaSetup.numanims], &piAnimTable[shapenum], sizeof(piAnimInfo));
+        memcpy(&piAnimList[InfoAreaSetup.numanims], &piAnimTable[shapenum], sizeof(piAnimInfo));
         anim  = &piAnimList[InfoAreaSetup.numanims++];
         shape = &piShapeTable[anim->baseshape + anim->frame]; // BUG!! (assumes "pia_shapetable")
                                                               //					spr = &spritetable[shape->shapenum-STARTSPRITES];
@@ -1634,6 +1655,7 @@ char* HandleControlCodes(char* first_ch)
         break;
 #endif
     }
+#endif
 
     return (first_ch);
 }
@@ -1908,14 +1930,14 @@ unsigned static_points[] = {
 
 unsigned static_health[][3] =
     {
-        {100, HEALTH2SND, -1},                 // Full Heal
-        {30, HEALTH1SND, -1},                  // First Aid
+        {100, HEALTH2SND, 0xFFFFFFFF},         // Full Heal
+        {30, HEALTH1SND, 0xFFFFFFFF},          // First Aid
         {20, HEALTH1SND, SPR_STAT_45},         // Steak
         {15, HEALTH1SND, SPR_STAT_43},         // Chicken Leg
         {10, HEALTH1SND, SPR_SANDWICH_WRAPER}, // Sandwich
         {8, HEALTH1SND, SPR_CANDY_WRAPER},     // Candy Bar
         {5, HEALTH1SND, SPR_STAT_41},          // Water bowl
-        {5, HEALTH1SND, -1},                   // Water puddle
+        {5, HEALTH1SND, 0xFFFFFFFF},           // Water puddle
 };
 
 extern char bonus_msg24[];
@@ -1978,7 +2000,7 @@ void GetBonus(statobj_t* check)
     case bo_water:
         if (gamestate.health == 100)
             return;
-        SD_PlaySound(static_health[check->itemnumber - bo_fullheal][1]);
+        SD_PlaySound(static_cast<soundnames>(static_health[check->itemnumber - bo_fullheal][1]));
         HealSelf(static_health[check->itemnumber - bo_fullheal][0]);
         check->flags &= ~FL_BONUS;
         shapenum = static_health[check->itemnumber - bo_fullheal][2];
@@ -2080,16 +2102,18 @@ void writeTokenStr(char* str)
 {
     char buffer[3], len;
 
-    len = _fstrlen(str);
+    len = strlen(str);
     if (gamestate.tokens > 9)
-        itoa(gamestate.tokens, buffer, 10);
+        assert(false);
+    // itoa(gamestate.tokens, buffer, 10); !!! Use of undeclared identifier 'itoa'
     else
     {
         buffer[0] = '0';
-        itoa(gamestate.tokens, buffer + 1, 10);
+        assert(false);
+        // itoa(gamestate.tokens, buffer + 1, 10); !!! Use of undeclared identifier 'itoa'
     }
 
-    _fstrcpy(str + len - 2, buffer);
+    strcpy(str + len - 2, buffer);
 }
 
 /*
@@ -2603,7 +2627,8 @@ void Cmd_Use(void)
 
             case FOODTILE:
             case SODATILE:
-                OperateConcession((int)actorat[checkx][checky]);
+                assert(false);
+                // OperateConcession((int)actorat[checkx][checky]); !!! Cast from pointer to smaller type 'int' loses information
                 break;
 
             default:
@@ -2618,7 +2643,7 @@ void Cmd_Use(void)
 #define INTG_ANGLE 45
 
         char     x, y;
-        objtype *intg_ob = NULL, *ob;
+        objtype *intg_ob = nullptr, *ob;
         long     dx, dy, dist, intg_dist = INTERROGATEDIST + 1;
 
         for (y = -MDIST; y < MDIST + 1; y++)
@@ -2715,15 +2740,15 @@ char int_interrogate[] = "INTERROGATE:",
 bool Interrogate(objtype* ob)
 {
     bool  rt_value = true;
-    char* msgptr   = NULL;
+    char* msgptr   = nullptr;
 
-    _fstrcpy(msg, int_interrogate);
+    strcpy(msg, int_interrogate);
 
     if (ob->flags & FL_INFORMANT) // Informant
     {
         short msgnum;
 
-        _fstrcat(msg, int_informant);
+        strcat(msg, int_informant);
 
         if (ob->flags & FL_INTERROGATED)
         {
@@ -2768,20 +2793,20 @@ bool Interrogate(objtype* ob)
                 ob->ammo = ob->areanumber;
                 if (ob->s_tilex == 0xff)
                     ob->s_tilex = Random(NumAreaMsgs);
-                msgptr = InfAreaMsgs[ob->s_tilex];
+                msgptr = static_cast<char*>(InfAreaMsgs[ob->s_tilex]);
             }
             else
             {
                 if (ob->s_tiley == 0xff)
                     ob->s_tiley = FirstGenInfMsg + Random(TotalGenInfMsgs);
-                msgptr = InfHintList.smInfo[ob->s_tiley].mInfo.mSeg;
+                msgptr = static_cast<char*>(InfHintList.smInfo[ob->s_tiley].mInfo.mSeg);
             }
 
             // Still no msgptr? This is a shared message! Use smInfo[local_val]
             // for this message.
             //
             if (!msgptr)
-                msgptr = InfHintList.smInfo[InfHintList.smInfo[ob->s_tiley].mInfo.local_val].mInfo.mSeg;
+                msgptr = static_cast<char*>(InfHintList.smInfo[InfHintList.smInfo[ob->s_tiley].mInfo.local_val].mInfo.mSeg);
 
             ob->flags |= FL_INTERROGATED; // Scientist has been interrogated
         }
@@ -2803,15 +2828,15 @@ bool Interrogate(objtype* ob)
             st = &NiceSciList;
         }
 
-        msgptr = st->smInfo[Random(st->NumMsgs)].mInfo.mSeg;
+        msgptr = static_cast<char*>(st->smInfo[Random(st->NumMsgs)].mInfo.mSeg);
     }
 
     if (msgptr)
     {
-        _fstrcat(msg, int_rr);
-        _fstrcat(msg, msgptr);
-        _fstrcat(msg, int_xx);
-        if (_fstrlen(msg) > MSG_BUFFER_LEN)
+        strcat(msg, int_rr);
+        strcat(msg, msgptr);
+        strcat(msg, int_xx);
+        if (strlen(msg) > MSG_BUFFER_LEN)
             AGENT_ERROR(INTERROGATE_LONG_MSG);
         DisplayInfoMsg(msg, MP_INTERROGATE, DISPLAY_MSG_STD_TIME * 2, MT_GENERAL);
         SD_PlaySound(INTERROGATESND);
@@ -2875,7 +2900,7 @@ short InputFloor(void)
 
     MM_GetPtr(&ov_buffer, 4096);
     ShowStats(0, 0, ss_justcalc, &gamestuff.level[gamestate.mapon].stats);
-    _fmemcpy(&ov_stats, &gamestuff.level[gamestate.mapon].stats, sizeof(statsInfoType));
+    memcpy(&ov_stats, &gamestuff.level[gamestate.mapon].stats, sizeof(statsInfoType));
     ShowOverhead(TOV_X, TOV_Y, 32, 0, RADAR_FLAGS);
     SaveOverheadChunk(tpNum);
 
@@ -2933,6 +2958,8 @@ short InputFloor(void)
                 //
                 for (loop = 0; loop < 10; loop++)
                 {
+                    assert(false);
+#if 0
                     VWB_DrawMPic(teleX[tpNum], teleY[tpNum], TELEPORT1OFFPIC + tpNum);
                     VW_UpdateScreen();
                     VW_WaitVBL(4);
@@ -2940,6 +2967,7 @@ short InputFloor(void)
                     VWB_DrawMPic(teleX[tpNum], teleY[tpNum], TELEPORT1ONPIC + tpNum);
                     VW_UpdateScreen();
                     VW_WaitVBL(4);
+#endif
                 }
 
                 break;
@@ -3041,7 +3069,8 @@ short InputFloor(void)
         }
 
         CycleColors();
-        VW_UpdateScreen();
+        assert(false);
+        // VW_UpdateScreen();
         if (screenfaded)
         {
             VW_FadeIn();
@@ -3089,7 +3118,7 @@ short InputFloor(void)
 //--------------------------------------------------------------------------
 void ShowOverheadChunk(void)
 {
-    VL_MemToScreen(ov_buffer, 64, 64, TOV_X, TOV_Y);
+    VL_MemToScreen(static_cast<byte*>(ov_buffer), 64, 64, TOV_X, TOV_Y);
     VW_MarkUpdateBlock(TOV_X, TOV_Y, 79, 195);
     ShowStats(235, 138, ss_quick, &ov_stats);
 }
@@ -3099,6 +3128,8 @@ void ShowOverheadChunk(void)
 //--------------------------------------------------------------------------
 void LoadOverheadChunk(short tpNum)
 {
+    assert(false);
+#if 0
     int  handle;
     long offset;
     char chunk[5] = "OVxx";
@@ -3121,7 +3152,7 @@ void LoadOverheadChunk(short tpNum)
     else
     {
         ov_noImage = true;
-        _fmemset(ov_buffer, 0x52, 4096);
+        memset(ov_buffer, 0x52, 4096);
         memset(&ov_stats, 0, sizeof(statsInfoType));
     }
 
@@ -3164,6 +3195,7 @@ void SaveOverheadChunk(short tpNum)
     // Close file
     //
     close(handle);
+#endif
 }
 
 //--------------------------------------------------------------------------
@@ -3282,7 +3314,8 @@ short ShowStats(short bx, short by, ss_type type, statsInfoType* stats)
     mission = ShowRatio(bx, by, bx + 52, by, total, mission, type);
 
     if (show_stats_quick)
-        VW_UpdateScreen();
+        assert(false);
+    // VW_UpdateScreen();
 
     return (mission);
 }
@@ -3355,7 +3388,8 @@ byte ShowRatio(short bx, short by, short nx, short ny, long total, long perc, ss
             if (!(loop % 2))
                 SD_PlaySound(STATS1SND);
             VW_WaitVBL(1);
-            VW_UpdateScreen();
+            assert(false);
+            // VW_UpdateScreen();
         }
     }
 
@@ -3504,9 +3538,9 @@ PinballBonusInfo PinballBonus[] = {
     {B_ScoreRolled, 1000000l, true, B_RollFunc},
     {B_OneMillion, 1000000l, false, B_MillFunc},
     {B_ExtraMan, 0, true, B_EManFunc},
-    {B_EnemyDestroyed, 50000l, false, NULL},
-    {B_TotalPoints, 50000l, false, NULL},
-    {B_InformantsAlive, 50000l, false, NULL},
+    {B_EnemyDestroyed, 50000l, false, nullptr},
+    {B_TotalPoints, 50000l, false, nullptr},
+    {B_InformantsAlive, 50000l, false, nullptr},
 
 };
 
@@ -3627,8 +3661,8 @@ char TERM_sound_on = 1;
 
 char* Commands[TC_LAST];
 
-memptr TermMessages = NULL;
-memptr TermCommands = NULL;
+memptr TermMessages = nullptr;
+memptr TermCommands = nullptr;
 
 #define FreeTerminalCommands() MM_FreePtr(&TermCommands)
 #define FreeTerminalMessages() MM_FreePtr(&TermMessages)
@@ -3761,7 +3795,7 @@ void TerminalPrint(char* msg, bool FastPrint)
                 //
 
             case TP_CNVT_CODE('X', 'X'):
-                msg = NULL;
+                msg = nullptr;
                 break;
             }
         }
@@ -4343,7 +4377,7 @@ void SpawnPlayer(int tilex, int tiley, int dir)
     }
 
     player->obclass = playerobj;
-    player->active  = true;
+    player->active  = static_cast<activetype>(true);
     player->tilex   = tilex;
     player->tiley   = tiley;
 
@@ -4407,7 +4441,7 @@ void GunAttack(objtype* ob)
     //
 
     viewdist = 0x7fffffffl;
-    closest  = NULL;
+    closest  = nullptr;
 
     while (1)
     {
@@ -5005,7 +5039,7 @@ bool OperateSmartSwitch(unsigned tilex, unsigned tiley, char Operation, bool For
     // Handle Doors
     //
     case wit_DOOR:
-        if (doorobjlist[DoorNum].action == dr_jammed)
+        if (doorobjlist[DoorNum].action == doorstruct::dr_jammed)
             return (false);
 
         doorobjlist[DoorNum].lock = kt_none;
