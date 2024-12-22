@@ -1,8 +1,31 @@
 // 3D_PLAY.C
 
 #include "3d_def.hpp"
+#include <cassert>
+#include <cstring>
 #pragma hdrstop
 
+extern void ClearMemory();
+extern void ForceUpdateStatusBar();
+extern void INL_GetJoyDelta(word joy, int* dx, int* dy);
+extern void UpdateRadarGuage();
+extern void GiveWeapon(int weapon);
+extern void DrawWeapon();
+extern void DrawHealth();
+extern void DrawKeys();
+extern void DrawWeapon();
+extern void DrawScore();
+extern void ClearSplitVWB();
+extern void RedrawStatusAreas();
+extern void PreloadGraphics();
+extern void TryDropPlasmaDetonator();
+extern void PML_OpenPageFile(char* filename);
+extern void IN_StartAck();
+extern bool IN_CheckAck();
+extern void MoveDoors();
+extern void MovePWalls();
+extern void ConnectAreas();
+extern void UpdateSoundLoc();
 /*
 =============================================================================
 
@@ -49,7 +72,7 @@ int TestQuickSave = 0, TestAutoMapper = 0;
 
 #endif
 
-objtype objlist[MAXACTORS], *new, *player, *lastobj,
+objtype objlist[MAXACTORS], *new_, *player, *lastobj,
     *objfreelist, *killerobj;
 
 unsigned farmapylookup[MAPSIZE];
@@ -298,9 +321,12 @@ void PollMouseMove(void)
 {
     int mousexmove, mouseymove;
 
+    assert(false);
+#if 0
     Mouse(MDelta);
     mousexmove = _CX;
     mouseymove = _DX;
+#endif
 
     // Double speed when shift is pressed.
     //
@@ -636,7 +662,7 @@ void CheckKeys(void)
                 if (DigiMode != sds_Off)
                     SD_SetDigiDevice(sds_Off);
 
-                _fmemcpy((char*)&SoundOn[55], "OFF.", 4);
+                memcpy((char*)&SoundOn[55], "OFF.", 4);
             }
             else
             {
@@ -656,7 +682,7 @@ void CheckKeys(void)
                 CA_LoadAllSounds();
                 PM_CheckMainMem();
 
-                _fmemcpy((char*)&SoundOn[55], "ON. ", 4);
+                memcpy((char*)&SoundOn[55], "ON. ", 4);
             }
 
             DISPLAY_TIMED_MSG(SoundOn, MP_BONUS, MT_GENERAL);
@@ -768,7 +794,8 @@ void CheckKeys(void)
         SD_MusicOn();
         Paused = false;
         if (MousePresent)
-            Mouse(MDelta); // Clear accumulated mouse movement
+            assert(false);
+        // Mouse(MDelta); // Clear accumulated mouse movement
         return;
     }
 
@@ -896,7 +923,8 @@ void CheckKeys(void)
             }
 
             if (MousePresent)
-                Mouse(MDelta); // Clear accumulated mouse movement
+                assert(false);
+            // Mouse(MDelta); // Clear accumulated mouse movement
             lasttimecount = TimeCount;
             return;
         }
@@ -969,13 +997,13 @@ void CheckMusicToggle(void)
             else if (MusicMode != smm_Off)
             {
                 SD_SetMusicMode(smm_Off);
-                _fmemcpy((char*)&MusicOn[58], "OFF.", 4);
+                memcpy((char*)&MusicOn[58], "OFF.", 4);
             }
             else
             {
                 SD_SetMusicMode(smm_AdLib);
                 StartMusic(false);
-                _fmemcpy((char*)&MusicOn[58], "ON. ", 4);
+                memcpy((char*)&MusicOn[58], "ON. ", 4);
             }
 
             DISPLAY_TIMED_MSG(MusicOn, MP_BONUS, MT_GENERAL);
@@ -1030,7 +1058,6 @@ void ChangeSwapFiles(bool display)
 void OpenPageFile(void)
 {
 #if DUAL_SWAP_FILES
-
     if (gamestate.flags & GS_DRAW_FLOOR || (!ShadowsAvail))
     {
         PML_OpenPageFile(PageFileName);
@@ -1054,7 +1081,6 @@ void PopupAutoMap()
 {
 #define BASE_X 64
 #define BASE_Y 44
-
     ThreeDRefresh();
     ThreeDRefresh();
 
@@ -1092,8 +1118,8 @@ void PopupAutoMap()
 
 objlist containt structures for every actor currently playing.  The structure
 is accessed as a linked list starting at *player, ending when ob->next ==
-NULL.  GetNewObj inserts a new object at the end of the list, meaning that
-if an actor spawn another actor, the new one WILL get to think and react the
+NULL.  GetNewObj inserts a new_ object at the end of the list, meaning that
+if an actor spawn another actor, the new_ one WILL get to think and react the
 same frame.  RemoveObj unlinks the given object and returns it to the free
 list, but does not damage the objects ->next pointer, so if the current object
 removes itself, a linked list following loop can still safely get to the
@@ -1147,7 +1173,7 @@ void InitActorList(void)
     // give the player the first free spots
     //
     GetNewActor();
-    player = new;
+    player = new_;
 }
 
 //===========================================================================
@@ -1157,7 +1183,7 @@ void InitActorList(void)
 =
 = GetNewActor
 =
-= Sets the global variable new to point to a free spot in objlist.
+= Sets the global variable new_ to point to a free spot in objlist.
 = The free spot is inserted at the end of the liked list
 =
 = When the object list is full, the caller can either have it bomb out ot
@@ -1187,25 +1213,25 @@ void GetNewActor(void)
     if (!objfreelist)
         if (usedummy)
         {
-            new = &dummyobj;
-            memset(new, 0, sizeof(*new));
+            new_ = &dummyobj;
+            memset(new_, 0, sizeof(*new_));
         }
         else
             PLAY_ERROR(GETNEWACTOR_NO_FREE_SPOTS);
     else
     {
-        new         = objfreelist;
-        objfreelist = new->prev;
+        new_        = objfreelist;
+        objfreelist = new_->prev;
 
-        memset(new, 0, sizeof(*new));
+        memset(new_, 0, sizeof(*new_));
 
         if (lastobj)
-            lastobj->next = new;
+            lastobj->next = new_;
 
-        new->prev = lastobj; // new->next is allready NULL from memset
+        new_->prev = lastobj; // new_->next is allready NULL from memset
 
-        //		new->active = false;
-        lastobj = new;
+        //		new_->active = false;
+        lastobj = new_;
 
         objcount++;
     }
@@ -1281,7 +1307,8 @@ void StopMusic(void)
     SD_MusicOff();
     for (i = 0; i < LASTMUSIC; i++)
         if (audiosegs[STARTMUSIC + i])
-            MM_FreePtr(&((memptr)audiosegs[STARTMUSIC + i]));
+            assert(false);
+            //MM_FreePtr(&((memptr)audiosegs[STARTMUSIC + i]));
 }
 
 //==========================================================================
@@ -1297,13 +1324,13 @@ void StartMusic(bool preload)
     SD_MusicOff();
 #if IN_DEVELOPMENT || GAME_VERSION != SHAREWARE_VERSION || TECH_SUPPORT_VERSION
     if (gamestate.flags & GS_MUSIC_TEST)
-        musicchunk = music_num;
+        musicchunk = static_cast<musicnames>(music_num);
     else
 #endif
         if (playstate == ex_victorious)
         musicchunk = FORTRESS_MUS;
     else
-        musicchunk = songs[gamestate.mapon + gamestate.episode * MAPS_PER_EPISODE];
+        musicchunk = static_cast<musicnames>(songs[gamestate.mapon + gamestate.episode * MAPS_PER_EPISODE]);
 
     if (!audiosegs[STARTMUSIC + musicchunk])
     {
@@ -1316,7 +1343,8 @@ void StartMusic(bool preload)
         mmerror = false;
     else
     {
-        MM_SetLock(&((memptr)audiosegs[STARTMUSIC + musicchunk]), true);
+        assert(false);
+        //MM_SetLock(&((memptr)audiosegs[STARTMUSIC + musicchunk]), true);
         if (!preload)
             SD_StartMusic((MusicGroup*)audiosegs[STARTMUSIC + musicchunk]);
     }
@@ -1578,7 +1606,7 @@ void DoActor(objtype* ob)
 
     if (!ob->ticcount)
     {
-        think = ob->state->think;
+        think = reinterpret_cast<void (*)(objtype*)>(ob->state->think);
         if (think)
         {
             think(ob);
@@ -1609,7 +1637,7 @@ void DoActor(objtype* ob)
     ob->ticcount -= tics;
     while (ob->ticcount <= 0)
     {
-        think = ob->state->action; // end of state action
+        think = reinterpret_cast<void (*)(objtype*)>(ob->state->action); // end of state action
         if (think)
         {
             think(ob);
@@ -1641,7 +1669,7 @@ think:
     //
     // think
     //
-    think = ob->state->think;
+    think = reinterpret_cast<void (*)(objtype*)>(ob->state->think);
     if (think)
     {
         think(ob);
@@ -1684,7 +1712,9 @@ void PlayLoop(void)
     int      give;
     objtype* obj;
 
-    playstate = TimeCount = lasttimecount = 0;
+    playstate = static_cast<exit_t>(0);
+    TimeCount = 0;
+    lasttimecount = 0;
     framecount = frameon = 0;
     pwallstate = anglefrac = 0;
     memset(buttonstate, 0, sizeof(buttonstate));
@@ -1692,7 +1722,8 @@ void PlayLoop(void)
     ForceUpdateStatusBar();
 
     if (MousePresent)
-        Mouse(MDelta); // Clear accumulated mouse movement
+        assert(false);
+    // Mouse(MDelta); // Clear accumulated mouse movement
 
     tics = 1; // for first time through
     if (demoplayback)

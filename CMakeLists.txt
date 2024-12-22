@@ -17,7 +17,7 @@ list(APPEND SOURCES
     src/3d_menu.cpp
     src/3d_menu.hpp
     src/3D_MSGS.C
-    src/3D_PLAY.C
+    src/3d_play.cpp
     src/3D_SCALE.C
     src/3D_STATE.C
     src/3d_state.hpp
