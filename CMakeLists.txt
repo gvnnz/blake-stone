@@ -22,7 +22,7 @@ list(APPEND SOURCES
     src/3D_STATE.C
     src/3d_state.hpp
     src/an_codes.hpp
-    src/AUDIO.H
+        src/audio.hpp
     src/AUDIOBS1.H
     src/AUDIOFIR.H
     src/audiovsi.hpp
