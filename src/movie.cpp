@@ -11,7 +11,7 @@
 // #include <io.h>
 // #include <mem.h>
 #include "3d_def.hpp"
-#include "AN_CODES.H"
+#include "an_codes.hpp"
 #include "jm_io.hpp"
 #include <cassert>
 #include <cstdio>

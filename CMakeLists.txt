@@ -21,7 +21,7 @@ list(APPEND SOURCES
     src/3D_SCALE.C
     src/3D_STATE.C
     src/3d_state.hpp
-    src/AN_CODES.H
+    src/an_codes.hpp
     src/AUDIO.H
     src/AUDIOBS1.H
     src/AUDIOFIR.H
