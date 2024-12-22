@@ -24,7 +24,7 @@ list(APPEND SOURCES
     src/an_codes.hpp
         src/audio.hpp
         src/audiobs1.hpp
-    src/AUDIOFIR.H
+        src/audiofir.hpp
     src/audiovsi.hpp
     src/C0.ASM
     src/D3_ASM.ASM
