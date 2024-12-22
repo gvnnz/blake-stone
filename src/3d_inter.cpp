@@ -1,7 +1,11 @@
 // 3D_INTER.C
 
 #include "3d_def.hpp"
+#include <cassert>
+#include <cstring>
 #pragma hdrstop
+
+extern void CA_CacheScreen(int chunk);
 
 //==========================================================================
 //
@@ -111,7 +115,8 @@ void PreloadUpdate(unsigned current, unsigned total)
     if (w)
         VWB_Bar(WindowX, WindowY, w - 1, 1, BORDER_TEXT_COLOR);
 
-    VW_UpdateScreen();
+    assert(false);
+    //VW_UpdateScreen();
 }
 
 char prep_msg[] = "^ST1^CEGet Ready, Blake!\r^XX";
@@ -151,7 +156,8 @@ void DisplayPrepingMsg(char* text)
 
     // Update screen and fade in
     //
-    VW_UpdateScreen();
+    assert(false);
+    //VW_UpdateScreen();
     if (screenfaded)
         VW_FadeIn();
 }
@@ -170,7 +176,8 @@ void PreloadGraphics(void)
         VW_FadeOut();
 
     DrawPlayBorder();
-    VW_UpdateScreen();
+    assert(false);
+    //VW_UpdateScreen();
 }
 
 //==========================================================================
@@ -233,19 +240,22 @@ void DrawHighScores(void)
         if (s->score > 9999999)
             SETFONTCOLOR(HIGHLIGHT_TEXT_COLOR + 1, TERM_BACK_COLOR);
 
-        ltoa(s->score, buffer, 10);
+        assert(false);
+        // ltoa(s->score, buffer, 10); !!! Use of undeclared identifier 'ltoa'
         USL_MeasureString(buffer, &w, &h);
         ShadowPrint(buffer, 205 - w, 68 + (SCORE_Y_SPACING * i)); // 235
 
         //
         // mission ratio
         //
-        ltoa(s->ratio, buffer, 10);
+        assert(false);
+        // ltoa(s->ratio, buffer, 10); !!! ltoa undeclared
         USL_MeasureString(buffer, &w, &h);
         ShadowPrint(buffer, 272 - w, 68 + (SCORE_Y_SPACING * i));
     }
 
-    VW_UpdateScreen();
+    assert(false);
+    // VW_UpdateScreen();
 }
 
 //===========================================================================
