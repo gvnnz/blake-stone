@@ -147,7 +147,7 @@ extern byte fontcolor, backcolor;
     fontcolor = f;         \
     backcolor = b;
 
-#include "3D_MENU.H"
+#include "3d_menu.hpp"
 
 #define CA_FarRead(h, d, s) IO_FarRead((int)h, (byte*)d, (long)s)
 
