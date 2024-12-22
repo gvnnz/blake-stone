@@ -14,7 +14,7 @@ list(APPEND SOURCES
     src/3d_game.cpp
     src/3d_inter.cpp
     src/3d_main.cpp
-    src/3D_MENU.C
+    src/3d_menu.cpp
     src/3D_MENU.H
     src/3D_MSGS.C
     src/3D_PLAY.C

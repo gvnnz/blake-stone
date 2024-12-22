@@ -1,10 +1,21 @@
 
 #include "3d_def.hpp"
+#include <cassert>
+#include <cstring>
 
 #include "jm_io.hpp"
 #include "jm_tp.hpp"
 
 #pragma hdrstop
+
+extern extern void CA_CacheScreen(int chunk);
+extern void        DrawHighScores();
+extern void        ClearMemory();
+extern void        DrawTopInfo(sp_type type);
+extern void        PreloadUpdate(unsigned current, unsigned total);
+extern void        ShowViewSize(int width);
+extern void        INL_GetJoyDelta(word joy, int* dx, int* dy);
+extern bool        SD_PlaySound(soundnames sound);
 
 // As is, this switch will not work ... the data associated with this
 // is not saved out correctly.
@@ -78,25 +89,25 @@ CP_iteminfo
 
 CP_itemtype MainMenu[] =
     {
-        {AT_ENABLED, "NEW MISSION", CP_NewGame, COAL_FONT},
-        {AT_READIT, "ORDERING INFO", CP_OrderingInfo},
-        {AT_READIT, "INSTRUCTIONS", CP_ReadThis},
-        {AT_ENABLED, "STORY", CP_BlakeStoneSaga},
+        {AT_ENABLED, "NEW MISSION", reinterpret_cast<void (*)(int)>(CP_NewGame), COAL_FONT},
+        {AT_READIT, "ORDERING INFO", reinterpret_cast<void (*)(int)>(CP_OrderingInfo)},
+        {AT_READIT, "INSTRUCTIONS", reinterpret_cast<void (*)(int)>(CP_ReadThis)},
+        {AT_ENABLED, "STORY", reinterpret_cast<void (*)(int)>(CP_BlakeStoneSaga)},
         {AT_DISABLED, "", 0},
-        {AT_ENABLED, "GAME OPTIONS", CP_GameOptions},
-        {AT_ENABLED, "HIGH SCORES", CP_ViewScores},
-        {AT_ENABLED, "LOAD MISSION", CP_LoadGame},
-        {AT_DISABLED, "SAVE MISSION", CP_SaveGame},
+        {AT_ENABLED, "GAME OPTIONS", reinterpret_cast<void (*)(int)>(CP_GameOptions)},
+        {AT_ENABLED, "HIGH SCORES", reinterpret_cast<void (*)(int)>(CP_ViewScores)},
+        // !!! {AT_ENABLED, "LOAD MISSION", CP_LoadGame},
+        // !!! {AT_DISABLED, "SAVE MISSION", CP_SaveGame},
         {AT_DISABLED, "", 0},
-        {AT_ENABLED, "BACK TO DEMO", CP_ExitOptions},
+        {AT_ENABLED, "BACK TO DEMO", reinterpret_cast<void (*)(int)>(CP_ExitOptions)},
         {AT_ENABLED, "LOGOFF", 0}},
 
             GopMenu[] =
                 {
-                    {AT_ENABLED, "SOUND", CP_Sound},
-                    {AT_ENABLED, "CONTROLS", CP_Control},
-                    {AT_ENABLED, "CHANGE VIEW", CP_ChangeView},
-                    {AT_ENABLED, "SWITCHES", CP_Switches},
+                    {AT_ENABLED, "SOUND", reinterpret_cast<void (*)(int)>(CP_Sound)},
+                    {AT_ENABLED, "CONTROLS", reinterpret_cast<void (*)(int)>(CP_Control)},
+                    {AT_ENABLED, "CHANGE VIEW", reinterpret_cast<void (*)(int)>(CP_ChangeView)},
+                    {AT_ENABLED, "SWITCHES", reinterpret_cast<void (*)(int)>(CP_Switches)},
 },
 
             SndMenu[] =
@@ -121,8 +132,8 @@ CP_itemtype MainMenu[] =
                     {AT_DISABLED, "USE JOYSTICK PORT 2", 0},
                     {AT_DISABLED, "GRAVIS GAMEPAD ENABLED", 0},
                     {AT_DISABLED, "CALIBRATE JOYSTICK", 0},
-                    {AT_DISABLED, "MOUSE SENSITIVITY", MouseSensitivity},
-                    {AT_ENABLED, "CUSTOMIZE CONTROLS", CustomControls}},
+                    {AT_DISABLED, "MOUSE SENSITIVITY", reinterpret_cast<void (*)(int)>(MouseSensitivity)},
+                    {AT_ENABLED, "CUSTOMIZE CONTROLS", reinterpret_cast<void (*)(int)>(CustomControls)}},
 
             SwitchMenu[] =
                 {
@@ -187,9 +198,9 @@ CP_itemtype MainMenu[] =
             CusMenu[] =
                 {
                     {AT_ENABLED, "", 0},
-                    {0, "", 0},
+                    {static_cast<activetypes>(0), "", 0},
                     {AT_ENABLED, "", 0},
-                    {0, "", 0},
+                    {static_cast<activetypes>(0), "", 0},
                     {AT_ENABLED, "", 0},
                     {AT_ENABLED, "", 0}};
 
@@ -222,7 +233,7 @@ char SaveGameNames[10][GAME_DESCRIPTION_LEN + 1], SaveName[13] = "SAVEGAM?.";
 
 #ifndef CACHE_KEY_DATA
 
-static byte
+static const char
     *ScanNames[] = // Scan code names with single chars
     {
         "?", "?", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "+", "?", "?",
@@ -265,7 +276,7 @@ void HelpScreens()
 #ifndef ID_CACHE_HELP
     HelpPresenter("HELP.TXT", false, 0, true);
 #else
-    HelpPresenter(NULL, false, HELPTEXT, true);
+    HelpPresenter(nullptr, false, HELPTEXT, true);
 #endif
 }
 
@@ -420,12 +431,12 @@ void US_ControlPanel(byte scancode)
     //
     do
     {
-        which = HandleMenu(&MainItems, &MainMenu[0], NULL);
+        which = HandleMenu(&MainItems, &MainMenu[0], nullptr);
 
         switch (which)
         {
         case MM_VIEW_SCORES:
-            if (MainMenu[MM_VIEW_SCORES].routine == NULL)
+            if (MainMenu[MM_VIEW_SCORES].routine == nullptr)
                 if (CP_EndGame())
                     StartGame = 1;
 
@@ -464,8 +475,8 @@ void US_ControlPanel(byte scancode)
     if (startgame || loadedgame)
     {
 #pragma warn - sus
-        MainMenu[MM_VIEW_SCORES].routine = NULL;
-        _fstrcpy(MainMenu[MM_VIEW_SCORES].string, "END GAME");
+        MainMenu[MM_VIEW_SCORES].routine = nullptr;
+        strcpy(MainMenu[MM_VIEW_SCORES].string, "END GAME");
 #pragma warn + sus
     }
 
@@ -499,12 +510,12 @@ void DrawMainMenu(void)
     //
     if (ingame)
     {
-        _fstrcpy(&MainMenu[MM_BACK_TO_DEMO].string[8], "MISSION");
+        strcpy(&MainMenu[MM_BACK_TO_DEMO].string[8], "MISSION");
         MainMenu[MM_BACK_TO_DEMO].active = AT_READIT;
     }
     else
     {
-        _fstrcpy(&MainMenu[MM_BACK_TO_DEMO].string[8], "DEMO");
+        strcpy(&MainMenu[MM_BACK_TO_DEMO].string[8], "DEMO");
         MainMenu[MM_BACK_TO_DEMO].active = AT_ENABLED;
     }
 
@@ -512,7 +523,8 @@ void DrawMainMenu(void)
 
     DrawMenu(&MainItems, &MainMenu[0]);
 
-    VW_UpdateScreen();
+    assert(false);
+    // VW_UpdateScreen();
 }
 
 //--------------------------------------------------------------------------
@@ -534,7 +546,7 @@ void CP_OrderingInfo(void)
 #ifndef ID_CACHE_HELP
     HelpPresenter("ORDER.TXT", false, 0, true);
 #else
-    HelpPresenter(NULL, false, ORDERTEXT, true);
+    HelpPresenter(nullptr, false, ORDERTEXT, true);
 #endif
     ControlPanelAlloc();
 }
@@ -548,7 +560,7 @@ void CP_BlakeStoneSaga()
 #ifndef ID_CACHE_HELP
     HelpPresenter("SAGA.TXT", false, 0, true);
 #else
-    HelpPresenter(NULL, false, SAGATEXT, true);
+    HelpPresenter(nullptr, false, SAGATEXT, true);
 #endif
     ControlPanelAlloc();
 }
@@ -586,7 +598,7 @@ int CP_CheckQuick(unsigned scancode)
 
             CA_CacheGrChunk(STARTFONT + 1);
 
-            _fstrcat(string, SaveGameNames[LSItems.curpos]);
+            strcat(string, SaveGameNames[LSItems.curpos]);
             strcat(string, "\"?");
             VW_ScreenToScreen(displayofs, bufferofs, 80, 160);
 
@@ -617,7 +629,8 @@ int CP_CheckQuick(unsigned scancode)
 
             lasttimecount = TimeCount;
             if (MousePresent)
-                Mouse(MDelta); // Clear accumulated mouse movement
+                assert(false);
+            // Mouse(MDelta); // Clear accumulated mouse movement
         }
 
         return (1);
@@ -631,7 +644,7 @@ int CP_CheckQuick(unsigned scancode)
 
             CA_CacheGrChunk(STARTFONT + 1);
 
-            _fstrcat(string, SaveGameNames[LSItems.curpos]);
+            strcat(string, SaveGameNames[LSItems.curpos]);
             strcat(string, "\"?");
             VW_ScreenToScreen(displayofs, bufferofs, 80, 160);
 
@@ -656,7 +669,8 @@ int CP_CheckQuick(unsigned scancode)
 
             lasttimecount = TimeCount;
             if (MousePresent)
-                Mouse(MDelta); // Clear accumulated mouse movement
+                assert(false);
+            // Mouse(MDelta); // Clear accumulated mouse movement
             PM_CheckMainMem();
         }
 
@@ -701,7 +715,7 @@ int CP_EndGame(void)
 #if 0
 #pragma warn - sus
 	 MainMenu[MM_VIEW_SCORES].routine=&CP_ViewScores;
-	_fstrcpy(MainMenu[MM_VIEW_SCORES].string,"HIGH SCORES");
+	strcpy(MainMenu[MM_VIEW_SCORES].string,"HIGH SCORES");
 #pragma warn + sus
 #endif
 
@@ -716,7 +730,9 @@ void CP_ViewScores(void)
     fontnumber = 4;
     StartCPMusic(ROSTER_MUS);
     DrawHighScores();
-    VW_UpdateScreen();
+
+    assert(false);
+    // VW_UpdateScreen();
     MenuFadeIn();
     fontnumber = 1;
 
@@ -906,7 +922,9 @@ void DrawNewEpisode(void)
 
 	DrawEpisodePic(NewEitems.curpos);
 
-	VW_UpdateScreen();
+	
+assert(false);
+// VW_UpdateScreen();
 	MenuFadeIn();
 	WaitKeyUp();
 
@@ -936,7 +954,8 @@ void DrawNewGame(void)
     py += 6;
     ShPrint("            MORE, STRONGER ENEMIES", TERM_SHADOW_COLOR, false);
 
-    VW_UpdateScreen();
+    assert(false);
+    // VW_UpdateScreen();
 
     MenuFadeIn();
     WaitKeyUp();
@@ -972,7 +991,7 @@ void CP_GameOptions(void)
 
     do
     {
-        which = HandleMenu(&GopItems, &GopMenu[0], NULL);
+        which = HandleMenu(&GopItems, &GopMenu[0], nullptr);
 
         if (which != -1)
         {
@@ -1000,7 +1019,8 @@ void DrawGopMenu(void)
 
     DrawMenu(&GopItems, &GopMenu[0]);
 
-    VW_UpdateScreen();
+    assert(false);
+    // VW_UpdateScreen();
 }
 
 void ChangeSwaps(void)
@@ -1083,7 +1103,8 @@ void DrawSwitchMenu(void)
     DrawMenu(&SwitchItems, &SwitchMenu[0]);
     DrawAllSwitchLights(SwitchItems.curpos);
 
-    VW_UpdateScreen();
+    assert(false);
+    // VW_UpdateScreen();
 }
 
 //--------------------------------------------------------------------------
@@ -1329,7 +1350,8 @@ void DrawSoundMenu(void)
 
     DrawAllSoundLights(SndItems.curpos);
 
-    VW_UpdateScreen();
+    assert(false);
+    // VW_UpdateScreen();
 }
 
 //--------------------------------------------------------------------------
@@ -1418,7 +1440,7 @@ void DrawLSAction(int which)
 
     VW_FadeOut();
     screenfaded = true;
-    DrawTopInfo(sp_loading + which);
+    DrawTopInfo(static_cast<sp_type>(sp_loading + which));
     DrawPlayBorder();
     DisplayPrepingMsg(LOADSAVE_GAME_MSG[which]);
 
@@ -1435,10 +1457,13 @@ void DrawLSAction(int which)
 //--------------------------------------------------------------------------
 int CP_LoadGame(int quick)
 {
-    int  handle, which, exit = 0;
+    assert(false);
+
+    int handle, which, exit = 0;
+#if 0
     char name[13];
 
-    _fstrcpy(name, SaveName);
+    strcpy(name, SaveName);
 
     //
     // QUICKLOAD?
@@ -1505,7 +1530,7 @@ restart:;
 
     if (loadedgame)
         refresh_screen = false;
-
+#endif
     return exit;
 }
 
@@ -1551,7 +1576,8 @@ void DrawLoadSaveScreen(int loadsave)
     fontnumber = 4;
     DrawMenu(&LSItems, &LSMenu[0]);
 
-    VW_UpdateScreen();
+    assert(false);
+    // VW_UpdateScreen();
     MenuFadeIn();
     WaitKeyUp();
 }
@@ -1583,14 +1609,16 @@ void PrintLSEntry(int w, int color)
 //--------------------------------------------------------------------------
 int CP_SaveGame(int quick)
 {
+    assert(false);
 
-    int             handle, which, exit = 0;
+    int handle, which, exit = 0;
+#if 0
     unsigned        nwritten;
     char            name[13], input[GAME_DESCRIPTION_LEN + 1];
     bool            temp_caps  = allcaps;
     US_CursorStruct TermCursor = {'@', 0, HIGHLIGHT_TEXT_COLOR, 2};
 
-    _fstrcpy(name, SaveName);
+    strcpy(name, SaveName);
 
     allcaps           = true;
     use_custom_cursor = true;
@@ -1640,23 +1668,27 @@ int CP_SaveGame(int quick)
                 {
                     DrawLoadSaveScreen(1);
                     PrintLSEntry(which, HIGHLIGHT_TEXT_COLOR);
-                    VW_UpdateScreen();
+
+                    assert(false);
+                    // VW_UpdateScreen();
                 }
 
             ShootSnd();
 
-            _fstrcpy(input, &SaveGameNames[which][0]);
+            strcpy(input, &SaveGameNames[which][0]);
             name[7] = which + '0';
 
             fontnumber = 2;
             VWB_Bar(LSM_X + LSItems.indent + 1, LSM_Y + which * LSItems.y_spacing - 1, LSM_W - LSItems.indent - 1, 7, HIGHLIGHT_BOX_COLOR);
             SETFONTCOLOR(HIGHLIGHT_TEXT_COLOR, HIGHLIGHT_BOX_COLOR);
-            VW_UpdateScreen();
+
+            assert(false);
+            // VW_UpdateScreen();
 
             if (US_LineInput(LSM_X + LSItems.indent + 2, LSM_Y + which * LSItems.y_spacing, input, input, true, GAME_DESCRIPTION_LEN, LSM_W - LSItems.indent - 10))
             {
                 SaveGamesAvail[which] = 1;
-                _fstrcpy(&SaveGameNames[which][0], input);
+                strcpy(&SaveGameNames[which][0], input);
 
                 unlink(name);
                 _fmode = O_BINARY;
@@ -1676,7 +1708,9 @@ int CP_SaveGame(int quick)
             {
                 VWB_Bar(LSM_X + LSItems.indent + 1, LSM_Y + which * LSItems.y_spacing - 1, LSM_W - LSItems.indent - 1, 7, TERM_BACK_COLOR);
                 PrintLSEntry(which, HIGHLIGHT_TEXT_COLOR);
-                VW_UpdateScreen();
+
+                assert(false);
+                // VW_UpdateScreen();
                 SD_PlaySound(ESCPRESSEDSND);
                 continue;
             }
@@ -1690,6 +1724,7 @@ int CP_SaveGame(int quick)
     MenuFadeOut();
     use_custom_cursor = false;
     allcaps           = temp_caps;
+#endif
     return exit;
 }
 
@@ -1728,13 +1763,15 @@ void CP_Control(void)
 
     do
     {
-        which = HandleMenu(&CtlItems, &CtlMenu[0], NULL);
+        which = HandleMenu(&CtlItems, &CtlMenu[0], nullptr);
         switch (which)
         {
         case MOUSEENABLE:
             mouseenabled ^= 1;
-            _CX = _DX = CENTER;
-            Mouse(4);
+            assert(false);
+            // !!! _CX = _DX = CENTER;
+            assert(false);
+            // !!! Mouse(4);
             DrawCtlScreen();
             CusItems.curpos = -1;
             ShootSnd();
@@ -1805,7 +1842,8 @@ void DrawMouseSens(void)
 
     DrawMousePos();
 
-    VW_UpdateScreen();
+    assert(false);
+    // VW_UpdateScreen();
     MenuFadeIn();
 }
 
@@ -1817,7 +1855,9 @@ void CalibrateJoystick(void)
     word minx, maxx, miny, maxy;
 
     CacheMessage(CALJOY1_TEXT);
-    VW_UpdateScreen();
+
+    assert(false);
+    // VW_UpdateScreen();
 
     while (IN_GetJoyButtonsDB(joystickport))
         ;
@@ -1831,7 +1871,9 @@ void CalibrateJoystick(void)
         ;
 
     CacheMessage(CALJOY2_TEXT);
-    VW_UpdateScreen();
+
+    assert(false);
+    // VW_UpdateScreen();
 
     while ((LastScan != sc_Escape) && !IN_GetJoyButtonsDB(joystickport))
         ;
@@ -1871,7 +1913,9 @@ void MouseSensitivity(void)
             {
                 mouseadjustment--;
                 DrawMousePos();
-                VW_UpdateScreen();
+
+                assert(false);
+                // VW_UpdateScreen();
                 SD_PlaySound(MOVEGUN1SND);
                 while (Keyboard[sc_LeftArrow])
                     ;
@@ -1885,7 +1929,9 @@ void MouseSensitivity(void)
             {
                 mouseadjustment++;
                 DrawMousePos();
-                VW_UpdateScreen();
+
+                assert(false);
+                // VW_UpdateScreen();
                 SD_PlaySound(MOVEGUN1SND);
                 while (Keyboard[sc_RightArrow])
                     ;
@@ -1936,7 +1982,7 @@ void DrawCtlScreen(void)
                 CtlMenu[3].active =
                     CtlMenu[4].active = AT_ENABLED;
 
-    CtlMenu[2].active = CtlMenu[3].active = CtlMenu[4].active = joystickenabled;
+    CtlMenu[2].active = CtlMenu[3].active = CtlMenu[4].active = static_cast<activetypes>(joystickenabled);
 
     if (MousePresent)
     {
@@ -1944,7 +1990,7 @@ void DrawCtlScreen(void)
             CtlMenu[0].active = AT_ENABLED;
     }
 
-    CtlMenu[5].active = mouseenabled;
+    CtlMenu[5].active = static_cast<activetypes>(mouseenabled);
 
     fontnumber = 4;
     DrawMenu(&CtlItems, &CtlMenu[0]);
@@ -1987,7 +2033,9 @@ void DrawCtlScreen(void)
             }
 
     DrawMenuGun(&CtlItems);
-    VW_UpdateScreen();
+
+    assert(false);
+    // VW_UpdateScreen();
 }
 
 enum
@@ -2084,8 +2132,8 @@ bool TestForValidKey(ScanCode Scan)
 
 #pragma warn - pia
 
-    if (!(pos = _fmemchr(buttonscan, Scan, sizeof(buttonscan))))
-        pos = _fmemchr(dirscan, Scan, sizeof(dirscan));
+    if (!(pos = static_cast<char*>(memchr(buttonscan, Scan, sizeof(buttonscan)))))
+        pos = static_cast<char*>(memchr(dirscan, Scan, sizeof(dirscan)));
 
 #pragma warn + pia
 
@@ -2148,7 +2196,9 @@ void EnterCtrlData(int index, CustomCtrls* cust, void (*DrawRtn)(int), void (*Pr
             PrintRtn(which);
             PrintX = x;
             SETFONTCOLOR(HIGHLIGHT_TEXT_COLOR, TERM_BACK_COLOR);
-            VW_UpdateScreen();
+
+            assert(false);
+            // VW_UpdateScreen();
             WaitKeyUp();
             redraw = 0;
         }
@@ -2199,7 +2249,9 @@ void EnterCtrlData(int index, CustomCtrls* cust, void (*DrawRtn)(int), void (*Pr
 
                     tick ^= 1;
                     TimeCount = 0;
-                    VW_UpdateScreen();
+
+                    assert(false);
+                    // VW_UpdateScreen();
                 }
 
                 //
@@ -2209,6 +2261,8 @@ void EnterCtrlData(int index, CustomCtrls* cust, void (*DrawRtn)(int), void (*Pr
                 switch (type)
                 {
                 case MOUSE:
+                    assert(false);
+#if 0
                     Mouse(3);
                     button = _BX;
                     switch (button)
@@ -2241,7 +2295,7 @@ void EnterCtrlData(int index, CustomCtrls* cust, void (*DrawRtn)(int), void (*Pr
                         clean_display = false;
                     }
                     break;
-
+#endif
                 case JOYSTICK:
                     if (ci.button0)
                         result = 1;
@@ -2276,7 +2330,7 @@ void EnterCtrlData(int index, CustomCtrls* cust, void (*DrawRtn)(int), void (*Pr
                         if (LastScan == sc_Escape)
                             break;
 
-                        if (_fmemchr(special_keys, LastScan, sizeof(special_keys)))
+                        if (memchr(special_keys, LastScan, sizeof(special_keys)))
                             SD_PlaySound(NOWAYSND);
                         else
                         {
@@ -2298,7 +2352,7 @@ void EnterCtrlData(int index, CustomCtrls* cust, void (*DrawRtn)(int), void (*Pr
                         if (LastScan == sc_Escape)
                             break;
 
-                        if (_fmemchr(special_keys, LastScan, sizeof(special_keys)))
+                        if (memchr(special_keys, LastScan, sizeof(special_keys)))
                             SD_PlaySound(NOWAYSND);
                         else
                         {
@@ -2502,7 +2556,8 @@ void DrawCustomScreen(void)
                 break;
             }
 
-    VW_UpdateScreen();
+    assert(false);
+    // VW_UpdateScreen();
     MenuFadeIn();
 }
 
@@ -2597,7 +2652,7 @@ void DrawCustJoy(int hilight)
 void PrintCustKeybd(int i)
 {
     PrintX = CST_START + CST_SPC * i;
-    US_Print(IN_GetScanName(buttonscan[order[i]]));
+    US_Print(reinterpret_cast<char*>(IN_GetScanName(buttonscan[order[i]])));
 }
 
 //---------------------------------------------------------------------------
@@ -2626,7 +2681,7 @@ void DrawCustKeybd(int hilight)
 void PrintCustKeys(int i)
 {
     PrintX = CST_START + CST_SPC * i;
-    US_Print(IN_GetScanName(dirscan[moveorder[i]]));
+    US_Print(reinterpret_cast<char*>(IN_GetScanName(dirscan[moveorder[i]])));
 }
 
 //---------------------------------------------------------------------------
@@ -2674,7 +2729,9 @@ void CP_ChangeView(void)
             if (newview < 6)
                 newview = 6;
             ShowViewSize(newview);
-            VW_UpdateScreen();
+
+            assert(false);
+            // VW_UpdateScreen();
             if (newview != lastview)
                 SD_PlaySound(HITWALLSND);
             TicDelay(10);
@@ -2687,7 +2744,9 @@ void CP_ChangeView(void)
             if (newview > 20)
                 newview = 20;
             ShowViewSize(newview);
-            VW_UpdateScreen();
+
+            assert(false);
+            // VW_UpdateScreen();
             if (newview != lastview)
                 SD_PlaySound(HITWALLSND);
             TicDelay(10);
@@ -2735,7 +2794,8 @@ void DrawChangeView(int view)
     CacheBMAmsg(CHANGEVIEW_TEXT);
     FREEFONT(STARTFONT + 1);
 
-    VW_UpdateScreen();
+    assert(false);
+    // VW_UpdateScreen();
 
     MenuFadeIn();
 }
@@ -2836,8 +2896,10 @@ void SetupControlPanel(void)
     // CENTER MOUSE
     //
 
-    _CX = _DX = CENTER;
-    Mouse(4);
+    assert(false);
+    // !!! _CX = _DX = CENTER;
+    assert(false);
+    // !!! Mouse(4);
 }
 
 //---------------------------------------------------------------------------
@@ -2845,13 +2907,15 @@ void SetupControlPanel(void)
 //---------------------------------------------------------------------------
 void ReadGameNames()
 {
+    assert(false);
+#if 0
     struct ffblk f;
     char         name[13];
     int          which;
 
     // SEE WHICH SAVE GAME FILES ARE AVAILABLE & READ STRING IN
     //
-    _fstrcpy(name, SaveName);
+    strcpy(name, SaveName);
     MakeDestPath(name);
     if (!findfirst(tempPath, &f, 0))
         do
@@ -2868,13 +2932,14 @@ void ReadGameNames()
                 if (FindChunk(handle, "DESC"))
                 {
                     read(handle, temp, GAME_DESCRIPTION_LEN + 1);
-                    _fstrcpy(&SaveGameNames[which][0], temp);
+                    strcpy(&SaveGameNames[which][0], temp);
                 }
                 else
-                    _fstrcpy(&SaveGameNames[which][0], "DESCRIPTION LOST");
+                    strcpy(&SaveGameNames[which][0], "DESCRIPTION LOST");
                 close(handle);
             }
         } while (!findnext(&f));
+#endif
 }
 
 //---------------------------------------------------------------------------
@@ -2963,7 +3028,8 @@ int HandleMenu(CP_iteminfo* item_i, CP_itemtype* items, void (*routine)(int w))
     if (routine)
         routine(which);
 
-    VW_UpdateScreen();
+    assert(false);
+    // VW_UpdateScreen();
 
     flash_tics = 40;
     exit       = 0;
@@ -2996,7 +3062,8 @@ int HandleMenu(CP_iteminfo* item_i, CP_itemtype* items, void (*routine)(int w))
                     routine(which);
             }
 
-            VW_UpdateScreen();
+            assert(false);
+            // VW_UpdateScreen();
         }
 
         CheckPause();
@@ -3021,7 +3088,9 @@ int HandleMenu(CP_iteminfo* item_i, CP_itemtype* items, void (*routine)(int w))
                     item_i->curpos = which; // jtr -testing
                     box_on         = 1;
                     DrawGun(item_i, items, x, &y, which, basey, routine);
-                    VW_UpdateScreen();
+
+                    assert(false);
+                    // VW_UpdateScreen();
 
                     ok = 1;
                     IN_ClearKeysDown();
@@ -3042,7 +3111,9 @@ int HandleMenu(CP_iteminfo* item_i, CP_itemtype* items, void (*routine)(int w))
                         item_i->curpos = which; // jtr -testing
                         box_on         = 1;
                         DrawGun(item_i, items, x, &y, which, basey, routine);
-                        VW_UpdateScreen();
+
+                        assert(false);
+                        // VW_UpdateScreen();
 
                         IN_ClearKeysDown();
                         break;
@@ -3078,7 +3149,8 @@ int HandleMenu(CP_iteminfo* item_i, CP_itemtype* items, void (*routine)(int w))
             box_on = 1;
             DrawGun(item_i, items, x, &y, which, basey, routine);
 
-            VW_UpdateScreen();
+            assert(false);
+            // VW_UpdateScreen();
 
             TicDelay(20);
             break;
@@ -3102,7 +3174,8 @@ int HandleMenu(CP_iteminfo* item_i, CP_itemtype* items, void (*routine)(int w))
             box_on = 1;
             DrawGun(item_i, items, x, &y, which, basey, routine);
 
-            VW_UpdateScreen();
+            assert(false);
+            // VW_UpdateScreen();
 
             TicDelay(20);
             break;
@@ -3136,7 +3209,8 @@ int HandleMenu(CP_iteminfo* item_i, CP_itemtype* items, void (*routine)(int w))
         routine(which);
     }
 
-    VW_UpdateScreen();
+    assert(false);
+    // VW_UpdateScreen();
 
     item_i->curpos = which;
 
@@ -3148,7 +3222,7 @@ int HandleMenu(CP_iteminfo* item_i, CP_itemtype* items, void (*routine)(int w))
         //
         // CALL THE ROUTINE
         //
-        if ((items + which)->routine != NULL)
+        if ((items + which)->routine != nullptr)
         {
             // Make sure there's room to save when CP_SaveGame() is called.
             //
@@ -3159,7 +3233,7 @@ int HandleMenu(CP_iteminfo* item_i, CP_itemtype* items, void (*routine)(int w))
             //
             // ALREADY IN A GAME?
             //
-            if (ingame && ((items + which)->routine == CP_NewGame))
+            if (ingame && ((items + which)->routine == reinterpret_cast<void (*)(int)>(CP_NewGame)))
                 if (!Confirm(CURGAME))
                 {
                     MenuFadeOut();
@@ -3190,7 +3264,9 @@ void EraseGun(CP_iteminfo* item_i, CP_itemtype* items, int x, int y, int which)
 
     ShadowPrint((items + which)->string, item_i->x + item_i->indent, y);
 
-    //	VW_UpdateScreen();
+    //
+    assert(false);
+    // VW_UpdateScreen();
 
     x++; // Shut up compiler
 }
@@ -3214,7 +3290,9 @@ void DrawGun(CP_iteminfo* item_i, CP_itemtype* items, int x, int* y, int which, 
     if (routine)
         routine(which);
 
-    //	VW_UpdateScreen();
+    //
+    assert(false);
+    // VW_UpdateScreen();
     //	SD_PlaySound(MOVEGUN2SND);
 
     x++; // Shutup compiler
@@ -3314,6 +3392,9 @@ void ReadAnyControl(ControlInfo* ci)
 
     if (mouseenabled)
     {
+        assert(false);
+
+#if 0
         int mousey, mousex;
 
         // READ MOUSE MOTION COUNTERS
@@ -3363,6 +3444,7 @@ void ReadAnyControl(ControlInfo* ci)
             ci->button3 = false;
             mouseactive = 1;
         }
+#endif
     }
 
     if (joystickenabled && !mouseactive)
@@ -3436,7 +3518,8 @@ int Confirm(char* string)
                 US_Print("_");
             }
 
-            VW_UpdateScreen();
+            assert(false);
+            // VW_UpdateScreen();
             tick ^= 1;
             TimeCount = 0;
         }
@@ -3452,7 +3535,7 @@ int Confirm(char* string)
         ;
 
     IN_ClearKeysDown();
-    SD_PlaySound(whichsnd[xit]);
+    SD_PlaySound(static_cast<soundnames>(whichsnd[xit]));
 
     FREEFONT(STARTFONT + fontnumber);
 
@@ -3471,10 +3554,10 @@ void Message(char* string)
     fontnumber = 1;
     CA_CacheGrChunk(STARTFONT + 1);
 
-    font = grsegs[STARTFONT + fontnumber];
+    font = static_cast<fontstruct*>(grsegs[STARTFONT + fontnumber]);
 
     h = font->height;
-    for (i = 0; i < _fstrlen(string); i++)
+    for (i = 0; i < strlen(string); i++)
         if (string[i] == '\n')
         {
             if (w > mw)
@@ -3510,15 +3593,16 @@ void Message(char* string)
 
     FREEFONT(STARTFONT + 1);
 
-    VW_UpdateScreen();
+    assert(false);
+    // VW_UpdateScreen();
 }
 
 //--------------------------------------------------------------------------
-// TerminateStr - Searches for an "^XX" and replaces with a 0 (NULL)
+// TerminateStr - Searches for an "^XX" and replaces with a 0 (nullptr)
 //--------------------------------------------------------------------------
 void TerminateStr(char* pos)
 {
-    pos = _fstrstr(pos, "^XX");
+    pos = strstr(pos, "^XX");
 
 #if IN_DEVELOPMENT
     if (!pos)
@@ -3533,6 +3617,8 @@ void TerminateStr(char* pos)
 //---------------------------------------------------------------------------
 void CacheMessage(unsigned MessageNum)
 {
+    assert(false);
+#if 0
     char* string;
 
     CA_CacheGrChunk(MessageNum);
@@ -3543,6 +3629,7 @@ void CacheMessage(unsigned MessageNum)
     Message(string);
 
     FREEFONT(MessageNum);
+#endif
 }
 
 //---------------------------------------------------------------------------
@@ -3557,6 +3644,9 @@ void CacheMessage(unsigned MessageNum)
 //---------------------------------------------------------------------------
 unsigned long CacheCompData(unsigned ItemNum, memptr* dest_loc)
 {
+    assert(false);
+    return 0;
+#if 0
     char *        compdata, *dest_ptr;
     CompHeader_t* CompHeader;
     unsigned long data_len;
@@ -3593,6 +3683,7 @@ unsigned long CacheCompData(unsigned ItemNum, memptr* dest_loc)
 
     MM_SetLock(dest_loc, false);
     return (data_len);
+#endif
 }
 
 //-------------------------------------------------------------------------
@@ -3605,8 +3696,11 @@ unsigned long CacheCompData(unsigned ItemNum, memptr* dest_loc)
 //-------------------------------------------------------------------------
 bool CheckForSpecialCode(unsigned ItemNum)
 {
+    assert(false);
+
     memptr code;
     bool   return_val = false;
+#if 0
     char   i;
     char*  code_ptr;
 
@@ -3625,7 +3719,7 @@ bool CheckForSpecialCode(unsigned ItemNum)
     // free allocated memory
 
     MM_FreePtr(&code);
-
+#endif
     return (return_val);
 }
 
@@ -3647,7 +3741,7 @@ void StartCPMusic(int song)
     lastmenumusic = song;
 
     SD_MusicOff();
-    chunk = song;
+    chunk = static_cast<musicnames>(song);
 
     MM_BombOnError(false);
     CA_CacheAudioChunk(STARTMUSIC + chunk);
@@ -3656,8 +3750,11 @@ void StartCPMusic(int song)
         mmerror = false;
     else
     {
+        assert(false);
+#if 0
         MM_SetLock(&((memptr)audiosegs[STARTMUSIC + chunk]), true);
         SD_StartMusic((MusicGroup*)audiosegs[STARTMUSIC + chunk]);
+#endif
     }
 }
 
@@ -3697,6 +3794,9 @@ byte* IN_GetScanName(ScanCode scan)
 //---------------------------------------------------------------------------
 byte* IN_GetScanName(ScanCode scan)
 {
+    assert(false);
+    return nullptr;
+#if 0
     byte**    p;
     ScanCode* s;
 
@@ -3705,6 +3805,7 @@ byte* IN_GetScanName(ScanCode scan)
             return (*p);
 
     return (ScanNames[scan]);
+#endif
 }
 
 #endif
@@ -3773,7 +3874,9 @@ void ShowPromo()
     //
     MenuFadeOut();
     CA_CacheScreen(PROMO1PIC);
-    VW_UpdateScreen();
+
+    assert(false);
+    // VW_UpdateScreen();
     MenuFadeIn();
     IN_UserInput(TickBase * 20);
 
@@ -3781,7 +3884,9 @@ void ShowPromo()
     //
     MenuFadeOut();
     CA_CacheScreen(PROMO2PIC);
-    VW_UpdateScreen();
+
+    assert(false);
+    // VW_UpdateScreen();
     MenuFadeIn();
     IN_UserInput(TickBase * 20);
 
@@ -3811,5 +3916,5 @@ void ExitGame()
     //
     for (i = 1; i <= 0xf5; i++)
         alOut(i, 0);
-    Quit(NULL);
+    Quit(nullptr);
 }
