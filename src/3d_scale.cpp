@@ -1,6 +1,7 @@
 // 3D_SCALE.C
 
 #include "3d_def.hpp"
+#include <cassert>
 #pragma hdrstop
 
 #define OP_RETF 0xcb
@@ -264,10 +265,12 @@ void ScaleMaskedLSPost(int height, unsigned buf)
             dc_length = (unsigned)(dc_yh - dc_yl + 1);
 #if CLOAKED_SHAPES
             if (cloaked_shape)
-                R_DrawSLSColumn();
+                assert(false);
+            // R_DrawSLSColumn();
             else
 #endif
-                R_DrawLSColumn();
+                assert(false);
+            // R_DrawLSColumn();
         }
         end = (*(srcpost++)) >> 1;
     }
@@ -282,6 +285,8 @@ void ScaleMaskedLSPost(int height, unsigned buf)
 */
 void ScaleMaskedWideLSPost(int height, unsigned buf, unsigned xx, unsigned pwidth)
 {
+    assert(false);
+#if 0
     byte     ofs;
     byte     msk;
     unsigned ii;
@@ -302,6 +307,7 @@ void ScaleMaskedWideLSPost(int height, unsigned buf, unsigned xx, unsigned pwidt
     buf++;
     outp(SC_INDEX + 1, msk);
     ScaleMaskedLSPost(height, buf);
+#endif
 }
 
 /*
@@ -361,7 +367,8 @@ void ScaleMaskedPost(int height, unsigned buf)
         {
             dc_dest   = buf + (unsigned)ylookup[(unsigned)dc_yl];
             dc_length = (unsigned)(dc_yh - dc_yl + 1);
-            R_DrawColumn();
+            assert(false);
+            // R_DrawColumn();
         }
         end = (*(srcpost++)) >> 1;
     }
@@ -376,6 +383,8 @@ void ScaleMaskedPost(int height, unsigned buf)
 */
 void ScaleMaskedWidePost(int height, unsigned buf, unsigned xx, unsigned pwidth)
 {
+    assert(false);
+#if 0
     byte     ofs;
     byte     msk;
     unsigned ii;
@@ -396,6 +405,7 @@ void ScaleMaskedWidePost(int height, unsigned buf, unsigned xx, unsigned pwidth)
     buf++;
     outp(SC_INDEX + 1, msk);
     ScaleMaskedPost(height, buf);
+#endif
 }
 
 /*
@@ -424,6 +434,8 @@ extern byte* lightsource;
 
 void ScaleLSShape(int xcenter, int shapenum, unsigned height, char lighting)
 {
+    assert(false);
+#if 0
     t_compshape* shape;
     int          dest;
     int          i;
@@ -539,6 +551,7 @@ void ScaleLSShape(int xcenter, int shapenum, unsigned height, char lighting)
             ScaleMaskedLSPost(height >> 2, bufferofs + ((unsigned)x1 >> 2));
         }
     }
+#endif
 }
 
 /*
@@ -564,6 +577,8 @@ void ScaleLSShape(int xcenter, int shapenum, unsigned height, char lighting)
 */
 void ScaleShape(int xcenter, int shapenum, unsigned height)
 {
+    assert(false);
+#if 0
     t_compshape* shape;
     int          dest;
     int          i;
@@ -670,6 +685,7 @@ void ScaleShape(int xcenter, int shapenum, unsigned height)
             ScaleMaskedPost(height >> 2, bufferofs + ((unsigned)x1 >> 2));
         }
     }
+#endif
 }
 
 /*
@@ -698,6 +714,8 @@ void ScaleShape(int xcenter, int shapenum, unsigned height)
 
 void SimpleScaleShape(int xcenter, int shapenum, unsigned height)
 {
+    assert(false);
+#if 0
     t_compshape* shape;
     int          dest;
     int          i;
@@ -788,6 +806,7 @@ void SimpleScaleShape(int xcenter, int shapenum, unsigned height)
             ScaleMaskedPost(height, bufferofs + (x1 >> 2));
         }
     }
+#endif
 }
 
 //-------------------------------------------------------------------------
@@ -799,6 +818,8 @@ void SimpleScaleShape(int xcenter, int shapenum, unsigned height)
 //-------------------------------------------------------------------------
 void MegaSimpleScaleShape(int xcenter, int ycenter, int shapenum, unsigned height, unsigned shade)
 {
+    assert(false);
+#if 0
     t_compshape* shape;
     int          dest;
     int          i;
@@ -901,6 +922,7 @@ void MegaSimpleScaleShape(int xcenter, int ycenter, int shapenum, unsigned heigh
         }
     }
     bufferofs = old_bufferofs;
+#endif
 }
 
 //
