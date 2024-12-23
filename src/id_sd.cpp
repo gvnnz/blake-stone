@@ -30,12 +30,11 @@
 
 #pragma hdrstop // Wierdo thing with MUSE
 
-#include <dos.h>
-
 #ifdef _MUSE_ // Will be defined in ID_Types.h
 #include "ID_SD.h"
 #else
 #include "id_heads.hpp"
+#include <cassert>
 #endif
 #pragma hdrstop
 #pragma warn - pia
@@ -66,8 +65,8 @@
 #define readstat() inportb(alFMStatus)
 
 //	Imports from ID_SD_A.ASM
-extern void           SDL_SetDS(void);
-extern void interrupt SDL_t0FastAsmService(void),
+extern void SDL_SetDS(void);
+extern void SDL_t0FastAsmService(void),
     SDL_t0SlowAsmService(void);
 
 //	Imports from ID_SDD.C
@@ -117,9 +116,9 @@ static void (*SoundUserHook)(void);
 soundnames SoundNumber, DigiNumber;
 word       SoundPriority, DigiPriority;
 int        LeftPosition, RightPosition;
-void       interrupt (*t0OldService)(void);
-long       LocalTime;
-word       TimerRate;
+void (*t0OldService)(void);
+long LocalTime;
+word TimerRate;
 
 word                   NumDigi, DigiLeft, DigiPage;
 word*                  DigiList;
@@ -148,8 +147,8 @@ static int sbLocation = -1, sbInterrupt = 7, sbIntVec = 0xf,
 static volatile byte          sbLastTimeValue;
 static volatile longword      sbNextSegLen;
 static volatile SampledSound* sbSamples;
-static void                   interrupt (*sbOldIntHand)(void);
-static byte                   sbpOldFMMix, sbpOldVOCMix;
+static void (*sbOldIntHand)(void);
+static byte sbpOldFMMix, sbpOldVOCMix;
 
 //	SoundSource variables
 bool              ssNoCheck;
@@ -203,6 +202,8 @@ void SDL_DigitizedDone(void);
 static void
 SDL_SetTimer0(word speed)
 {
+    assert(false);
+#if 0
 #ifndef TPROF // If using Borland's profiling, don't screw with the timer
     asm pushf asm cli
 
@@ -218,6 +219,7 @@ SDL_SetTimer0(word speed)
     asm popf
 #else
     TimerDivisor = 0x10000;
+#endif
 #endif
 }
 
@@ -237,8 +239,10 @@ SDL_SetIntsPerSec(word ints)
 static void
 SDL_SetTimerSpeed(void)
 {
+    assert(false);
+#if 0
     word rate;
-    void interrupt (*isr)(void);
+    void (*isr)(void);
 
     if (
         (MusicMode == smm_AdLib) || ((DigiMode == sds_SoundSource) && DigiPlaying))
@@ -258,6 +262,7 @@ SDL_SetTimerSpeed(void)
         SDL_SetIntsPerSec(rate);
         TimerRate = rate;
     }
+#endif
 }
 
 //
@@ -272,6 +277,8 @@ SDL_SetTimerSpeed(void)
 ///////////////////////////////////////////////////////////////////////////
 bool sbWriteDelay(void)
 {
+    assert(false);
+#if 0
     int i;
 
     // Try to avoid hitting the card while it's doing a DMA transfer
@@ -307,15 +314,18 @@ bool sbWriteDelay(void)
     }
     else
         return (false);
+#endif
 }
 
 ///////////////////////////////////////////////////////////////////////////
 //
-//	SDL_EnableDMAInt() - Save old interrupt status and unmask DMA interrupt
+//	SDL_EnableDMAInt() - Save old  status and unmask DMA
 //
 ///////////////////////////////////////////////////////////////////////////
 void SDL_EnableDMAInt(void)
 {
+assert(false);
+#if 0
     sbOldIntMask = inportb(0x21);
     outportb(0x21, sbOldIntMask & ~sbPIC1Mask);
 
@@ -324,15 +334,18 @@ void SDL_EnableDMAInt(void)
         sbOldIntMask2 = inportb(0xa1);
         outportb(0xa1, sbOldIntMask2 & ~sbPIC2Mask);
     }
+#endif
 }
 
 ///////////////////////////////////////////////////////////////////////////
 //
-//	SDL_RestoreDMAInt() - Restore DMA interrupt mask bit(s)
+//	SDL_RestoreDMAInt() - Restore DMA  mask bit(s)
 //
 ///////////////////////////////////////////////////////////////////////////
 void SDL_RestoreDMAInt(void)
 {
+    assert(false);
+#if 0
     byte is;
 
     is = inportb(0x21);
@@ -351,6 +364,7 @@ void SDL_RestoreDMAInt(void)
             is &= ~sbPIC2Mask;
         outportb(0xa1, is);
     }
+#endif
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -366,6 +380,8 @@ static void
 #endif
 SDL_SBStopSample(void)
 {
+    assert(false);
+#if 0
     byte is;
     int  i;
 
@@ -381,7 +397,7 @@ SDL_SBStopSample(void)
             sbIn(sbWriteStat);
 
 #if 0
-		is = inportb(0x21);	// Restore interrupt mask bit
+		is = inportb(0x21);	// Restore  mask bit
 		if (sbOldIntMask & (1 << sbInterrupt))
 			is |= (1 << sbInterrupt);
 		else
@@ -391,6 +407,7 @@ SDL_SBStopSample(void)
     }
 
     asm popf
+#endif
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -403,6 +420,8 @@ SDL_SBStopSample(void)
 static longword
 SDL_SBPlaySeg(volatile byte* data, longword length)
 {
+    assert(false);
+#if 0
     unsigned datapage;
     longword dataofs, uselen;
 
@@ -442,16 +461,19 @@ SDL_SBPlaySeg(volatile byte* data, longword length)
     asm popf
 
         return (uselen + 1);
+#endif
 }
 
 ///////////////////////////////////////////////////////////////////////////
 //
-//	SDL_SBService() - Services the SoundBlaster DMA interrupt
+//	SDL_SBService() - Services the SoundBlaster DMA
 //
 ///////////////////////////////////////////////////////////////////////////
-static void interrupt
+static void
 SDL_SBService(void)
 {
+    assert(false);
+#if 0
     longword used;
 
 #if 0 // for debugging
@@ -464,7 +486,7 @@ asm	mov	al,10	// bright green
 asm	out	dx,al
 #endif
 
-    sbIn(sbDataAvail); // Ack interrupt to SB
+    sbIn(sbDataAvail); // Ack  to SB
 
     if (sbNextSegPtr)
     {
@@ -484,7 +506,7 @@ asm	out	dx,al
         SDL_DigitizedDone();
     }
 
-    outportb(0x20, 0x20); // Ack interrupt
+    outportb(0x20, 0x20); // Ack
     if (sbInterrupt >= 8) // If necessary, ack to cascade PIC
         outportb(0xa0, 0x20);
 
@@ -498,6 +520,7 @@ asm	mov	al,3	// blue
 asm	out	dx,al
 asm	mov	al,0x20	// normal
 asm	out	dx,al
+#endif
 #endif
 }
 
@@ -514,6 +537,8 @@ static void
 #endif
 SDL_SBPlaySample(byte* data, longword len)
 {
+    assert(false);
+#if 0
     longword used;
 
     SDL_SBStopSample();
@@ -530,7 +555,7 @@ SDL_SBPlaySample(byte* data, longword len)
     }
 
 #if 0
-	// Save old interrupt status and unmask ours
+	// Save old  status and unmask ours
 	sbOldIntMask = inportb(0x21);
 	outportb(0x21,sbOldIntMask & ~(1 << sbInterrupt));
 #endif
@@ -543,6 +568,7 @@ SDL_SBPlaySample(byte* data, longword len)
     sbSamplePlaying = true;
 
     asm popf
+#endif
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -555,6 +581,8 @@ SDL_SBPlaySample(byte* data, longword len)
 static void
 SDL_PositionSBP(int leftpos, int rightpos)
 {
+    assert(false);
+#if 0
     byte v;
 
     if (!SBProPresent)
@@ -570,6 +598,7 @@ SDL_PositionSBP(int leftpos, int rightpos)
     sbOut(sbpMixerData, v);
 
     asm popf
+#endif
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -581,6 +610,8 @@ SDL_PositionSBP(int leftpos, int rightpos)
 static bool
 SDL_CheckSB(int port)
 {
+    assert(false);
+#if 0
     int i;
 
     sbLocation = port << 4; // Initialize stuff for later use
@@ -610,6 +641,7 @@ SDL_CheckSB(int port)
     }
     sbLocation = -1; // Retry count exceeded - fail
     return (false);
+#endif
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -674,6 +706,8 @@ void SDL_SBSetDMA(byte channel)
 static void
 SDL_StartSB(void)
 {
+    assert(false);
+#if 0
     byte timevalue, test;
 
     sbIntVec = sbIntVectors[sbInterrupt];
@@ -683,10 +717,10 @@ SDL_StartSB(void)
     sbPIC1Mask = 1 << (sbInterrupt & 7);
     sbPIC2Mask = 1 << 2;
 
-    sbOldIntHand = getvect(sbIntVec); // Get old interrupt handler
+    sbOldIntHand = getvect(sbIntVec); // Get old  handler
     setvect(sbIntVec, SDL_SBService); // Set mine
 
-    SDL_EnableDMAInt(); // Enable DMA interrupt
+    SDL_EnableDMAInt(); // Enable DMA
 
     sbWriteDelay();
     sbOut(sbWriteCmd, 0xd1); // Turn on DSP speaker
@@ -726,6 +760,7 @@ SDL_StartSB(void)
             sbOut(sbpMixerData, 0); // 0=off,2=on
         }
     }
+#endif
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -736,8 +771,10 @@ SDL_StartSB(void)
 static void
 SDL_ShutSB(void)
 {
+    assert(false);
+#if 0
     SDL_SBStopSample();
-    SDL_RestoreDMAInt(); // Restore DMA interrupt
+    SDL_RestoreDMAInt(); // Restore DMA
 
     if (SBProPresent)
     {
@@ -751,6 +788,7 @@ SDL_ShutSB(void)
     }
 
     setvect(sbIntVec, sbOldIntHand); // Set vector back
+#endif
 }
 
 //	Sound Source Code
@@ -800,11 +838,14 @@ static void
 #endif
 SDL_SSStopSample(void)
 {
+    assert(false);
+#if 0
     asm pushf asm cli
 
         (long) ssSample = 0;
 
     asm popf
+#endif
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -815,6 +856,8 @@ SDL_SSStopSample(void)
 static void
 SDL_SSService(void)
 {
+    assert(false);
+#if 0
     bool gotit;
     byte v;
 
@@ -845,6 +888,7 @@ SDL_SSService(void)
             asm pop ax asm push ax asm pop ax
     }
 done:;
+#endif
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -859,12 +903,15 @@ static void
 #endif
 SDL_SSPlaySample(byte* data, longword len)
 {
+    assert(false);
+#if 0
     asm pushf asm cli
 
         ssLengthLeft = len;
     ssSample         = (volatile byte*)data;
 
     asm popf
+#endif
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -875,6 +922,8 @@ SDL_SSPlaySample(byte* data, longword len)
 static void
 SDL_StartSS(void)
 {
+    assert(false);
+#if 0
     if (ssPort == 3)
         ssControl = 0x27a; // If using LPT3
     else if (ssPort == 2)
@@ -893,6 +942,7 @@ SDL_StartSS(void)
     outportb(ssControl, ssOn); // Enable SS
 
     SDL_SSSetVol(0x100);
+#endif
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -903,7 +953,10 @@ SDL_StartSS(void)
 static void
 SDL_ShutSS(void)
 {
+    assert(false);
+#if 0
     outportb(ssControl, ssOff);
+#endif
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -915,6 +968,8 @@ SDL_ShutSS(void)
 static bool
 SDL_CheckSS(void)
 {
+    assert(false);
+#if 0
     bool     present = false;
     longword lasttime;
 
@@ -961,6 +1016,7 @@ SDL_CheckSS(void)
 checkdone:
     SDL_ShutSS();
     return (present);
+#endif
 }
 
 static bool
@@ -988,6 +1044,8 @@ static void
 #endif
 SDL_PCPlaySound(PCSound* sound)
 {
+    assert(false);
+#if 0
     asm pushf asm cli
 
         pcLastSample = -1;
@@ -995,6 +1053,7 @@ SDL_PCPlaySound(PCSound* sound)
     pcSound          = sound->data;
 
     asm popf
+#endif
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -1009,6 +1068,8 @@ static void
 #endif
 SDL_PCStopSound(void)
 {
+    assert(false);
+#if 0
     asm pushf asm cli
 
         (long) pcSound = 0;
@@ -1020,6 +1081,7 @@ SDL_PCStopSound(void)
         al
 
         asm popf
+#endif
 }
 
 #if 0
@@ -1086,6 +1148,8 @@ SDL_PCService(void)
 static void
 SDL_ShutPC(void)
 {
+    assert(false);
+#if 0
     asm pushf asm cli
 
         pcSound = 0;
@@ -1097,6 +1161,7 @@ SDL_ShutPC(void)
         al
 
         asm popf
+#endif
 }
 
 //
@@ -1137,6 +1202,8 @@ asm	out	dx,al
 
 void SDL_PlayDigiSegment(memptr addr, word len)
 {
+    assert(false);
+#if 0
     switch (DigiMode)
     {
     case sds_SoundSource:
@@ -1146,10 +1213,13 @@ void SDL_PlayDigiSegment(memptr addr, word len)
         SDL_SBPlaySample(addr, len);
         break;
     }
+#endif
 }
 
 void SD_StopDigitized(void)
 {
+    assert(false);
+#if 0
     int i;
 
     asm pushf asm cli
@@ -1181,6 +1251,7 @@ void SD_StopDigitized(void)
             PM_SetPageLock(i + PMSoundStart, pml_Unlocked);
     DigiLastStart = 1;
     DigiLastEnd   = 0;
+#endif
 }
 
 void SD_Poll(void)
@@ -1259,6 +1330,8 @@ void SD_SetPosition(int leftpos, int rightpos)
 
 void SD_PlayDigitized(word which, int leftpos, int rightpos)
 {
+    assert(false);
+#if 0
     int    i;
     byte   timevalue;
     word   pages;
@@ -1315,10 +1388,13 @@ void SD_PlayDigitized(word which, int leftpos, int rightpos)
         DigiLastSegment = true;
 
     SD_Poll();
+#endif
 }
 
 void SDL_DigitizedDone(void)
 {
+    assert(false);
+#if 0
     if (DigiNextAddr)
     {
         SDL_PlayDigiSegment(DigiNextAddr, DigiNextLen);
@@ -1345,6 +1421,7 @@ void SDL_DigitizedDone(void)
         else
             DigiMissed = true;
     }
+#endif
 }
 
 void SD_SetDigiDevice(SDSMode mode)
@@ -1390,6 +1467,8 @@ void SD_SetDigiDevice(SDSMode mode)
 
 void SDL_SetupDigi(void)
 {
+    assert(false);
+#if 0
     memptr list;
     word * p,
         pg;
@@ -1415,6 +1494,7 @@ void SDL_SetupDigi(void)
 
     for (i = 0; i < sdLastSound; i++)
         DigiMap[i] = -1;
+#endif
 }
 
 // 	AdLib Code
@@ -1427,6 +1507,8 @@ void SDL_SetupDigi(void)
 
 void alOut(byte n, byte b)
 {
+    assert(false);
+#if 0
     int i;
 
     asm pushf asm cli
@@ -1440,6 +1522,7 @@ void alOut(byte n, byte b)
 
         for (i = 0; i < 35; i++)
             inportb(alFMStatus);
+#endif
 }
 
 #if 0
@@ -1500,12 +1583,15 @@ static void
 #endif
 SDL_ALStopSound(void)
 {
+    assert(false);
+#if 0
     asm pushf asm cli
 
         (long) alSound = 0;
     alOut(alFreqH + 0, 0);
 
     asm popf
+#endif
 }
 
 static void
@@ -1543,6 +1629,8 @@ static void
 #endif
 SDL_ALPlaySound(AdLibSound* sound)
 {
+    assert(false);
+#if 0
     Instrument* inst;
     byte*       data;
 
@@ -1568,6 +1656,7 @@ SDL_ALPlaySound(AdLibSound* sound)
     SDL_AlSetFXInst(inst);
 
     asm popf
+#endif
 }
 
 #if 0
@@ -1641,6 +1730,8 @@ SDL_ALService(void)
 static void
 SDL_ShutAL(void)
 {
+    assert(false);
+#if 0
     asm pushf asm cli
 
         alOut(alEffects, 0);
@@ -1649,6 +1740,7 @@ SDL_ShutAL(void)
     alSound = 0;
 
     asm popf
+#endif
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -1659,6 +1751,8 @@ SDL_ShutAL(void)
 static void
 SDL_CleanAL(void)
 {
+    assert(false);
+#if 0
     int i;
 
     asm pushf asm cli
@@ -1668,6 +1762,7 @@ SDL_CleanAL(void)
         alOut(i, 0);
 
     asm popf
+#endif
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -1692,6 +1787,8 @@ SDL_StartAL(void)
 static bool
 SDL_DetectAdLib(void)
 {
+    assert(false);
+#if 0
     byte status1, status2;
     int  i;
 
@@ -1722,6 +1819,7 @@ SDL_DetectAdLib(void)
     }
     else
         return (false);
+#endif
 }
 
 #if 0
@@ -1731,7 +1829,7 @@ SDL_DetectAdLib(void)
 //		dispatches to whatever other routines are appropriate
 //
 ///////////////////////////////////////////////////////////////////////////
-static void interrupt
+static void 
 SDL_t0Service(void)
 {
 static	word	count = 1;
@@ -1801,7 +1899,7 @@ asm	jnc	myack
 	t0OldService();			// If we overflow a word, time to call old int handler
 asm	jmp	olddone
 myack:;
-	outportb(0x20,0x20);	// Ack the interrupt
+	outportb(0x20,0x20);	// Ack the 
 olddone:;
 
 #if 0 // for debugging
@@ -1858,6 +1956,8 @@ SDL_CleanDevice(void)
 static void
 SDL_StartDevice(void)
 {
+    assert(false);
+#if 0
     switch (SoundMode)
     {
     case sdm_AdLib:
@@ -1865,6 +1965,7 @@ SDL_StartDevice(void)
         break;
     }
     SoundNumber = SoundPriority = 0;
+#endif
 }
 
 //	Public routines
@@ -1969,6 +2070,8 @@ bool SD_SetMusicMode(SMMode mode)
 ///////////////////////////////////////////////////////////////////////////
 void SD_Startup(void)
 {
+    assert(false);
+#if 0
     int i;
 
     if (SD_Started)
@@ -2094,6 +2197,7 @@ void SD_Startup(void)
     SDL_SetupDigi();
 
     SD_Started = true;
+#endif
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -2153,6 +2257,8 @@ void SD_Default(bool gotit, SDMode sd, SMMode sm)
 ///////////////////////////////////////////////////////////////////////////
 void SD_Shutdown(void)
 {
+    assert(false);
+#if 0
     if (!SD_Started)
         return;
 
@@ -2176,6 +2282,7 @@ void SD_Shutdown(void)
     asm popf
 
         SD_Started = false;
+#endif
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -2209,6 +2316,8 @@ void SD_PositionSound(int leftvol, int rightvol)
 ///////////////////////////////////////////////////////////////////////////
 bool SD_PlaySound(soundnames sound)
 {
+    assert(false);
+#if 0
     bool         ispos;
     SoundCommon* s;
     int          lp, rp;
@@ -2283,6 +2392,7 @@ bool SD_PlaySound(soundnames sound)
     SoundPriority = s->priority;
 
     return (false);
+#endif
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -2318,6 +2428,8 @@ word SD_SoundPlaying(void)
 ///////////////////////////////////////////////////////////////////////////
 void SD_StopSound(void)
 {
+    assert(false);
+#if 0
     if (DigiPlaying)
         SD_StopDigitized();
 
@@ -2334,6 +2446,7 @@ void SD_StopSound(void)
     SoundPositioned = false;
 
     SDL_SoundFinished();
+#endif
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -2385,6 +2498,8 @@ void SD_MusicOff(void)
 ///////////////////////////////////////////////////////////////////////////
 void SD_StartMusic(MusicGroup* music)
 {
+    assert(false);
+#if 0
     SD_MusicOff();
     asm pushf asm cli
 
@@ -2402,6 +2517,7 @@ void SD_StartMusic(MusicGroup* music)
         sqPlayedOnce = true;
 
     asm popf
+#endif
 }
 
 ///////////////////////////////////////////////////////////////////////////
