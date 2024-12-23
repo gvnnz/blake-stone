@@ -100,7 +100,6 @@ typedef struct
 
 #define nil (0l)
 
-#include "ID_CA.H"
 #include "ID_IN.H"
 #include "ID_MM.H"
 #include "ID_PM.H"
@@ -108,6 +107,7 @@ typedef struct
 #include "ID_US.H"
 #include "ID_VH.H"
 #include "ID_VL.H"
+#include "id_ca.hpp"
 
 #include "jm_debug.hpp"
 #include "jm_error.hpp"

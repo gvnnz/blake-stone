@@ -41,8 +41,8 @@ list(APPEND SOURCES
     src/GFXV_WL1.EQU
     src/GFXV_WL6.EQU
     src/H_LDIV.ASM
-    src/ID_CA.C
-    src/ID_CA.H
+    src/id_ca.cpp
+    src/id_ca.hpp
     src/ID_HEAD.H
     src/id_heads.hpp
     src/ID_IN.C

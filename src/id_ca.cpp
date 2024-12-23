@@ -15,6 +15,8 @@ loaded into the data segment
 */
 
 #include "id_heads.hpp"
+#include <cassert>
+#include <cstring>
 #pragma hdrstop
 
 #pragma warn - pro
@@ -165,6 +167,8 @@ void CA_CloseDebug (void)
 //------------------------------------------------------------------------
 void OpenGrFile(void)
 {
+    assert(false);
+#if 0
     char fname[13];
     strcpy(fname, gfilename);
     strcat(fname, extension);
@@ -172,6 +176,7 @@ void OpenGrFile(void)
     grhandle = open(fname, O_RDONLY | O_BINARY);
     if (grhandle == -1)
         CA_CannotOpen(fname);
+#endif
 }
 
 //-----------------------------------------------------------------------
@@ -179,8 +184,11 @@ void OpenGrFile(void)
 //------------------------------------------------------------------------
 void CloseGrFile(void)
 {
+    assert(false);
+#if 0
     if (grhandle != -1)
         close(grhandle);
+#endif
 }
 
 //-----------------------------------------------------------------------
@@ -188,6 +196,8 @@ void CloseGrFile(void)
 //------------------------------------------------------------------------
 void OpenMapFile(void)
 {
+    assert(false);
+#if 0
     char fname[13];
 
 #ifdef CARMACIZED
@@ -205,6 +215,7 @@ void OpenMapFile(void)
              O_RDONLY | O_BINARY, S_IREAD)) == -1)
         CA_CannotOpen(fname);
 #endif
+#endif
 }
 
 //-----------------------------------------------------------------------
@@ -212,8 +223,11 @@ void OpenMapFile(void)
 //------------------------------------------------------------------------
 void CloseMapFile(void)
 {
+    assert(false);
+#if 0
     if (maphandle != -1)
         close(maphandle);
+#endif
 }
 
 //-----------------------------------------------------------------------
@@ -221,6 +235,8 @@ void CloseMapFile(void)
 //------------------------------------------------------------------------
 void OpenAudioFile(void)
 {
+    assert(false);
+#if 0
     char fname[13];
 
 #ifndef AUDIOHEADERLINKED
@@ -235,6 +251,7 @@ void OpenAudioFile(void)
              O_RDONLY | O_BINARY, S_IREAD)) == -1)
         CA_ERROR(SETUPAUDIO_CANT_OPEN);
 #endif
+#endif
 }
 
 //-----------------------------------------------------------------------
@@ -242,8 +259,11 @@ void OpenAudioFile(void)
 //------------------------------------------------------------------------
 void CloseAudioFile(void)
 {
+    assert(false);
+#if 0
     if (audiohandle != -1)
         close(audiohandle);
+#endif
 }
 
 /*
@@ -259,9 +279,12 @@ void CloseAudioFile(void)
 
 void CAL_GetGrChunkLength(int chunk)
 {
+    assert(false);
+#if 0
     lseek(grhandle, GRFILEPOS(chunk), SEEK_SET);
     read(grhandle, &chunkexplen, sizeof(chunkexplen));
     chunkcomplen = GRFILEPOS(chunk + 1) - GRFILEPOS(chunk) - 4;
+#endif
 }
 
 // MDM - functions removed...
@@ -477,6 +500,8 @@ bool CA_LoadFile (char *filename, memptr *ptr)
 
 void CAL_OptimizeNodes(huffnode* table)
 {
+    assert(false);
+#if 0
     huffnode* node;
     int       i;
 
@@ -490,6 +515,7 @@ void CAL_OptimizeNodes(huffnode* table)
             node->bit1 = (unsigned)(table + (node->bit1 - 256));
         node++;
     }
+#endif
 }
 
 /*
@@ -524,16 +550,21 @@ void CAL_HuffExpand(byte* source, byte* dest,
 
     if (screenhack)
     {
+        assert(false);
+#if 0
         mapmask = 1;
         asm mov dx, SC_INDEX asm mov ax, SC_MAPMASK + 256 asm out dx, ax length >>= 2;
+#endif
     }
 
+    assert(false);
+#if 0
     sourceseg = FP_SEG(source);
     sourceoff = FP_OFF(source);
     destseg   = FP_SEG(dest);
     destoff   = FP_OFF(dest);
     endoff    = destoff + length;
-
+#endif
     //
     // ds:si source
     // es:di dest
@@ -542,7 +573,8 @@ void CAL_HuffExpand(byte* source, byte* dest,
 
     if (length < 0xfff0)
     {
-
+        assert(false);
+#if 0
         //--------------------------
         // expand less than 64k of data
         //--------------------------
@@ -608,10 +640,12 @@ void CAL_HuffExpand(byte* source, byte* dest,
                                                                                   [endoff] asm jmp expandshort
 
                                                                                       notscreen:;
+#endif
     }
     else
     {
-
+        assert(false);
+#if 0
         //--------------------------
         // expand more than 64k of data
         //--------------------------
@@ -666,9 +700,13 @@ void CAL_HuffExpand(byte* source, byte* dest,
 
             asm sub[WORD PTR ss : length],
             1 asm jnc expand asm dec[WORD PTR ss : length + 2] asm jns expand // when length = ffff ffff, done
+#endif
     }
 
+    assert(false);
+#if 0
     asm mov ax, ss asm mov ds, ax
+#endif
 }
 
 /*
@@ -845,6 +883,8 @@ void CA_RLEWexpand(unsigned* source, unsigned* dest, long length,
   } while (dest<end);
 #endif
 
+    assert(false);
+#if 0
     end       = dest + (length) / 2;
     sourceseg = FP_SEG(source);
     sourceoff = FP_OFF(source);
@@ -906,6 +946,7 @@ void CA_RLEWexpand(unsigned* source, unsigned* dest, long length,
                   asm mov    ax,
                   ss asm mov ds,
                   ax
+#endif
 }
 
 /*
@@ -928,6 +969,8 @@ void CA_RLEWexpand(unsigned* source, unsigned* dest, long length,
 
 void CA_Shutdown(void)
 {
+    assert(false);
+#if 0
 #ifdef PROFILE
     close(profilehandle);
 #endif
@@ -935,6 +978,7 @@ void CA_Shutdown(void)
     close(maphandle);
     close(grhandle);
     close(audiohandle);
+#endif
 }
 
 //===========================================================================
@@ -949,6 +993,8 @@ void CA_Shutdown(void)
 
 void CA_CacheAudioChunk(int chunk)
 {
+    assert(false);
+#if 0
     long pos, compressed;
 #ifdef AUDIOHEADERLINKED
     long   expanded;
@@ -1025,6 +1071,7 @@ done:
 #if FORCE_FILE_CLOSE
     CloseAudioFile();
 #endif
+#endif
 }
 
 //===========================================================================
@@ -1041,6 +1088,8 @@ done:
 
 void CA_LoadAllSounds(void)
 {
+    assert(false);
+#if 0
     unsigned start, i;
 
     switch (oldsoundmode)
@@ -1077,6 +1126,7 @@ cachein:
         CA_CacheAudioChunk(start);
 
     oldsoundmode = SoundMode;
+#endif
 }
 
 //===========================================================================
@@ -1133,7 +1183,7 @@ void CAL_ExpandGrChunk(int chunk, byte* source)
     MM_GetPtr(&grsegs[chunk], expanded);
     if (mmerror)
         return;
-    CAL_HuffExpand(source, grsegs[chunk], expanded, grhuffman, false);
+    CAL_HuffExpand(source, static_cast<byte*>(grsegs[chunk]), expanded, grhuffman, false);
 }
 
 /*
@@ -1148,6 +1198,8 @@ void CAL_ExpandGrChunk(int chunk, byte* source)
 
 void CA_CacheGrChunk(int chunk)
 {
+    assert(false);
+#if 0
     long   pos, compressed;
     memptr bigbufferseg;
     byte*  source;
@@ -1193,6 +1245,7 @@ void CA_CacheGrChunk(int chunk)
 
     if (compressed > BUFFERSIZE)
         MM_FreePtr(&bigbufferseg);
+#endif
 }
 
 //==========================================================================
@@ -1209,6 +1262,8 @@ void CA_CacheGrChunk(int chunk)
 
 void CA_CacheScreen(int chunk)
 {
+    assert(false);
+#if 0
     long   pos, compressed, expanded;
     memptr bigbufferseg;
     byte*  source;
@@ -1240,6 +1295,7 @@ void CA_CacheScreen(int chunk)
     CAL_HuffExpand(source, MK_FP(SCREENSEG, bufferofs), expanded, grhuffman, true);
     VW_MarkUpdateBlock(0, 0, 319, 199);
     MM_FreePtr(&bigbufferseg);
+#endif
 }
 
 //==========================================================================
@@ -1256,6 +1312,8 @@ void CA_CacheScreen(int chunk)
 
 void CA_CacheMap(int mapnum)
 {
+    assert(false);
+#if 0
     long      pos, compressed;
     int       plane;
     memptr *  dest, bigbufferseg;
@@ -1325,6 +1383,7 @@ void CA_CacheMap(int mapnum)
 #if FORCE_FILE_CLOSE
     CloseMapFile();
 #endif
+#endif
 }
 
 //===========================================================================
@@ -1342,6 +1401,8 @@ void CA_CacheMap(int mapnum)
 
 void CA_UpLevel(void)
 {
+    assert(false);
+#if 0
     int i;
 
     if (ca_levelnum == 7)
@@ -1352,6 +1413,7 @@ void CA_UpLevel(void)
             MM_SetPurge(&(memptr)grsegs[i], 3);
     ca_levelbit <<= 1;
     ca_levelnum++;
+#endif
 }
 
 //===========================================================================
@@ -1493,6 +1555,8 @@ void CA_SetAllPurge (void)
 
 void CA_CacheMarks(void)
 {
+    assert(false);
+#if 0
     int    i, next, numcache;
     long   pos, endpos, nextpos, nextendpos, compressed;
     long   bufferstart, bufferend; // file position of general buffer
@@ -1596,6 +1660,7 @@ void CA_CacheMarks(void)
         }
 
 getout:;
+#endif
 }
 
 void CA_CannotOpen(char* string)
