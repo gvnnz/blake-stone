@@ -18,6 +18,7 @@
 //
 
 #include "id_heads.hpp"
+#include <cassert>
 #pragma hdrstop
 
 #define KeyInt 9 // The keyboard ISR number
@@ -129,7 +130,7 @@ static Direction DirTable[] = // Quick lookup for total direction
         dir_SouthWest, dir_South, dir_SouthEast};
 
 static void (*INL_KeyHook)(void);
-static void interrupt (*OldKeyVect)(void);
+static void (*OldKeyVect)(void);
 
 char* IN_ParmStrings[] = {"nojoys", "nomouse", "enablegp", nil};
 
@@ -140,9 +141,10 @@ char* IN_ParmStrings[] = {"nojoys", "nomouse", "enablegp", nil};
 //	INL_KeyService() - Handles a keyboard interrupt (key up/down)
 //
 ///////////////////////////////////////////////////////////////////////////
-static void interrupt
-INL_KeyService(void)
+static void INL_KeyService(void)
 {
+    assert(false);
+#if 0
     static bool special;
     byte        k, c,
         temp;
@@ -213,6 +215,7 @@ INL_KeyService(void)
     if (INL_KeyHook && !special)
         INL_KeyHook();
     outportb(0x20, 0x20);
+#endif
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -224,9 +227,12 @@ INL_KeyService(void)
 static void
 INL_GetMouseDelta(int* x, int* y)
 {
+    assert(false);
+#if 0
     Mouse(MDelta);
     *x = _CX;
     *y = _DX;
+#endif
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -240,8 +246,11 @@ INL_GetMouseButtons(void)
 {
     word buttons;
 
+    assert(false);
+#if 0
     Mouse(MButtons);
     buttons = _BX;
+#endif
     return (buttons);
 }
 
@@ -252,6 +261,8 @@ INL_GetMouseButtons(void)
 ///////////////////////////////////////////////////////////////////////////
 void IN_GetJoyAbs(word joy, word* xp, word* yp)
 {
+    assert(false);
+#if 0
     byte xb, yb,
         xs, ys;
     word x, y;
@@ -351,6 +362,7 @@ void IN_GetJoyAbs(word joy, word* xp, word* yp)
 
                                   *xp = x;
     *yp                               = y;
+#endif
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -427,8 +439,9 @@ void INL_GetJoyDelta(word joy, int* dx, int* dy)
 static word
 INL_GetJoyButtons(word joy)
 {
-    register word result;
-
+    word result;
+    assert(false);
+#if 0
     // Handle Notebook Gamepad's joystick.
     //
     if (NGinstalled)
@@ -455,6 +468,7 @@ INL_GetJoyButtons(word joy)
     result >>= joy ? 6 : 4;  // Shift into bits 0-1
     result &= 3;             // Mask off the useless bits
     result ^= 3;
+#endif
     return (result);
 }
 
@@ -487,12 +501,15 @@ word IN_GetJoyButtonsDB(word joy)
 ///////////////////////////////////////////////////////////////////////////
 void INL_StartKbd(void)
 {
-    INL_KeyHook = NULL; // no key hook routine
+    assert(false);
+#if 0
+    INL_KeyHook = nullptr; // no key hook routine
 
     IN_ClearKeysDown();
 
     OldKeyVect = getvect(KeyInt);
     setvect(KeyInt, INL_KeyService);
+#endif
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -503,9 +520,12 @@ void INL_StartKbd(void)
 static void
 INL_ShutKbd(void)
 {
+    assert(false);
+#if 0
     poke(0x40, 0x17, peek(0x40, 0x17) & 0xfaf0); // Clear ctrl/alt/shift flags
 
     setvect(KeyInt, OldKeyVect);
+#endif
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -524,10 +544,13 @@ bool INL_StartMouse(void)
 	}
 	return(false);
 #endif
+
+    assert(false);
+#if 0
     union REGS     regs;
     unsigned char* vector;
 
-    if ((vector = MK_FP(peek(0, 0x33 * 4 + 2), peek(0, 0x33 * 4))) == NULL)
+    if ((vector = MK_FP(peek(0, 0x33 * 4 + 2), peek(0, 0x33 * 4))) == nullptr)
         return false;
 
     if (*vector == 207)
@@ -535,6 +558,7 @@ bool INL_StartMouse(void)
 
     Mouse(MReset);
     return true;
+#endif
 }
 
 #if 0
@@ -756,11 +780,14 @@ IN_SetKeyHook(void (*hook)())
 ///////////////////////////////////////////////////////////////////////////
 void IN_ClearKeysDown(void)
 {
+    assert(false);
+#if 0
     int i;
 
     LastScan  = sc_None;
     LastASCII = key_None;
     memset(Keyboard, 0, sizeof(Keyboard));
+#endif
 }
 
 //
@@ -787,13 +814,13 @@ void IN_ClearKeysDown(void)
 ///////////////////////////////////////////////////////////////////////////
 void IN_ReadControl(int player, ControlInfo* info)
 {
-    bool                  realdelta = false;
-    byte                  dbyte;
-    word                  buttons;
-    int                   dx, dy;
-    Motion                mx, my;
-    ControlType           type;
-    register KeyboardDef* def;
+    bool         realdelta = false;
+    byte         dbyte;
+    word         buttons;
+    int          dx, dy;
+    Motion       mx, my;
+    ControlType  type;
+    KeyboardDef* def;
 
     player = player; // shut up compiler!
 
@@ -1048,6 +1075,8 @@ bool btnstate[8];
 
 void IN_StartAck(void)
 {
+    assert(false);
+#if 0
     unsigned i, buttons;
 
     //
@@ -1063,6 +1092,7 @@ void IN_StartAck(void)
     for (i = 0; i < 8; i++, buttons >>= 1)
         if (buttons & 1)
             btnstate[i] = true;
+#endif
 }
 
 bool IN_CheckAck(void)
@@ -1133,6 +1163,8 @@ bool IN_UserInput(longword delay)
 
 byte IN_MouseButtons(void)
 {
+    assert(false);
+#if 0
     if (MousePresent)
     {
         Mouse(MButtons);
@@ -1140,6 +1172,7 @@ byte IN_MouseButtons(void)
     }
     else
         return 0;
+#endif
 }
 
 /*
@@ -1152,6 +1185,8 @@ byte IN_MouseButtons(void)
 
 byte IN_JoyButtons(void)
 {
+    assert(false);
+#if 0
     unsigned joybits;
 
     joybits = inportb(0x201); // Get all the joystick buttons
@@ -1159,4 +1194,5 @@ byte IN_JoyButtons(void)
     joybits ^= 15;            // return with 1=pressed
 
     return joybits;
+#endif
 }
