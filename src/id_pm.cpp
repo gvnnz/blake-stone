@@ -7,6 +7,7 @@
 // #define FLASH_LOAD			// Flashes border during Disk Hits
 
 #include "id_heads.hpp"
+#include <cassert>
 #pragma hdrstop
 
 //	Main Mem specific variables
@@ -66,6 +67,8 @@ char* PM_ParmStrings[] = {"nomain", "noems", "noxms", nil};
 //
 void PML_MapEMS(word logical, word physical)
 {
+    assert(false);
+#if 0
     _AL = physical;
     _BX = logical;
     _DX = EMSHandle;
@@ -74,6 +77,7 @@ void PML_MapEMS(word logical, word physical)
 
         if (_AH)
             PM_ERROR(PML_MAPEMS_MAPPING_FAIL);
+#endif
 }
 
 #if DUAL_SWAP_FILES
@@ -179,7 +183,10 @@ void PML_ShutdownEMS(void)
 {
     if (EMSPresent)
     {
+        assert(false);
+#if 0
         asm mov ah, EMS_FREEPAGES asm mov dx, [EMSHandle] asm int EMS_INT if (_AH) PM_ERROR(PML_SHUTDOWNEMS_FREE);
+#endif
     }
 }
 
@@ -264,11 +271,14 @@ void PML_XMSCopy(bool toxms, byte* addr, word xmspage, word length)
     copy.target_handle = toxms ? XMSHandle : 0;
     copy.target_offset = toxms ? xoffset : (long)addr;
 
+    assert(false);
+#if 0
     asm push si
         _SI = (word)&copy;
     XMS_CALL(XMS_MOVE);
     asm pop si if (!_AX)
         PM_ERROR(PML_XMSCOPY_COPY_ERROR);
+#endif
 }
 
 #if 1
@@ -301,11 +311,14 @@ void PML_ShutdownXMS(void)
 {
     if (XMSPresent)
     {
+        assert(false);
+#if 0
         XMSPresent = false;
         _DX        = XMSHandle;
         XMS_CALL(XMS_FREE);
         if (!_AX)
             PM_ERROR(PML_SHUTDOWNXMS_FREE);
+#endif
     }
 }
 
@@ -349,6 +362,8 @@ void PM_SetMainMemPurge(int level)
 
 void PM_CheckMainMem(void)
 {
+    assert(false);
+#if 0
     bool            allocfailed;
     int             i, n;
     memptr*         p;
@@ -414,6 +429,7 @@ void PM_CheckMainMem(void)
     }
     if (mmerror)
         mmerror = false;
+#endif
 }
 
 #if IN_DEVELOPMENT
@@ -466,6 +482,8 @@ void PML_StartupMainMem(void)
 
 void PML_ShutdownMainMem(void)
 {
+    assert(false);
+#if 0
     int          i;
     memptr*      p;
     PMBlockAttr* used;
@@ -487,6 +505,7 @@ void PML_ShutdownMainMem(void)
             MainPagesUsed--;     // and decrease used count
         }
     }
+#endif
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -501,6 +520,8 @@ void PML_ShutdownMainMem(void)
 
 void PML_ReadFromFile(byte* buf, long offset, word length)
 {
+    assert(false);
+#if 0
 #ifdef FLASH_LOAD
     asm mov dx, STATUS_REGISTER_1 asm in al, dx asm mov dx, ATR_INDEX asm mov al, ATR_OVERSCAN asm out dx, al asm mov al, 10 // bright green
         asm out dx,
@@ -523,6 +544,7 @@ void PML_ReadFromFile(byte* buf, long offset, word length)
         asm out    dx,
         al
 #endif
+#endif
 }
 
 //
@@ -530,6 +552,8 @@ void PML_ReadFromFile(byte* buf, long offset, word length)
 //
 void PML_OpenPageFile(char* filename)
 {
+    assert(false);
+#if 0
     int             i;
     long            size;
     void*           buf;
@@ -576,6 +600,7 @@ void PML_OpenPageFile(char* filename)
     for (i = 0, page = PMPages; i < ChunksInFile; i++, page++)
         page->length = *lengthptr++;
     MM_FreePtr(&buf);
+#endif
 }
 
 //
@@ -583,6 +608,8 @@ void PML_OpenPageFile(char* filename)
 //
 void PML_ClosePageFile(void)
 {
+    assert(false);
+#if 0
     if (PageFile != -1)
         close(PageFile);
     if (PMSegPages)
@@ -590,6 +617,7 @@ void PML_ClosePageFile(void)
         MM_SetLock(&(memptr)PMSegPages, false);
         MM_FreePtr(&(void*)PMSegPages);
     }
+#endif
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -610,6 +638,8 @@ void PML_ClosePageFile(void)
 memptr
 PML_GetEMSAddress(int page, PMLockType lock)
 {
+    assert(false);
+#if 0
     int  i, emspage;
     word emsoff, emsbase, offset;
 
@@ -651,6 +681,7 @@ PML_GetEMSAddress(int page, PMLockType lock)
     offset                   = emspage * EMSPageSizeSeg;
     offset += emsoff * PMPageSizeSeg;
     return ((memptr)(EMSPageFrame + offset));
+#endif
 }
 #else
 memptr
@@ -692,6 +723,8 @@ PM_GetPageAddress(int pagenum)
 //
 int PML_GiveLRUPage(bool mainonly)
 {
+    assert(false);
+#if 0
     int             i, lru;
     long            last;
     PageListStruct* page;
@@ -709,6 +742,7 @@ int PML_GiveLRUPage(bool mainonly)
     if (lru == -1)
         PM_ERROR(PML_GIVELRUPAGE_SEARCH);
     return (lru);
+#endif
 }
 
 //
@@ -718,6 +752,8 @@ int PML_GiveLRUPage(bool mainonly)
 //
 int PML_GiveLRUXMSPage(void)
 {
+    assert(false);
+#if 0
     int             i, lru;
     long            last;
     PageListStruct* page;
@@ -732,6 +768,7 @@ int PML_GiveLRUXMSPage(void)
         }
     }
     return (lru);
+#endif
 }
 
 //
@@ -740,6 +777,8 @@ int PML_GiveLRUXMSPage(void)
 //
 void PML_PutPageInXMS(int pagenum)
 {
+    assert(false);
+#if 0
     int             usexms;
     PageListStruct* page;
 
@@ -761,6 +800,7 @@ void PML_PutPageInXMS(int pagenum)
         PMPages[usexms].xmsPage = -1;
     }
     PML_CopyToXMS(PM_GetPageAddress(pagenum), page->xmsPage, page->length);
+#endif
 }
 
 //
@@ -768,16 +808,16 @@ void PML_PutPageInXMS(int pagenum)
 //		the old one's address space. Returns the address of the new page.
 //
 memptr
-PML_TransferPageSpace(int orig, int new)
+PML_TransferPageSpace(int orig, int new_)
 {
     memptr          addr;
     PageListStruct *origpage, *newpage;
 
-    if (orig == new)
+    if (orig == new_)
         PM_ERROR(PML_TRANSFERPAGE_IDENT);
 
     origpage = &PMPages[orig];
-    newpage  = &PMPages[new];
+    newpage  = &PMPages[new_];
 
     if (origpage->locked != pml_Unlocked)
         PM_ERROR(PML_TRANSFERPAGE_KILL);
@@ -817,6 +857,8 @@ PML_TransferPageSpace(int orig, int new)
 //
 byte* PML_GetAPageBuffer(int pagenum, bool mainonly)
 {
+    assert(false);
+#if 0
     byte*           addr = nil;
     int             i, n;
     PMBlockAttr*    used;
@@ -855,6 +897,7 @@ byte* PML_GetAPageBuffer(int pagenum, bool mainonly)
     if (!addr)
         PM_ERROR(PML_GETPAGEBUFFER_SEARC);
     return (addr);
+#endif
 }
 
 //
@@ -869,6 +912,8 @@ byte* PML_GetAPageBuffer(int pagenum, bool mainonly)
 memptr
 PML_GetPageFromXMS(int pagenum, bool mainonly)
 {
+    assert(false);
+#if 0
     byte*           checkaddr;
     memptr          addr = nil;
     PageListStruct* page;
@@ -886,6 +931,7 @@ PML_GetPageFromXMS(int pagenum, bool mainonly)
     }
 
     return (addr);
+#endif
 }
 
 //
@@ -913,6 +959,8 @@ void PML_LoadPage(int pagenum, bool mainonly)
 memptr
 PM_GetPage(int pagenum)
 {
+    assert(false);
+#if 0
     memptr result;
 
     if (pagenum >= ChunksInFile)
@@ -957,6 +1005,7 @@ asm	out	dx,al
 #endif
 
     return (result);
+#endif
 }
 #pragma warn + pia
 
@@ -1107,6 +1156,8 @@ void PM_Preload(void (*update)(word current, word total))
 //
 void PM_NextFrame(void)
 {
+    assert(false);
+#if 0
     int i;
 
     // Frame count overrun - kill the LRU hit entries & reset frame count
@@ -1140,6 +1191,7 @@ void PM_NextFrame(void)
     if (PMThrashing >= PMThrashThreshold)
         PMPanicMode = PMUnThrashThreshold;
     PMThrashing = false;
+#endif
 }
 
 //
@@ -1147,6 +1199,8 @@ void PM_NextFrame(void)
 //
 void PM_Reset(void)
 {
+    assert(false);
+#if 0
     int             i;
     PageListStruct* page;
 
@@ -1167,6 +1221,7 @@ void PM_Reset(void)
         page->xmsPage  = -1;
         page->locked   = false;
     }
+#endif
 }
 
 #if DUAL_SWAP_FILES

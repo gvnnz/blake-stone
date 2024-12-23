@@ -49,8 +49,8 @@ list(APPEND SOURCES
     src/id_in.hpp
     src/id_mm.cpp
     src/ID_MM.H
-    src/ID_PM.C
-    src/ID_PM.H
+    src/id_pm.cpp
+    src/id_pm.hpp
     src/ID_SD.C
     src/ID_SD.EQU
     src/ID_SD.H
