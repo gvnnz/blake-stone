@@ -27,6 +27,7 @@
 //
 
 #include "id_heads.hpp"
+#include <cassert>
 
 #pragma hdrstop
 
@@ -85,6 +86,8 @@ HighScore Scores[MaxScores] =
 #pragma warn - rch
 int USL_HardError(word errval, int ax, int bp, int si)
 {
+    assert(false);
+#if 0
 #define IGNORE 0
 #define RETRY 1
 #define ABORT 2
@@ -158,6 +161,7 @@ oh_kill_me:
 #undef IGNORE
 #undef RETRY
 #undef ABORT
+#endif
 }
 #pragma warn + par
 #pragma warn + rch
@@ -184,6 +188,8 @@ void US_Shutdown(void)
 ///////////////////////////////////////////////////////////////////////////
 int US_CheckParm(char* parm, char** strings)
 {
+    assert(false);
+#if 0
     char cp, cs,
         *p, *s;
     int i;
@@ -207,6 +213,7 @@ int US_CheckParm(char* parm, char** strings)
         }
     }
     return (-1);
+#endif
 }
 
 //	Window/Printing routines
@@ -273,9 +280,12 @@ void US_Print(char* s)
 ///////////////////////////////////////////////////////////////////////////
 void US_PrintUnsigned(longword n)
 {
+    assert(false);
+#if 0
     char buffer[32];
 
     US_Print(ultoa(n, buffer, 10));
+#endif
 }
 
 #if 0
@@ -479,6 +489,8 @@ void US_RestoreWindow(WindowRec* win)
 static void
 USL_XORICursor(int x, int y, char* s, word cursor)
 {
+    assert(false);
+#if 0
     static bool status; // VGA doesn't XOR...
     char        buf[MaxString];
     int         temp;
@@ -504,6 +516,7 @@ USL_XORICursor(int x, int y, char* s, word cursor)
         USL_DrawString("\x80");
         fontcolor = temp;
     }
+#endif
 }
 
 // JAM BEGIN - New Function
@@ -515,6 +528,8 @@ USL_XORICursor(int x, int y, char* s, word cursor)
 ///////////////////////////////////////////////////////////////////////////
 static void USL_CustomCursor(int x, int y, char* s, word cursor)
 {
+    assert(false);
+#if 0
     static bool status; // VGA doesn't XOR...
     char        buf[MaxString];
     int         temp, temp_font;
@@ -542,6 +557,7 @@ static void USL_CustomCursor(int x, int y, char* s, word cursor)
     USL_DrawString(&US_CustomCursor.cursor_char);
     fontcolor  = temp;
     fontnumber = temp_font;
+#endif
 }
 // JAM END - New Function
 
@@ -558,6 +574,8 @@ static void USL_CustomCursor(int x, int y, char* s, word cursor)
 bool US_LineInput(int x, int y, char* buf, char* def, bool escok,
     int maxchars, int maxwidth)
 {
+    assert(false);
+#if 0
     bool redraw,
         cursorvis, cursormoved,
         done, result;
@@ -753,4 +771,5 @@ bool US_LineInput(int x, int y, char* buf, char* def, bool escok,
 
     IN_ClearKeysDown();
     return (result);
+#endif
 }

@@ -57,7 +57,7 @@ list(APPEND SOURCES
     src/ID_SD_A.ASM
     src/ID_SDD.C
     src/ID_US.H
-    src/ID_US_1.C
+    src/id_us_1.cpp
     src/ID_US_A.ASM
     src/ID_VH.C
     src/ID_VH.H
