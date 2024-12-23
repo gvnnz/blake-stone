@@ -62,9 +62,9 @@ list(APPEND SOURCES
     src/ID_VH.C
     src/ID_VH.H
     src/ID_VH_A.ASM
-    src/ID_VL.C
+        src/id_vl.cpp
     src/ID_VL.EQU
-    src/ID_VL.H
+        src/id_vl.hpp
     src/ID_VL_A.ASM
     src/JABHACK.ASM
     src/JAM_IO.H

@@ -1,11 +1,8 @@
 // ID_VL.C
 
+#include "id_vl.hpp"
 #include "ID_HEAD.H"
-#include "ID_VL.H"
-#include <alloc.h>
-#include <dos.h>
-#include <mem.h>
-#include <string.h>
+#include <cassert>
 #pragma hdrstop
 
 //
@@ -99,7 +96,10 @@ void VL_SetVGAPlaneMode(void)
 
 void VL_SetTextMode(void)
 {
+    assert(false);
+#if 0
     asm mov ax, 3 asm int 0x10
+#endif
 }
 
 //===========================================================================
@@ -271,6 +271,8 @@ void VL_SetSplitScreen (int linenum)
 
 void VL_FillPalette(int red, int green, int blue)
 {
+    assert(false);
+#if 0
     int i;
 
     outportb(PEL_WRITE_ADR, 0);
@@ -280,6 +282,7 @@ void VL_FillPalette(int red, int green, int blue)
         outportb(PEL_DATA, green);
         outportb(PEL_DATA, blue);
     }
+#endif
 }
 
 //===========================================================================
@@ -339,6 +342,8 @@ void VL_GetColor	(int color, int *red, int *green, int *blue)
 
 void VL_SetPalette(byte firstreg, unsigned numregs, byte* palette)
 {
+    assert(false);
+#if 0
     int i; //,three=3;
 
     VL_WaitVBL(1);
@@ -369,6 +374,7 @@ void VL_SetPalette(byte firstreg, unsigned numregs, byte* palette)
                                           done : asm mov    ax,
                                                  ss asm mov ds,
                                                  ax
+#endif
 }
 
 //===========================================================================
@@ -386,6 +392,8 @@ void VL_SetPalette(byte firstreg, unsigned numregs, byte* palette)
 
 void VL_GetPalette(byte firstreg, unsigned numregs, byte* palette)
 {
+    assert(false);
+#if 0
     int i;
 
     numregs *= 3;
@@ -394,6 +402,7 @@ void VL_GetPalette(byte firstreg, unsigned numregs, byte* palette)
     outportb(PEL_READ_ADR, firstreg);
     for (i = 0; i < numregs; i++)
         *palette++ = inportb(PEL_DATA);
+#endif
 }
 
 //===========================================================================
@@ -410,6 +419,8 @@ void VL_GetPalette(byte firstreg, unsigned numregs, byte* palette)
 
 void VL_FadeOut(int start, int end, int red, int green, int blue, int steps)
 {
+    assert(false);
+#if 0
     int   i, j, orig, delta;
     byte *origptr, *newptr;
 
@@ -445,6 +456,7 @@ void VL_FadeOut(int start, int end, int red, int green, int blue, int steps)
     VL_FillPalette(red, green, blue);
 
     screenfaded = true;
+#endif
 }
 
 /*
@@ -457,6 +469,8 @@ void VL_FadeOut(int start, int end, int red, int green, int blue, int steps)
 
 void VL_FadeIn(int start, int end, byte* palette, int steps)
 {
+    assert(false);
+#if 0
     int i, j, delta;
 
     VL_GetPalette(0, 256, &palette1[0][0]);
@@ -484,6 +498,7 @@ void VL_FadeIn(int start, int end, byte* palette, int steps)
     //
     VL_SetPalette(0, 256, palette);
     screenfaded = false;
+#endif
 }
 
 //------------------------------------------------------------------------
@@ -586,11 +601,14 @@ void VL_TestPaletteSet (void)
 
 void VL_ColorBorder(int color)
 {
+    assert(false);
+#if 0
     _AH = 0x10;
     _AL = 1;
     _BH = color;
     geninterrupt(0x10);
     bordercolor = color;
+#endif
 }
 
 /*
@@ -615,12 +633,15 @@ byte rightmasks[4] = {1, 3, 7, 15};
 
 void VL_Plot(int x, int y, int color)
 {
+    assert(false);
+#if 0
     byte mask;
 
     mask = pixmasks[x & 3];
     VGAMAPMASK(mask);
     *(byte*)MK_FP(SCREENSEG, bufferofs + (ylookup[y] + (x >> 2))) = color;
     VGAMAPMASK(15);
+#endif
 }
 
 /*
@@ -633,6 +654,8 @@ void VL_Plot(int x, int y, int color)
 
 void VL_Hlin(unsigned x, unsigned y, unsigned width, unsigned color)
 {
+    assert(false);
+#if 0
     unsigned xbyte;
     byte*    dest;
     byte     leftmask, rightmask;
@@ -665,6 +688,7 @@ void VL_Hlin(unsigned x, unsigned y, unsigned width, unsigned color)
     *dest = color;
 
     VGAMAPMASK(15);
+#endif
 }
 
 /*
@@ -677,6 +701,8 @@ void VL_Hlin(unsigned x, unsigned y, unsigned width, unsigned color)
 
 void VL_Vlin(int x, int y, int height, int color)
 {
+    assert(false);
+#if 0
     byte *dest, mask;
 
     mask = pixmasks[x & 3];
@@ -691,6 +717,7 @@ void VL_Vlin(int x, int y, int height, int color)
     }
 
     VGAMAPMASK(15);
+#endif
 }
 
 /*
@@ -703,6 +730,8 @@ void VL_Vlin(int x, int y, int height, int color)
 
 void VL_Bar(int x, int y, int width, int height, int color)
 {
+    assert(false);
+#if 0
     byte* dest;
     byte  leftmask, rightmask;
     int   midbytes, linedelta;
@@ -743,6 +772,7 @@ void VL_Bar(int x, int y, int width, int height, int color)
     }
 
     VGAMAPMASK(15);
+#endif
 }
 
 /*
@@ -770,12 +800,14 @@ void VL_MemToLatch(byte* source, int width, int height, unsigned dest)
     mask  = 1;
     for (plane = 0; plane < 4; plane++)
     {
+        assert(false);
+#if 0
         VGAMAPMASK(mask);
         mask <<= 1;
 
         asm mov cx, count asm mov ax, SCREENSEG asm mov es, ax asm mov di, [dest] asm lds si, [source] asm rep movsb asm mov ax, ss asm mov ds, ax
 
-                                                                                                                                                    source += count;
+#endif source += count;
     }
 }
 
@@ -793,6 +825,8 @@ void VL_MemToLatch(byte* source, int width, int height, unsigned dest)
 
 void VL_MemToScreen(byte* source, int width, int height, int x, int y)
 {
+    assert(false);
+#if 0
     byte *screen, *dest, mask;
     int   plane;
 
@@ -811,6 +845,7 @@ void VL_MemToScreen(byte* source, int width, int height, int x, int y)
         for (y = 0; y < height; y++, screen += linewidth, source += width)
             _fmemcpy(screen, source, width);
     }
+#endif
 }
 
 //==========================================================================
@@ -820,6 +855,8 @@ void VL_MemToScreen(byte* source, int width, int height, int x, int y)
 //------------------------------------------------------------------------
 void VL_MaskMemToScreen(byte* source, int width, int height, int x, int y, byte mask)
 {
+    assert(false);
+#if 0
     byte *screen, *dest, bmask;
     int   plane, w, h, mod;
 
@@ -854,6 +891,7 @@ void VL_MaskMemToScreen(byte* source, int width, int height, int x, int y, byte 
             dest++;
         }
     }
+#endif
 }
 
 //------------------------------------------------------------------------
@@ -861,6 +899,8 @@ void VL_MaskMemToScreen(byte* source, int width, int height, int x, int y, byte 
 //------------------------------------------------------------------------
 void VL_ScreenToMem(byte* dest, int width, int height, int x, int y)
 {
+    assert(false);
+#if 0
     byte *screen, *source, mask;
     int   plane;
 
@@ -883,6 +923,7 @@ void VL_ScreenToMem(byte* dest, int width, int height, int x, int y)
             source++;
         }
     }
+#endif
 }
 
 //==========================================================================
@@ -897,6 +938,8 @@ void VL_ScreenToMem(byte* dest, int width, int height, int x, int y)
 
 void VL_LatchToScreen(unsigned source, int width, int height, int x, int y)
 {
+    assert(false);
+#if 0
     VGAWRITEMODE(1);
     VGAMAPMASK(15);
 
@@ -916,6 +959,7 @@ void VL_LatchToScreen(unsigned source, int width, int height, int x, int y)
                                                                                                                                                                  ax
 
                                                                                                                                                                      VGAWRITEMODE(0);
+#endif
 }
 
 //===========================================================================

@@ -2,6 +2,8 @@
 
 // wolf compatability
 
+#include "3d_def.hpp"
+
 #define MS_Quit Quit
 
 void Quit(char* error, ...);
