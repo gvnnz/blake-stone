@@ -1,8 +1,9 @@
-// ID_VL.H
+#ifndef ID_VL_HPP
+#define ID_VL_HPP
+
+#include "id_heads.hpp"
 
 // wolf compatability
-
-#include "3d_def.hpp"
 
 #define MS_Quit Quit
 
@@ -159,3 +160,5 @@ void VL_DrawLatch8String(char* str, unsigned tile8ptr, int printx, int printy);
 void VL_SizeTile8String(char* str, int* width, int* height);
 void VL_DrawPropString(char* str, unsigned tile8ptr, int printx, int printy);
 void VL_SizePropString(char* str, int* width, int* height, char* font);
+
+#endif
