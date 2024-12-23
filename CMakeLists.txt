@@ -43,7 +43,7 @@ list(APPEND SOURCES
     src/H_LDIV.ASM
     src/id_ca.cpp
     src/id_ca.hpp
-    src/ID_HEAD.H
+    src/id_head.hpp
     src/id_heads.hpp
     src/id_in.cpp
     src/id_in.hpp

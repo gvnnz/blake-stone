@@ -15,14 +15,16 @@ typedef unsigned int  word;
 typedef unsigned long longword;
 typedef byte*         Ptr;
 
+/*
 typedef struct
 {
     int x, y;
 } Point;
-
+*/
+/*
 typedef struct
 {
     Point ul, lr;
 } Rect;
-
+*/
 void Quit(char* error, ...); // defined in user program
