@@ -1,3 +1,6 @@
+#ifndef ID_MM_HPP
+#define ID_MM_HPP
+
 // ID_MM.H
 
 #ifndef __ID_CA__
@@ -129,4 +132,5 @@ typedef struct mmblockstruct
     struct mmblockstruct* next;
 } mmblocktype;
 
+#endif
 #endif

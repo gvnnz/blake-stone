@@ -47,7 +47,7 @@
 #define LZH_ID_MEMORY_ALLOCATION
 
 #ifdef LZH_ID_MEMORY_ALLOCATION
-#include "ID_MM.H"
+#include "id_mm.hpp"
 #endif
 
 //===========================================================================

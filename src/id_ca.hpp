@@ -1,7 +1,7 @@
 // ID_CA.H
 //===========================================================================
 
-#include "ID_MM.H"
+#include "id_mm.hpp"
 
 #define NUM_EPISODES 1
 #define MAPS_PER_EPISODE 25
