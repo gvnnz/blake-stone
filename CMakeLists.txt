@@ -59,8 +59,8 @@ list(APPEND SOURCES
     src/ID_US.H
     src/id_us_1.cpp
     src/ID_US_A.ASM
-    src/ID_VH.C
-    src/ID_VH.H
+    src/id_vh.cpp
+    src/id_vh.hpp
     src/ID_VH_A.ASM
         src/id_vl.cpp
     src/ID_VL.EQU

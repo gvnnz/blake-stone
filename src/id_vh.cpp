@@ -1,6 +1,7 @@
 // ID_VH.C
 
 #include "id_heads.hpp"
+#include <cassert>
 
 #define SCREENWIDTH 80
 #define CHARWIDTH 2
@@ -43,6 +44,8 @@ void VWL_UpdateScreenBlocks(void);
 
 void VW_DrawPropString(char* string)
 {
+    assert(false);
+#if 0
     fontstruct* font;
     int         width, step, height, i;
     byte *      source, *dest, *origdest;
@@ -86,6 +89,7 @@ void VW_DrawPropString(char* string)
     }
     bufferheight = height;
     bufferwidth  = ((dest + 1) - origdest) * 4;
+#endif
 }
 
 //==========================================================================
@@ -224,8 +228,11 @@ int VW_MarkUpdateBlock(int x1, int y1, int x2, int y2)
 
 void VWB_DrawTile8(int x, int y, int tile)
 {
+    assert(false);
+#if 0
     if (VW_MarkUpdateBlock(x, y, x + 7, y + 7))
         LatchDrawChar(x, y, tile);
+#endif
 }
 
 #if 0
@@ -239,6 +246,8 @@ void VWB_DrawTile8M (int x, int y, int tile)
 
 void VWB_DrawPic(int x, int y, int chunknum)
 {
+    assert(false);
+#if 0
     int      picnum = chunknum - STARTPICS;
     unsigned width, height;
 
@@ -249,6 +258,7 @@ void VWB_DrawPic(int x, int y, int chunknum)
 
     if (VW_MarkUpdateBlock(x, y, x + width - 1, y + height - 1))
         VL_MemToScreen(grsegs[chunknum], width, height, x, y);
+#endif
 }
 
 //--------------------------------------------------------------------------
@@ -256,6 +266,8 @@ void VWB_DrawPic(int x, int y, int chunknum)
 //--------------------------------------------------------------------------
 void VWB_DrawMPic(int x, int y, int chunknum)
 {
+    assert(false);
+#if 0
     int      picnum = chunknum - STARTPICS;
     unsigned width, height;
 
@@ -264,6 +276,7 @@ void VWB_DrawMPic(int x, int y, int chunknum)
 
     if (VW_MarkUpdateBlock(x, y, x + width - 1, y + height - 1))
         VL_MaskMemToScreen(grsegs[chunknum], width, height, x, y, 255);
+#endif
 }
 
 void VWB_DrawPropString(char* string)
@@ -323,6 +336,8 @@ void VW_UpdateScreen (void)
 
 void LatchDrawPic(unsigned x, unsigned y, unsigned picnum)
 {
+    assert(false);
+#if 0
     unsigned wide, height, source;
 
     x <<= 3;
@@ -332,6 +347,7 @@ void LatchDrawPic(unsigned x, unsigned y, unsigned picnum)
 
     if (VW_MarkUpdateBlock(x, y, x + wide - 1, y + height - 1))
         VL_LatchToScreen(source, wide / 4, height, x, y);
+#endif
 }
 
 //==========================================================================
@@ -349,6 +365,8 @@ unsigned destoff;
 
 void LoadLatchMem(void)
 {
+    assert(false);
+#if 0
     int      i, j, p, m, width, height;
     byte*    src;
     unsigned picnum = 0;
@@ -403,6 +421,7 @@ void LoadLatchMem(void)
     }
 
     EGAMAPMASK(15);
+#endif
 }
 
 //==========================================================================
@@ -422,6 +441,8 @@ extern ControlInfo c;
 bool FizzleFade(unsigned source, unsigned dest,
     unsigned width, unsigned height, unsigned frames, bool abortable)
 {
+    assert(false);
+#if 0
     int      pixperframe;
     unsigned drawofs, pagedelta;
     byte     mask, maskb[8] = {1, 2, 4, 8};
@@ -484,4 +505,5 @@ bool FizzleFade(unsigned source, unsigned dest,
             ForceUpdateStatusBar();
 
     } while (1);
+#endif
 }
