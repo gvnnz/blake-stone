@@ -8,6 +8,9 @@
 //
 
 #include "id_heads.hpp"
+#include <cassert>
+#include <cstdio>
+#include <cstring>
 #pragma hdrstop
 
 #include "3d_def.hpp"
@@ -348,6 +351,8 @@ bool INL_StartJoy(word joy)
 ///////////////////////////////////////////////////////////////////////////
 void IN_Startup(void)
 {
+    assert(false);
+#if 0
     bool checkjoys, checkmouse, checkNG;
     word i;
 
@@ -391,6 +396,7 @@ void IN_Startup(void)
         JoysPresent[i] = checkjoys ? INL_StartJoy(i) : false;
 
     IN_Started = true;
+#endif
 }
 
 // #endif
@@ -414,6 +420,8 @@ extern void* nearheap;
 
 void MM_Startup(void)
 {
+    assert(false);
+#if 0
     int           i;
     unsigned long length;
     void*         start;
@@ -427,11 +435,11 @@ void MM_Startup(void)
     //
     // set up the linked list (everything in the free list;
     //
-    mmhead = NULL;
+    mmhead = nullptr;
     mmfree = &mmblocks[0];
     for (i = 0; i < MAXBLOCKS - 1; i++)
         mmblocks[i].next = &mmblocks[i + 1];
-    mmblocks[i].next = NULL;
+    mmblocks[i].next = nullptr;
 
     //
     // locked block of all memory until we punch out free space
@@ -441,7 +449,7 @@ void MM_Startup(void)
     mmnew->start      = 0;
     mmnew->length     = 0xffff;
     mmnew->attributes = LOCKBIT;
-    mmnew->next       = NULL;
+    mmnew->next       = nullptr;
     mmrover           = mmhead;
 
     //
@@ -478,6 +486,7 @@ void MM_Startup(void)
     mmrover = mmhead; // start looking for space after low block
 
     MM_GetPtr(&bufferseg, BUFFERSIZE);
+#endif
 }
 
 //
@@ -498,6 +507,8 @@ extern EMSListStruct EMSList[];
 
 bool PML_StartupEMS(void)
 {
+    assert(false);
+#if 0
     int  i;
     long size;
 
@@ -575,6 +586,7 @@ gotinfo:
 
 error:
     return (EMSPresent);
+#endif
 }
 
 //
@@ -591,6 +603,8 @@ extern int      XMSProtectPage;
 
 bool PML_StartupXMS(void)
 {
+    assert(false);
+#if 0
     XMSPresent = false; // Assume failure
     XMSAvail   = 0;
 
@@ -625,6 +639,7 @@ bool PML_StartupXMS(void)
 error:
 
     return (XMSPresent);
+#endif
 }
 
 //
@@ -673,6 +688,8 @@ extern char* PM_ParmStrings[];
 
 void PM_Startup(void)
 {
+    assert(false);
+#if 0
     bool nomain, noems, noxms;
     int  i;
 
@@ -711,6 +728,7 @@ void PM_Startup(void)
     PM_Reset();
 
     PMStarted = true;
+#endif
 }
 
 #endif
@@ -728,6 +746,8 @@ extern int   USL_HardError(word errval, int ax, int bp, int si);
 
 void US_Startup(void)
 {
+    assert(false);
+#if 0
     int i, n;
 
     if (US_Started)
@@ -771,6 +791,7 @@ void US_Startup(void)
     }
 
     US_Started = true;
+#endif
 }
 
 /*
@@ -783,6 +804,8 @@ void US_Startup(void)
 
 void VL_Startup(void)
 {
+    assert(false);
+#if 0
     int i, videocard;
 
     asm cld;
@@ -797,6 +820,7 @@ void VL_Startup(void)
 
     if (videocard != 5)
         Quit("Improper video card! Try the -HIDDENCARD command line parameter!");
+#endif
 }
 
 #if !RESTART_PICTURE_PAUSE
@@ -811,9 +835,12 @@ void VL_Startup(void)
 
 void VL_SetVGAPlaneMode(void)
 {
+    assert(false);
+#if 0
     asm mov ax, 0x13 asm int 0x10 VL_DePlaneVGA();
     VGAMAPMASK(15);
     VL_SetLineWidth(40);
+#endif
 }
 
 /*
@@ -828,6 +855,8 @@ void VL_SetVGAPlaneMode(void)
 
 void VL_ClearVideo(byte color)
 {
+    assert(false);
+#if 0
     asm mov dx, GC_INDEX asm mov al, GC_MODE asm out dx, al asm inc dx asm in al, dx asm and al, 0xfc // write mode 0 to store directly to video
         asm out dx,
         al
@@ -840,6 +869,7 @@ void VL_ClearVideo(byte color)
                                                                                     asm xor
                                                                                     di,
         di asm rep stosw
+#endif
 }
 
 /*
@@ -852,7 +882,8 @@ void VL_ClearVideo(byte color)
 
 void VL_DePlaneVGA(void)
 {
-
+    assert(false);
+#if 0
     //
     // change CPU addressing to non linear mode
     //
@@ -890,6 +921,7 @@ void VL_DePlaneVGA(void)
 
     outportb(CRTC_INDEX, CRTC_MODE);
     outportb(CRTC_INDEX + 1, inportb(CRTC_INDEX + 1) | 0x40);
+#endif
 }
 
 /*
@@ -904,6 +936,8 @@ void VL_DePlaneVGA(void)
 
 void VL_SetLineWidth(unsigned width)
 {
+    assert(false);
+#if 0
     int i, offset;
 
     //
@@ -923,6 +957,7 @@ void VL_SetLineWidth(unsigned width)
         ylookup[i] = offset;
         offset += linewidth;
     }
+#endif
 }
 
 #endif
@@ -944,6 +979,8 @@ const float radtoint = (float)FINEANGLES / 2 / PI;
 
 void BuildTables(void)
 {
+    assert(false);
+#if 0
     int    i;
     float  angle, anglestep;
     double tang;
@@ -986,6 +1023,7 @@ void BuildTables(void)
     _fmemcpy(temp, colormap, 16896);
     lightsource = (byte*)(((long)colormap + 255) & ~0xff);
     _fmemcpy(lightsource, temp, 16384);
+#endif
 }
 
 /*
@@ -1025,10 +1063,13 @@ void SetupWalls(void)
 
 void InitDigiMap(void)
 {
+    assert(false);
+#if 0
     char* map;
 
     for (map = wolfdigimap; *map != LASTSOUND; map += 2)
         DigiMap[map[0]] = map[1];
+#endif
 }
 
 /*
@@ -1041,6 +1082,8 @@ void InitDigiMap(void)
 
 void CAL_SetupAudioFile(void)
 {
+    assert(false);
+#if 0
     int  handle;
     long length;
     char fname[13];
@@ -1070,6 +1113,7 @@ void CAL_SetupAudioFile(void)
     // open the data file
     //
     OpenAudioFile();
+#endif
 }
 
 /*
@@ -1081,6 +1125,8 @@ void CAL_SetupAudioFile(void)
 */
 void CAL_SetupGrFile(void)
 {
+    assert(false);
+#if 0
     char   fname[13];
     int    handle;
     memptr compseg;
@@ -1151,6 +1197,7 @@ void CAL_SetupGrFile(void)
 	MM_FreePtr(&compseg);
 #endif
     // MDM end
+#endif
 }
 
 /*
@@ -1163,6 +1210,8 @@ void CAL_SetupGrFile(void)
 
 void CAL_SetupMapFile(void)
 {
+    assert(false);
+#if 0
     int  i;
     int  handle;
     long length, pos;
@@ -1221,6 +1270,7 @@ void CAL_SetupMapFile(void)
 #if FORCE_FILE_CLOSE
     CloseMapFile();
 #endif
+#endif
 }
 
 // --------------------- Other general functions ------------------------
@@ -1235,6 +1285,8 @@ void CAL_SetupMapFile(void)
 
 void ReadConfig(void)
 {
+    assert(false);
+#if 0
     int     file;
     SDMode  sd;
     SMMode  sm;
@@ -1359,6 +1411,7 @@ void ReadConfig(void)
     SD_SetMusicMode(sm);
     SD_SetSoundMode(sd);
     SD_SetDigiDevice(sds);
+#endif
 }
 
 /*
@@ -1373,6 +1426,8 @@ void ReadConfig(void)
 
 void Patch386(void)
 {
+    assert(false);
+#if 0
     extern void jabhack2(void);
     extern int  CheckIs386(void);
 
@@ -1397,6 +1452,7 @@ void Patch386(void)
     }
     else
         IsA386 = false;
+#endif
 }
 
 #pragma warn - rvl
@@ -1452,6 +1508,8 @@ extern int         EpisodeSelect[];
 //-------------------------------------------------------------------------
 void CheckForEpisodes(void)
 {
+    assert(false);
+#if 0
     struct ffblk f;
     short        i;
 
@@ -1485,6 +1543,7 @@ void CheckForEpisodes(void)
 #if DUAL_SWAP_FILES
     strcat(AltPageFileName, extension);
     ShadowsAvail = (!findfirst(AltPageFileName, &f, FA_ARCH));
+#endif
 #endif
 }
 
@@ -1596,6 +1655,8 @@ extern char  bc_buffer[];
 //------------------------------------------------------------------------
 void PreDemo()
 {
+    assert(false);
+#if 0
     int i;
 
 #if TECH_SUPPORT_VERSION
@@ -1798,6 +1859,7 @@ void PreDemo()
         VL_FadeOut(0, 255, 39, 0, 0, 20);
         VW_FadeOut();
     }
+#endif
 }
 
 //------------------------------------------------------------------------
@@ -1805,6 +1867,8 @@ void PreDemo()
 //------------------------------------------------------------------------
 void InitGame(void)
 {
+    assert(false);
+#if 0
     int       i, x, y;
     unsigned* blockstart;
     // long mmsize;
@@ -1929,6 +1993,7 @@ void InitGame(void)
     // initialize variables
     //
     InitRedShifts();
+#endif
 }
 
 //-------------------------------------------------------------------------
@@ -1976,10 +2041,13 @@ void ShowSystem()
 //-------------------------------------------------------------------------
 unsigned scan_atoi(char* s)
 {
+    assert(false);
+#if 0
     while (*s && (!isdigit(*s))) // First scans for a digit...
         s++;
 
     return (atoi(s)); // Then converts to integer...
+#endif
 }
 
 extern char* MainStrs[];
@@ -1990,6 +2058,8 @@ extern short starting_episode, starting_level, starting_difficulty;
 //-------------------------------------------------------------------------
 void freed_main()
 {
+    assert(false);
+#if 0
     int              i;
     struct dosdate_t d;
 
@@ -2104,11 +2174,12 @@ void freed_main()
     InitGame();
 
     if (!IsA386)
-        Quit(NULL);
+        Quit(nullptr);
 
     bufferofs = SCREENSIZE;
 
     PreDemo();
+#endif
 }
 
 //-------------------------------------------------------------------------
@@ -2144,6 +2215,8 @@ memptr cfc_buffer;
 //-------------------------------------------------------------------------
 long ChecksumFile(char* file, long checksum)
 {
+    assert(false);
+#if 0
 #define JUMPSIZE 8
 
     int   handle;
@@ -2181,6 +2254,7 @@ exit_func:;
     MM_FreePtr(&cfc_buffer);
 
     return (checksum);
+#endif
 }
 
 #if IN_DEVELOPMENT || GEORGE_CHEAT || SHOW_CHECKSUM
@@ -2222,6 +2296,8 @@ void ShowChecksums()
 //-------------------------------------------------------------------------
 void InvalidLevels()
 {
+    assert(false);
+#if 0
     char* chunkptr;
 
     CA_CacheGrChunk(BADLEVELSTEXT);
@@ -2235,6 +2311,7 @@ void InvalidLevels()
     bioskey(0);
 
     UNCACHEGRCHUNK(BADLEVELSTEXT);
+#endif
 }
 
 #endif
