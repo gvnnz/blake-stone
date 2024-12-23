@@ -87,7 +87,7 @@ list(APPEND SOURCES
     src/MARKHACK.ASM
     src/movie.cpp
     src/movie.hpp
-    src/MUNGE.C
+    src/munge.cpp
     src/RND.ASM
     src/SCALE.ASM
     src/WAITVBL.ASM

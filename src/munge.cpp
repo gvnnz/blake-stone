@@ -1,4 +1,5 @@
 
+#include <cassert>
 /*
 =================
 =
@@ -9,6 +10,8 @@
 
 void VL_MungePic(unsigned char* source, unsigned width, unsigned height)
 {
+    assert(false);
+#if 0
     unsigned       x, y, plane, size, pwidth;
     unsigned char *temp, *dest, *srcline;
 
@@ -44,4 +47,5 @@ void VL_MungePic(unsigned char* source, unsigned width, unsigned height)
     }
 
     free(temp);
+#endif
 }
