@@ -47,7 +47,7 @@ list(APPEND SOURCES
     src/id_heads.hpp
     src/ID_IN.C
     src/ID_IN.H
-    src/ID_MM.C
+    src/id_mm.cpp
     src/ID_MM.H
     src/ID_PM.C
     src/ID_PM.H

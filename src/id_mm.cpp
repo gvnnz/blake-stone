@@ -25,8 +25,9 @@ EMS / XMS unmanaged routines
 */
 
 #include "id_heads.hpp"
-#include <STDARG.H>
-#include <dos.h>
+#include <cassert>
+// #include <STDARG.H>
+// #include <dos.h>
 #pragma hdrstop
 
 #pragma warn - pro
@@ -53,19 +54,19 @@ EMS / XMS unmanaged routines
 // #define GETNEWBLOCK {if(!mmfree)MML_ClearBlock();mmnew=mmfree;mmfree=mmfree->next;}
 
 #if IN_DEVELOPMENT
-#define FREEBLOCK(x)         \
-    {                        \
-        *x->useptr = NULL;   \
-        x->next    = mmfree; \
-        mmfree     = x;      \
-        blockcount--;        \
+#define FREEBLOCK(x)          \
+    {                         \
+        *x->useptr = nullptr; \
+        x->next    = mmfree;  \
+        mmfree     = x;       \
+        blockcount--;         \
     }
 #else
-#define FREEBLOCK(x)         \
-    {                        \
-        *x->useptr = NULL;   \
-        x->next    = mmfree; \
-        mmfree     = x;      \
+#define FREEBLOCK(x)          \
+    {                         \
+        *x->useptr = nullptr; \
+        x->next    = mmfree;  \
+        mmfree     = x;       \
     }
 #endif
 
@@ -305,7 +306,7 @@ void MML_UseSpace(unsigned segstart, unsigned seglength)
     if (extra > 0)
     {
         GETNEWBLOCK;
-        mmnew->useptr = NULL;
+        mmnew->useptr = nullptr;
 
         mmnew->next       = scan->next;
         scan->next        = mmnew;
@@ -515,8 +516,11 @@ void MM_Shutdown(void)
     if (!mmstarted)
         return;
 
+    assert(false);
+#if 0
     farfree(farheap);
     free(nearheap);
+#endif
     //  MML_ShutdownXMS ();
 }
 
@@ -538,9 +542,9 @@ char gp_text[] = " WRITE DOWN THE FOLLOWING INFO, TOO:\n"
                  "\n"
                  " MM_GETPTR SIZE: ";
 
-char* gp_fartext = NULL; // mdebug
+char* gp_fartext = nullptr; // mdebug
 
-char* jr_fartext = NULL; // jim/mdebug
+char* jr_fartext = nullptr; // jim/mdebug
 
 #endif
 
@@ -597,7 +601,7 @@ void MM_GetPtr(memptr* baseptr, unsigned long size)
         case 0:
             lastscan = mmrover;
             scan     = mmrover->next;
-            endscan  = NULL;
+            endscan  = nullptr;
             break;
         case 1:
             lastscan = mmhead;
@@ -608,7 +612,7 @@ void MM_GetPtr(memptr* baseptr, unsigned long size)
             MM_SortMem();
             lastscan = mmhead;
             scan     = mmhead->next;
-            endscan  = NULL;
+            endscan  = nullptr;
             break;
         }
 
@@ -664,7 +668,8 @@ void MM_GetPtr(memptr* baseptr, unsigned long size)
         //	mprintf("\n\nOUT OF MEMORY:\n");
         //	mprintf("blocks needed: %d   (%ld)\n",needed,needed<<4);
 
-        unlink(configname);
+        assert(false);
+        //unlink(configname);
         MM_ERROR(MM_GETPTR_OUT_OF_MEMORY);
     }
     else
@@ -819,7 +824,8 @@ void MM_SortMem(void)
             playing += STARTADLIBSOUNDS;
             break;
         }
-        MM_SetLock(&(memptr)audiosegs[playing], true);
+        assert(false);
+        //MM_SetLock(&(memptr)audiosegs[playing], true);
     }
 
     SD_StopSound();
@@ -829,7 +835,7 @@ void MM_SortMem(void)
 
     scan = mmhead;
 
-    last = NULL; // shut up compiler warning
+    last = nullptr; // shut up compiler warning
 
     while (scan)
     {
@@ -865,12 +871,14 @@ void MM_SortMem(void)
                     dest   = start;
                     while (length > 0xf00)
                     {
-                        movedata(source, 0, dest, 0, 0xf00 * 16);
+                        assert(false);
+                        //movedata(source, 0, dest, 0, 0xf00 * 16);
                         length -= 0xf00;
                         source += 0xf00;
                         dest += 0xf00;
                     }
-                    movedata(source, 0, dest, 0, length * 16);
+                    assert(false);
+                    //movedata(source, 0, dest, 0, length * 16);
 
                     scan->start              = start;
                     *(unsigned*)scan->useptr = start;
@@ -889,7 +897,8 @@ void MM_SortMem(void)
         aftersort();
 
     if (playing)
-        MM_SetLock(&(memptr)audiosegs[playing], false);
+        assert(false);
+        //MM_SetLock(&(memptr)audiosegs[playing], false);
 }
 
 //==========================================================================
