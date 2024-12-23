@@ -2,10 +2,19 @@
 
 #include "3d_def.hpp"
 #include "3d_state.hpp"
+#include <cassert>
+#include <cmath>
+#include <cstdlib>
 
 // #include <math.h>
 
 #pragma hdrstop
+
+extern void OpenDoor(int door);
+extern void A_DeathScream(objtype*);
+extern void PlaceItemType(int itemtype, int tilex, int tiley);
+extern void PlaceItemNearTile(int itemtype, int tilex, int tiley);
+extern void ChangeShootMode(objtype*);
 
 /*
 =============================================================================
@@ -77,24 +86,24 @@ bool ElevatorFloor(char x, char y);
 void SpawnNewObj(unsigned tilex, unsigned tiley, statetype* state)
 {
     GetNewActor();
-    new->state    = state;
-    new->ticcount = Random(state->tictime) + 1;
+    new_->state    = state;
+    new_->ticcount = Random(state->tictime) + 1;
 
-    new->tilex = tilex;
-    new->tiley = tiley;
-    new->x     = ((long)tilex << TILESHIFT) + TILEGLOBAL / 2;
-    new->y     = ((long)tiley << TILESHIFT) + TILEGLOBAL / 2;
-    new->dir = new->trydir = nodir;
+    new_->tilex = tilex;
+    new_->tiley = tiley;
+    new_->x     = ((long)tilex << TILESHIFT) + TILEGLOBAL / 2;
+    new_->y     = ((long)tiley << TILESHIFT) + TILEGLOBAL / 2;
+    new_->dir = new_->trydir = nodir;
 
     if (!nevermark)
         if (!actorat[tilex][tiley])
-            actorat[tilex][tiley] = new;
+            actorat[tilex][tiley] = new_;
 
-    new->areanumber = GetAreaNumber(new->tilex, new->tiley);
+    new_->areanumber = GetAreaNumber(new_->tilex, new_->tiley);
 
 #if IN_DEVELOPMENT
-    if (new->areanumber >= NUMAREAS && (!nevermark))
-        Quit("Actor Spawned on wall at %d %d", new->tilex, new->tiley);
+    if (new_->areanumber >= NUMAREAS && (!nevermark))
+        Quit("Actor Spawned on wall at %d %d", new_->tilex, new_->tiley);
 #endif
 }
 
@@ -198,7 +207,8 @@ bool TryWalk(objtype* ob, bool moveit)
         //		}
         //		else
         {
-            CHECKSIDE(ob->tilex, ob->tiley - 1);
+            assert(false);
+            //CHECKSIDE(ob->tilex, ob->tiley - 1);
         }
 
         if (ElevatorFloor(ob->tilex, ob->tiley - 1))
@@ -211,9 +221,10 @@ bool TryWalk(objtype* ob, bool moveit)
         break;
 
     case northeast:
-        CHECKDIAG(ob->tilex + 1, ob->tiley - 1);
-        CHECKDIAG(ob->tilex + 1, ob->tiley);
-        CHECKDIAG(ob->tilex, ob->tiley - 1);
+        assert(false);
+        //CHECKDIAG(ob->tilex + 1, ob->tiley - 1);
+        //CHECKDIAG(ob->tilex + 1, ob->tiley);
+        //CHECKDIAG(ob->tilex, ob->tiley - 1);
 
         //		if (ElevatorFloor(ob->tilex+1,ob->tiley-1))
         //			return(false);
@@ -232,7 +243,8 @@ bool TryWalk(objtype* ob, bool moveit)
         //		}
         //		else
         {
-            CHECKSIDE(ob->tilex + 1, ob->tiley);
+            assert(false);
+            //CHECKSIDE(ob->tilex + 1, ob->tiley);
         }
 
         if (ElevatorFloor(ob->tilex + 1, ob->tiley))
@@ -250,9 +262,10 @@ bool TryWalk(objtype* ob, bool moveit)
         break;
 
     case southeast:
-        CHECKDIAG(ob->tilex + 1, ob->tiley + 1);
-        CHECKDIAG(ob->tilex + 1, ob->tiley);
-        CHECKDIAG(ob->tilex, ob->tiley + 1);
+        assert(false);
+        //CHECKDIAG(ob->tilex + 1, ob->tiley + 1);
+        //CHECKDIAG(ob->tilex + 1, ob->tiley);
+        //CHECKDIAG(ob->tilex, ob->tiley + 1);
 
         //		if (ElevatorFloor(ob->tilex+1,ob->tiley+1))
         //			return(false);
@@ -271,7 +284,8 @@ bool TryWalk(objtype* ob, bool moveit)
         //		}
         //		else
         {
-            CHECKSIDE(ob->tilex, ob->tiley + 1);
+            assert(false);
+            //CHECKSIDE(ob->tilex, ob->tiley + 1);
         }
 
         if (ElevatorFloor(ob->tilex, ob->tiley + 1))
@@ -284,9 +298,10 @@ bool TryWalk(objtype* ob, bool moveit)
         break;
 
     case southwest:
-        CHECKDIAG(ob->tilex - 1, ob->tiley + 1);
-        CHECKDIAG(ob->tilex - 1, ob->tiley);
-        CHECKDIAG(ob->tilex, ob->tiley + 1);
+        assert(false);
+        //CHECKDIAG(ob->tilex - 1, ob->tiley + 1);
+        //CHECKDIAG(ob->tilex - 1, ob->tiley);
+        //CHECKDIAG(ob->tilex, ob->tiley + 1);
 
         //		if (ElevatorFloor(ob->tilex-1,ob->tiley+1))
         //			return(false);
@@ -305,7 +320,8 @@ bool TryWalk(objtype* ob, bool moveit)
         //		}
         //		else
         {
-            CHECKSIDE(ob->tilex - 1, ob->tiley);
+            assert(false);
+            //CHECKSIDE(ob->tilex - 1, ob->tiley);
         }
 
         if (ElevatorFloor(ob->tilex - 1, ob->tiley))
@@ -323,9 +339,10 @@ bool TryWalk(objtype* ob, bool moveit)
         break;
 
     case northwest:
-        CHECKDIAG(ob->tilex - 1, ob->tiley - 1);
-        CHECKDIAG(ob->tilex - 1, ob->tiley);
-        CHECKDIAG(ob->tilex, ob->tiley - 1);
+        assert(false);
+        //CHECKDIAG(ob->tilex - 1, ob->tiley - 1);
+        //CHECKDIAG(ob->tilex - 1, ob->tiley);
+        //CHECKDIAG(ob->tilex, ob->tiley - 1);
 
         //		if (ElevatorFloor(ob->tilex-1,ob->tiley-1))
         //			return(false);
@@ -598,6 +615,8 @@ void SelectChaseDir(objtype* ob)
 
     if (US_RndT() > 128) /*randomly determine direction of search*/
     {
+        assert(false);
+#if 0
         for (tdir = north; tdir <= west; tdir++)
         {
             if (tdir != turnaround)
@@ -607,9 +626,12 @@ void SelectChaseDir(objtype* ob)
                     return;
             }
         }
+#endif
     }
     else
     {
+        assert(false);
+#if 0
         for (tdir = west; tdir >= north; tdir--)
         {
             if (tdir != turnaround)
@@ -619,6 +641,7 @@ void SelectChaseDir(objtype* ob)
                     return;
             }
         }
+#endif
     }
 
     if (turnaround != nodir)
@@ -852,10 +875,10 @@ objtype* CheckAndReserve(void)
     SpawnNewObj(0, 0, &s_hold);
     usedummy = nevermark = false;
 
-    if (new == &dummyobj)
-        return (NULL);
+    if (new_ == &dummyobj)
+        return (nullptr);
     else
-        return (new);
+        return (new_);
 }
 
 #ifdef TRACK_ENEMY_COUNT
@@ -949,7 +972,7 @@ void KillActor(objtype* ob)
             gamestuff.level[gamestate.mapon].stats.accum_inf--;
             if (!(gamestate.flags & GS_KILL_INF_WARN) || (US_RndT() < 25))
             {
-                DisplayInfoMsg(dki_msg, MP_INTERROGATE - 1, DISPLAY_MSG_STD_TIME * 3, MT_GENERAL);
+                DisplayInfoMsg(dki_msg, static_cast<msg_priorities>(MP_INTERROGATE - 1), DISPLAY_MSG_STD_TIME * 3, MT_GENERAL);
                 gamestate.flags |= GS_KILL_INF_WARN;
             }
         }
@@ -1241,11 +1264,14 @@ void DamageActor(objtype* ob, unsigned damage, objtype* attacker)
         case scan_wait_alienobj: // These actors do not have an ouch!
         case lcan_wait_alienobj: // So... RETURN!
         case gurney_waitobj:
+            assert(false);
+#if 0
             if (!(ob->temp2 = (unsigned)CheckAndReserve()))
             {
                 ob->hitpoints += damage;
                 return;
             }
+#endif
             break;
 #endif
 
@@ -1265,7 +1291,8 @@ void DamageActor(objtype* ob, unsigned damage, objtype* attacker)
             break;
         }
 
-        SLIDE_TEMP(ob) = (unsigned)attacker;
+        assert(false);
+        //SLIDE_TEMP(ob) = (unsigned)attacker;
         KillActor(ob);
         return;
     }
@@ -1880,6 +1907,8 @@ void FirstSighting(objtype* ob)
 #pragma warn - pia
         if (ob->temp3)
         {
+            assert(false);
+#if 0
             if (ob->temp2 = (unsigned)CheckAndReserve())
             {
                 ob->flags &= ~(FL_SHOOTABLE);
@@ -1887,6 +1916,7 @@ void FirstSighting(objtype* ob)
             }
             else
                 return;
+#endif
         }
 #pragma warn + pia
         break;
@@ -2332,6 +2362,8 @@ bool LookForGoodies(objtype* ob, unsigned RunReason)
             //
             doornum = Random(doorsfound);
             door    = doorlist[doornum];
+            assert(false);
+#if 0
             if (((unsigned)door == ob->temp3) && (doorsfound > 1))
             {
                 doornum++;
@@ -2339,8 +2371,9 @@ bool LookForGoodies(objtype* ob, unsigned RunReason)
                     doornum = 0;
                 door = doorlist[doornum];
             }
-            ob->temp3 = (unsigned)door;
 
+            ob->temp3 = (unsigned)door;
+#endif
             ob->s_tilex = door->tilex;
             ob->s_tiley = door->tiley;
 

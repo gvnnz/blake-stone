@@ -19,7 +19,7 @@ list(APPEND SOURCES
     src/3d_msgs.cpp
     src/3d_play.cpp
     src/3d_scale.cpp
-    src/3D_STATE.C
+    src/3d_state.cpp
     src/3d_state.hpp
     src/an_codes.hpp
         src/audio.hpp
