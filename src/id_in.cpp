@@ -1145,7 +1145,8 @@ bool IN_UserInput(longword delay)
     IN_StartAck();
     do
     {
-        VL_WaitVBL(1);
+        assert(false);
+        //VL_WaitVBL(1);
         if (IN_CheckAck())
             return true;
     } while (TimeCount - lasttime < delay);

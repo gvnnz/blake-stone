@@ -72,8 +72,6 @@ extern mminfotype mminfo;
 extern memptr     bufferseg;
 extern bool       mmerror;
 // unsigned __SEGS_AVAILABLE__;
-unsigned long __PUR_MEM_AVAIL__;
-unsigned long __FREE_MEM_AVAIL__;
 
 extern void (*beforesort)(void);
 extern void (*aftersort)(void);

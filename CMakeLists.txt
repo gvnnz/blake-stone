@@ -3,6 +3,8 @@ cmake_minimum_required(VERSION 3.12)
 project(blake-stone LANGUAGES CXX)
 
 list(APPEND SOURCES
+    src/missing.hpp
+    src/missing.cpp
         src/3d_act1.cpp
     src/3d_act2.cpp
     src/3d_agent.cpp

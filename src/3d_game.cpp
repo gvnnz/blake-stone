@@ -2072,11 +2072,13 @@ void SetupGameLevel(void)
         InitGoldsternInfo();
     }
 
+    assert(false);
+#if 0
     if (demoplayback || demorecord)
         US_InitRndT(false);
     else
         US_InitRndT(true);
-
+#endif
     //
     // load the level
     //
@@ -2676,9 +2678,11 @@ void Warped(void)
 
     ThreeDRefresh();
 
+    assert(false);
+#if 0
     if (screenfaded)
         VW_FadeIn();
-
+#endif
     iangle = (((player->dir + 4) % 8) >> 1) * 90;
 
     RotateView(iangle, 2);
@@ -3425,7 +3429,8 @@ restart:
                 CacheBMAmsg(YOUWIN_TEXT);
                 for (loop = 0; loop < 2; loop++)
                 {
-                    VW_ScreenToScreen(displayofs, bufferofs, 320, 200);
+                    assert(false);
+                    //VW_ScreenToScreen(displayofs, bufferofs, 320, 200);
                     NextBuffer();
                 }
                 UNCACHEGRCHUNK(STARTFONT + 1);

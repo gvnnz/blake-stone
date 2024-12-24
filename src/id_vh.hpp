@@ -1,5 +1,8 @@
 // ID_VH.H
 
+#ifndef ID_VH_HPP
+#define ID_VH_HPP
+
 #define WHITE 15 // graphics mode independant colors
 #define BLACK 0
 #define FIRSTCOLOR 1
@@ -130,3 +133,5 @@ extern unsigned latchpics[NUMLATCHPICS];
 extern unsigned freelatch;
 
 extern unsigned LatchMemFree;
+
+#endif

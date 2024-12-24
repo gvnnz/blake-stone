@@ -1,6 +1,7 @@
 // 3D_DEBUG.C
 
 #include "3d_def.hpp"
+#include <cassert>
 #include <cstdlib>
 #include <cstring>
 
@@ -224,7 +225,8 @@ void DebugMemory(void)
         US_PrintUnsigned(shade_max);
     }
 
-    VH_UpdateScreen();
+    assert(false);
+    // VH_UpdateScreen();
     IN_Ack();
 
     temp       = bufferofs;
@@ -289,7 +291,8 @@ void CountObjects(void)
     US_Print("\nActive actors :");
     US_PrintUnsigned(active);
 
-    VW_UpdateScreen();
+    assert(false);
+    // VW_UpdateScreen();
     IN_Ack();
 }
 
@@ -311,7 +314,8 @@ void CountTotals(void)
     US_Print("\nTotal Informants:\n");
     US_PrintUnsigned(gamestuff.level[gamestate.mapon].stats.total_inf);
 
-    VW_UpdateScreen();
+    assert(false);
+    // VW_UpdateScreen();
     IN_Ack();
 }
 
@@ -331,7 +335,9 @@ void ShowMap(void)
     US_CPrint("CURRENT MAP\n\n ");
 
     ShowOverhead(160 - 32, py, 32, 0, OV_ACTORS | OV_SHOWALL | OV_KEYS | OV_PUSHWALLS);
-    VW_UpdateScreen();
+
+    assert(false);
+    // VW_UpdateScreen();
 
     memcpy(player, &old_player, sizeof(objtype));
     IN_Ack();
@@ -366,7 +372,8 @@ void ShapeTest(void)
     PageListStruct* page;
 
     CenterWindow(20, 16);
-    VW_UpdateScreen();
+    assert(false);
+    // VW_UpdateScreen();
     for (i = 0, done = false; !done;)
     {
         US_ClearWindow();
@@ -476,7 +483,8 @@ void ShapeTest(void)
             }
         }
 
-        VW_UpdateScreen();
+        assert(false);
+        // VW_UpdateScreen();
 
         while (!(scan = LastScan))
             SD_Poll();
@@ -587,7 +595,9 @@ int DebugKeys(void)
             US_PrintCentered("AUTOMAP: Show Actors ON");
         else
             US_PrintCentered("AUTOMAP: Show Actors OFF");
-        VW_UpdateScreen();
+
+        assert(false);
+        // VW_UpdateScreen();
         IN_Ack();
         return 1;
     }
@@ -596,7 +606,8 @@ int DebugKeys(void)
         CenterWindow(24, 3);
         PrintY += 6;
         US_Print(" Border color (0-15):");
-        VW_UpdateScreen();
+        assert(false);
+        // VW_UpdateScreen();
         esc = !US_LineInput(px, py, str, NULL, true, 2, 0);
         if (!esc)
         {
@@ -631,7 +642,8 @@ int DebugKeys(void)
         else
             US_PrintCentered("Player visible");
 
-        VW_UpdateScreen();
+        assert(false);
+        // VW_UpdateScreen();
         IN_Ack();
         return 1;
     }
@@ -641,7 +653,8 @@ int DebugKeys(void)
         US_PrintCentered("Instant Wiener!");
         InstantWin = 1;
         playstate  = ex_victorious;
-        VW_UpdateScreen();
+        assert(false);
+        // VW_UpdateScreen();
         IN_Ack();
         return 1;
     }
@@ -660,7 +673,8 @@ int DebugKeys(void)
         US_PrintUnsigned(player->angle);
         US_Print("\nD:");
         US_PrintUnsigned(player->dir);
-        VW_UpdateScreen();
+        assert(false);
+        // VW_UpdateScreen();
         IN_Ack();
         return 1;
     }
@@ -672,7 +686,8 @@ int DebugKeys(void)
             US_PrintCentered("God mode OFF");
         else
             US_PrintCentered("God mode ON");
-        VW_UpdateScreen();
+        assert(false);
+        // VW_UpdateScreen();
         IN_Ack();
         godmode ^= 1;
         return 1;
@@ -688,7 +703,8 @@ int DebugKeys(void)
         char loop;
         CenterWindow(12, 3);
         US_PrintCentered("Free items!");
-        VW_UpdateScreen();
+        assert(false);
+        // VW_UpdateScreen();
         HealSelf(99);
         GiveToken(5);
 
@@ -722,7 +738,8 @@ int DebugKeys(void)
             US_PrintCentered("NO clipping OFF");
         else
             US_PrintCentered("No clipping ON");
-        VW_UpdateScreen();
+        assert(false);
+        // VW_UpdateScreen();
         IN_Ack();
         return 1;
     }
@@ -750,7 +767,8 @@ int DebugKeys(void)
             US_PrintCentered("AUTOMAP: Show PWalls ON");
         else
             US_PrintCentered("AUTOMAP: Show PWalls OFF");
-        VW_UpdateScreen();
+        assert(false);
+        // VW_UpdateScreen();
         IN_Ack();
         return 1;
     }
@@ -759,7 +777,8 @@ int DebugKeys(void)
         int i;
         CenterWindow(24, 3);
         US_PrintCentered("Unlock All Floors!");
-        VW_UpdateScreen();
+        assert(false);
+        // VW_UpdateScreen();
         IN_Ack();
 
         for (i = 0; i < 11; i++)
@@ -772,7 +791,8 @@ int DebugKeys(void)
         CenterWindow(30, 3);
         PrintY += 6;
         US_Print("  Add how many extra VBLs(0-8):");
-        VW_UpdateScreen();
+        assert(false);
+        // VW_UpdateScreen();
         esc = !US_LineInput(px, py, str, NULL, true, 2, 0);
         if (!esc)
         {
@@ -790,7 +810,8 @@ int DebugKeys(void)
             US_PrintCentered("Slow motion ON");
         else
             US_PrintCentered("Slow motion OFF");
-        VW_UpdateScreen();
+        assert(false);
+        // VW_UpdateScreen();
         IN_Ack();
         return 1;
     }
@@ -805,7 +826,8 @@ int DebugKeys(void)
         US_Print("  Current map: ");
         US_PrintUnsigned(gamestate.mapon);
         US_Print("\n  Enter map number: ");
-        VW_UpdateScreen();
+        assert(false);
+        // VW_UpdateScreen();
         esc = !US_LineInput(px, py, str, NULL, true, 2, 0);
         if (!esc)
         {

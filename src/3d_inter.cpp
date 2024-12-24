@@ -166,8 +166,11 @@ void PreloadGraphics(void)
 {
     WindowY = 188;
 
+    assert(false);
+#if 0
     if (!(gamestate.flags & GS_QUICKRUN))
         VW_FadeIn();
+#endif
 
     PM_Preload(PreloadUpdate);
     IN_UserInput(70);
@@ -304,7 +307,8 @@ void CheckHighScore(long score, word other)
     StartCPMusic(ROSTER_MUS);
     DrawHighScores();
 
-    VW_FadeIn();
+    assert(false);
+    //VW_FadeIn();
 
     if (n != -1)
     {

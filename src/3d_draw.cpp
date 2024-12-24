@@ -1643,7 +1643,8 @@ void CalcTics(void)
 
 void FixOfs(void)
 {
-    VW_ScreenToScreen(displayofs, bufferofs, viewwidth / 8, viewheight);
+    assert(false);
+    //VW_ScreenToScreen(displayofs, bufferofs, viewwidth / 8, viewheight);
 }
 
 //==========================================================================
@@ -1682,7 +1683,8 @@ void WallRefresh(void)
 
     lastside = -1; // the first pixel is on a new wall
 
-    AsmRefresh();
+    assert(false);
+    //AsmRefresh();
     ScalePost(); // no more optimization on last post
 }
 

@@ -16,17 +16,18 @@
 void InitWeaponBounce(void);
 void HandleWeaponBounce(void);
 
-extern void VL_LatchToScreen(unsigned source, int width, int height, int x, int y);
-extern void StartDamageFlash(int damage);
-extern void StartBonusFlash();
-extern int  CalcAngle(objtype* from_obj, objtype* to_obj);
-extern void PushWall(int checkx, int checky, int dir);
-extern void OperateDoor(int door);
-extern void TryDropPlasmaDetonator();
-extern void ClearMemory();
-extern void InitAreas();
-extern void FirstSighting(objtype*);
-extern void OpenDoor(int door);
+extern void  VL_LatchToScreen(unsigned source, int width, int height, int x, int y);
+extern void  StartDamageFlash(int damage);
+extern void  StartBonusFlash();
+extern int   CalcAngle(objtype* from_obj, objtype* to_obj);
+extern void  PushWall(int checkx, int checky, int dir);
+extern void  OperateDoor(int door);
+extern void  TryDropPlasmaDetonator();
+extern void  ClearMemory();
+extern void  InitAreas();
+extern void  FirstSighting(objtype*);
+extern void  OpenDoor(int door);
+extern short InputFloor();
 
 /*
 =============================================================================
@@ -2902,7 +2903,8 @@ short InputFloor(void)
     ShowStats(0, 0, ss_justcalc, &gamestuff.level[gamestate.mapon].stats);
     memcpy(&ov_stats, &gamestuff.level[gamestate.mapon].stats, sizeof(statsInfoType));
     ShowOverhead(TOV_X, TOV_Y, 32, 0, RADAR_FLAGS);
-    SaveOverheadChunk(tpNum);
+    assert(false);
+    // SaveOverheadChunk(tpNum);
 
     px         = 115;
     py         = 188;
@@ -3387,7 +3389,8 @@ byte ShowRatio(short bx, short by, short nx, short ny, long total, long perc, ss
         {
             if (!(loop % 2))
                 SD_PlaySound(STATS1SND);
-            VW_WaitVBL(1);
+            assert(false);
+            // VW_WaitVBL(1);
             assert(false);
             // VW_UpdateScreen();
         }

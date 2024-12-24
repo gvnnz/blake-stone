@@ -165,7 +165,8 @@ void SetPlaneViewSize(void)
     }
 
     src  = static_cast<byte*>(PM_GetPage(CeilingTile));
-    dest = reinterpret_cast<byte*>(planepics);
+    assert(false);
+    //dest = reinterpret_cast<byte*>(planepics);
     for (x = 0; x < 4096; x++)
     {
         *dest = *src++;

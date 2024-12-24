@@ -2146,7 +2146,8 @@ bool CheckView(objtype* from_obj, objtype* to_obj)
     deltax = from_obj->x - to_obj->x;
     deltay = to_obj->y - from_obj->y;
 
-    fangle = atan2(deltay, deltax); // returns -pi to pi
+    assert(false);
+    //fangle = atan2(deltay, deltax); // returns -pi to pi
     if (fangle < 0)
         fangle = M_PI * 2 + fangle;
 

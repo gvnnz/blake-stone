@@ -1244,7 +1244,8 @@ void CycleColors()
     if (changes)
         VL_SetPalette(CRNG_LOW, CRNG_SIZE, (byte*)cbuffer);
     else
-        VW_WaitVBL(1);
+        assert(false);
+        //VW_WaitVBL(1);
 }
 
 //===========================================================================
@@ -1316,12 +1317,15 @@ void CalcProjection(long focal)
 
     for (i = 0; i < halfview; i++)
     {
+        assert(false);
+#if 0
         // start 1/2 pixel over, so viewangle bisects two middle pixels
         tang                         = (long)i * VIEWGLOBAL / viewwidth / facedist;
         angle                        = atan(tang);
         intang                       = angle * radtoint;
         pixelangle[halfview - 1 - i] = intang;
         pixelangle[halfview + i]     = -intang;
+#endif
     }
 
     //

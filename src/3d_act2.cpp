@@ -1,6 +1,7 @@
 // 3D_ACT2.C
 
 #include "3d_def.hpp"
+#include <cassert>
 #include <cmath>
 #include <cstring>
 
@@ -5687,7 +5688,8 @@ int CalcAngle(objtype* from_obj, objtype* to_obj)
 
     // Calc Arc Tan from Obj1 to Obj2 - Returns radians
 
-    angle = atan2(deltay, deltax);
+    assert(false);
+    // angle = atan2(deltay, deltax);
 
     if (angle < 0)
         angle = M_PI * 2 + angle;

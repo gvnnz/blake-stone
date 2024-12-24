@@ -729,7 +729,8 @@ void CheckKeys(void)
 
             ClearMemory();
             ClearSplitVWB();
-            VW_ScreenToScreen(displayofs, bufferofs, 80, 160);
+            assert(false);
+            //VW_ScreenToScreen(displayofs, bufferofs, 80, 160);
 
             Message("\n NOW you're jammin'!! \n");
 
@@ -1392,7 +1393,8 @@ void InitRedShifts(void)
     for (i = 1; i <= NUMREDSHIFTS; i++)
     {
         workptr = (byte*)&redshifts[i - 1][0];
-        baseptr = &vgapal;
+        assert(false);
+        //baseptr = &vgapal;
 
         for (j = 0; j <= 255; j++)
         {
@@ -1408,7 +1410,8 @@ void InitRedShifts(void)
     for (i = 1; i <= NUMWHITESHIFTS; i++)
     {
         workptr = (byte*)&whiteshifts[i - 1][0];
-        baseptr = &vgapal;
+        assert(false);
+        //baseptr = &vgapal;
 
         for (j = 0; j <= 255; j++)
         {
@@ -1500,19 +1503,22 @@ void UpdatePaletteShifts(void)
 
     if (red)
     {
-        VW_WaitVBL(1);
+        assert(false);
+        //VW_WaitVBL(1);
         VL_SetPalette(0, 256, redshifts[red - 1]);
         palshifted = true;
     }
     else if (white)
     {
-        VW_WaitVBL(1);
+        assert(false);
+        //VW_WaitVBL(1);
         VL_SetPalette(0, 256, whiteshifts[white - 1]);
         palshifted = true;
     }
     else if (palshifted)
     {
-        VW_WaitVBL(1);
+        assert(false);
+        //VW_WaitVBL(1);
         VL_SetPalette(0, 256, &vgapal); // back to normal
         palshifted = false;
     }
@@ -1533,7 +1539,8 @@ void FinishPaletteShifts(void)
     if (palshifted)
     {
         palshifted = 0;
-        VW_WaitVBL(1);
+        assert(false);
+        //VW_WaitVBL(1);
         VL_SetPalette(0, 256, &vgapal);
     }
 }
@@ -1780,7 +1787,8 @@ void PlayLoop(void)
         UpdateSoundLoc(); // JAB
 
         if (screenfaded & !playstate)
-            VW_FadeIn();
+            assert(false);
+            //VW_FadeIn();
 
         // Display first-time instructions.
         //
@@ -1797,11 +1805,13 @@ void PlayLoop(void)
         //
         if (singlestep)
         {
-            VW_WaitVBL(14);
+            assert(false);
+            //VW_WaitVBL(14);
             lasttimecount = TimeCount;
         }
         if (extravbls)
-            VW_WaitVBL(extravbls);
+            assert(false);
+           // VW_WaitVBL(extravbls);
 
         if ((demoplayback) && (IN_CheckAck()))
         {
@@ -1835,7 +1845,8 @@ void ShowQuickInstructions()
     WindowW = 320;
     WindowH = 168;
     CacheMessage(QUICK_INFO1_TEXT);
-    VW_WaitVBL(120);
+    assert(false);
+    //VW_WaitVBL(120);
     CacheMessage(QUICK_INFO2_TEXT);
     IN_Ack();
     IN_ClearKeysDown();

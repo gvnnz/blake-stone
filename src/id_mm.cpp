@@ -669,7 +669,7 @@ void MM_GetPtr(memptr* baseptr, unsigned long size)
         //	mprintf("blocks needed: %d   (%ld)\n",needed,needed<<4);
 
         assert(false);
-        //unlink(configname);
+        // unlink(configname);
         MM_ERROR(MM_GETPTR_OUT_OF_MEMORY);
     }
     else
@@ -825,7 +825,7 @@ void MM_SortMem(void)
             break;
         }
         assert(false);
-        //MM_SetLock(&(memptr)audiosegs[playing], true);
+        // MM_SetLock(&(memptr)audiosegs[playing], true);
     }
 
     SD_StopSound();
@@ -872,13 +872,13 @@ void MM_SortMem(void)
                     while (length > 0xf00)
                     {
                         assert(false);
-                        //movedata(source, 0, dest, 0, 0xf00 * 16);
+                        // movedata(source, 0, dest, 0, 0xf00 * 16);
                         length -= 0xf00;
                         source += 0xf00;
                         dest += 0xf00;
                     }
                     assert(false);
-                    //movedata(source, 0, dest, 0, length * 16);
+                    // movedata(source, 0, dest, 0, length * 16);
 
                     scan->start              = start;
                     *(unsigned*)scan->useptr = start;
@@ -898,7 +898,7 @@ void MM_SortMem(void)
 
     if (playing)
         assert(false);
-        //MM_SetLock(&(memptr)audiosegs[playing], false);
+    // MM_SetLock(&(memptr)audiosegs[playing], false);
 }
 
 //==========================================================================
