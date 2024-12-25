@@ -3,7 +3,7 @@
 #include "3d_agent.hpp"
 #include "3d_def.hpp"
 #include <cstring>
-
+#include <string>
 #pragma hdrstop
 
 #include <cassert>
@@ -3048,7 +3048,7 @@ short InputFloor(void)
             VWB_DrawMPic(teleX[lastTpNum], teleY[lastTpNum], TELEPORT1OFFPIC + lastTpNum);
             VWB_DrawMPic(teleX[tpNum], teleY[tpNum], TELEPORT1ONPIC + tpNum);
 
-            LoadOverheadChunk(tpNum, tempPath);
+            LoadOverheadChunk(tpNum, tempPath.c_str());
             ShowOverheadChunk();
             if (ov_noImage)
             {

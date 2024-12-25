@@ -4,7 +4,7 @@
 // #include <MATH.H>
 // #include <VALUES.H>
 #include <cstdarg>
-
+#include <string>
 // #define DEMOS_EXTERN
 // #define MYPROFILE
 // #define TRACK_ENEMY_COUNT
@@ -3201,7 +3201,7 @@ typedef struct
                       "ERROR: Insufficient disk space.\n" \
                       "Try deleting some files from your hard disk.\n\n"
 
-extern char tempPath[];
+extern std::string tempPath;
 
 extern const float radtoint; // = (float)FINEANGLES/2/PI;
 

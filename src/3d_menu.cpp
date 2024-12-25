@@ -1486,7 +1486,7 @@ int CP_LoadGame(int quick)
         {
             name[7] = which + '0';
             MakeDestPath(name);
-            handle = open(tempPath, O_RDONLY | O_BINARY);
+            handle = open(tempPath.c_str(), O_RDONLY | O_BINARY);
             DrawLSAction(0); // Testing...
             if (!(loadedgame = LoadTheGame(handle)))
             {
@@ -1511,7 +1511,7 @@ restart:;
             name[7] = which + '0';
 
             MakeDestPath(name);
-            handle = open(tempPath, O_RDONLY | O_BINARY);
+            handle = open(tempPath.c_str(), O_RDONLY | O_BINARY);
 
             DrawLSAction(0);
 
@@ -1648,7 +1648,7 @@ int CP_SaveGame(int quick)
             unlink(name);
             _fmode = O_BINARY;
             MakeDestPath(name);
-            handle = creat(tempPath, S_IREAD | S_IWRITE);
+            handle = creat(tempPath.c_str(), S_IREAD | S_IWRITE);
 
             lseek(handle, 0, SEEK_SET);
             SaveTheGame(handle, &SaveGameNames[which][0]);
@@ -1703,7 +1703,7 @@ int CP_SaveGame(int quick)
                 unlink(name);
                 _fmode = O_BINARY;
                 MakeDestPath(name);
-                handle = creat(tempPath, S_IREAD | S_IWRITE);
+                handle = creat(tempPath.c_str(), S_IREAD | S_IWRITE);
                 lseek(handle, 0, SEEK_SET);
 
                 DrawLSAction(1);
@@ -2929,7 +2929,7 @@ void ReadGameNames()
     //
     strcpy(name, SaveName);
     MakeDestPath(name);
-    if (!findfirst(tempPath, &f, 0))
+    if (!findfirst(tempPath.c_str(), &f, 0))
         do
         {
             which = f.ff_name[7] - '0';
@@ -2940,7 +2940,7 @@ void ReadGameNames()
 
                 SaveGamesAvail[which] = 1;
                 MakeDestPath(f.ff_name);
-                handle = open(tempPath, O_RDONLY | O_BINARY);
+                handle = open(tempPath.c_str(), O_RDONLY | O_BINARY);
                 if (FindChunk(handle, "DESC"))
                 {
                     read(handle, temp, GAME_DESCRIPTION_LEN + 1);

@@ -1296,7 +1296,7 @@ void ReadConfig(void)
     unsigned flags        = gamestate.flags;
     MakeDestPath(configname);
 
-    if ((file = open(tempPath, O_BINARY | O_RDONLY)) != -1)
+    if ((file = open(tempPath.c_str(), O_BINARY | O_RDONLY)) != -1)
     {
         //
         // valid config file

@@ -76,7 +76,7 @@ char* MainStrs[] = {
 short starting_episode, starting_level, starting_difficulty;
 
 std::string destPath;
-char        tempPath[MAX_DEST_PATH_LEN + 15];
+std::string tempPath;
 
 #if BETA_TEST
 char bc_buffer[] = BETA_CODE;
@@ -159,7 +159,7 @@ void WriteConfig(void)
     int file;
 
     MakeDestPath(configname);
-    file = open(tempPath, O_CREAT | O_BINARY | O_WRONLY,
+    file = open(tempPath.c_str(), O_CREAT | O_BINARY | O_WRONLY,
         S_IREAD | S_IWRITE | S_IFREG);
 
     if (file != -1)
@@ -303,7 +303,7 @@ void InitPlaytemp()
     long size;
 
     MakeDestPath(PLAYTEMP_FILE);
-    if ((handle = open(tempPath, O_CREAT | O_TRUNC | O_RDWR | O_BINARY, S_IREAD | S_IWRITE)) == -1)
+    if ((handle = open(tempPath.c_str(), O_CREAT | O_TRUNC | O_RDWR | O_BINARY, S_IREAD | S_IWRITE)) == -1)
         MAIN_ERROR(INITPLAYTEMP_OPEN_ERR);
 
     close(handle);
@@ -465,7 +465,7 @@ bool LoadLevel(short levelnum)
     // Open PLAYTEMP file
     //
     MakeDestPath(PLAYTEMP_FILE);
-    handle = open(tempPath, O_RDONLY | O_BINARY);
+    handle = open(tempPath.c_str(), O_RDONLY | O_BINARY);
 
     // If level exists in PLAYTEMP file, use it; otherwise, load it from scratch!
     //
@@ -656,7 +656,7 @@ bool SaveLevel(short levelnum)
     // Open PLAYTEMP file
     //
     MakeDestPath(PLAYTEMP_FILE);
-    if ((handle = open(tempPath, O_CREAT | O_RDWR | O_BINARY, S_IREAD | S_IWRITE)) == -1)
+    if ((handle = open(tempPath.c_str(), O_CREAT | O_RDWR | O_BINARY, S_IREAD | S_IWRITE)) == -1)
         MAIN_ERROR(SAVELEVEL_DISKERR);
 
     // Remove level chunk from file
@@ -767,7 +767,7 @@ long DeleteChunk(int handle, char* chunk)
             lseek(handle, cksize, SEEK_CUR); // seek source to NEXT chunk
 
             MakeDestPath(PLAYTEMP_FILE);
-            if ((dhandle = open(tempPath, O_CREAT | O_RDWR | O_BINARY, S_IREAD | S_IWRITE)) == -1)
+            if ((dhandle = open(tempPath.c_str(), O_CREAT | O_RDWR | O_BINARY, S_IREAD | S_IWRITE)) == -1)
                 MAIN_ERROR(SAVELEVEL_DISKERR);
 
             lseek(dhandle, offset, SEEK_SET);      // seek dest to THIS chunk
@@ -882,7 +882,7 @@ bool LoadTheGame(int handle)
     // Copy all remaining chunks to PLAYTEMP file
     //
     MakeDestPath(PLAYTEMP_FILE);
-    if ((shandle = open(tempPath, O_CREAT | O_RDWR | O_TRUNC | O_BINARY, S_IREAD | S_IWRITE)) == -1)
+    if ((shandle = open(tempPath.c_str(), O_CREAT | O_RDWR | O_TRUNC | O_BINARY, S_IREAD | S_IWRITE)) == -1)
         goto cleanup;
 
     while (cksize = NextChunk(handle))
@@ -979,10 +979,10 @@ bool SaveTheGame(int handle, char* description)
     // Append PLAYTEMP file to savegame file
     //
     MakeDestPath(PLAYTEMP_FILE);
-    if (findfirst(tempPath, &finfo, 0))
+    if (findfirst(tempPath.c_str(), &finfo, 0))
         goto cleanup;
 
-    if ((shandle = open(tempPath, O_RDONLY | O_BINARY)) == -1)
+    if ((shandle = open(tempPath.c_str(), O_RDONLY | O_BINARY)) == -1)
         goto cleanup;
 
     IO_CopyHandle(shandle, handle, -1);
@@ -1023,7 +1023,7 @@ bool LevelInPlaytemp(char levelnum)
     // Open PLAYTEMP file
     //
     MakeDestPath(PLAYTEMP_FILE);
-    handle = open(tempPath, O_RDONLY | O_BINARY);
+    handle = open(tempPath.c_str(), O_RDONLY | O_BINARY);
 
     // See if level exists in PLAYTEMP file...
     //
@@ -1498,7 +1498,7 @@ void Quit(char* error, ...)
     va_start(ap, error);
 
     MakeDestPath(PLAYTEMP_FILE);
-    remove(tempPath);
+    remove(tempPath.c_str());
     ClearMemory();
 
     if (!*error)
@@ -1557,7 +1557,7 @@ void Quit(char* error, ...)
         gotoxy(1, 8);
 
         MakeDestPath("BS_VSI.ERR");
-        fp = fopen(tempPath, "wb");
+        fp = fopen(tempPath.c_str(), "wb");
         fprintf(fp, "$%02x%02x", unit, err);
         if (fp)
             fclose(fp);
@@ -1833,11 +1833,11 @@ int main(void)
 #if 0
 #if IN_DEVELOPMENT
     MakeDestPath(ERROR_LOG);
-    remove(tempPath);
+    remove(tempPath.c_str());
 #endif
 
     MakeDestPath(PLAYTEMP_FILE);
-    remove(tempPath);
+    remove(tempPath.c_str());
 
     freed_main();
 
@@ -1931,8 +1931,8 @@ void InitDestPath(void)
 //-------------------------------------------------------------------------
 void MakeDestPath(char* file)
 {
-    strcpy(tempPath, destPath.c_str());
-    strcat(tempPath, file);
+    destPath = tempPath;
+    tempPath = tempPath + file;
 }
 
 #if IN_DEVELOPMENT
