@@ -1772,7 +1772,7 @@ short starting_episode = 0, starting_level = 0, starting_difficulty = 2;
 #endif
 short debug_value = 0;
 
-int main(void)
+int main(int argc, char* argv[])
 {
     assert(false);
     return 0;
@@ -1785,7 +1785,7 @@ int main(void)
     MakeDestPath(PLAYTEMP_FILE);
     remove(tempPath.c_str());
 
-    freed_main();
+    freed_main(argc, argv);
 
 #if FREE_FUNCTIONS
     UseFunc((char*)JM_FREE_START, (char*)JM_FREE_END);

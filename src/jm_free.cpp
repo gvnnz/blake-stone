@@ -1925,27 +1925,20 @@ extern short starting_episode, starting_level, starting_difficulty;
 //-------------------------------------------------------------------------
 // freed_main()
 //-------------------------------------------------------------------------
-void freed_main()
+void freed_main(int argc, char* argv[])
 {
-    assert(false);
-#if 0
-    int              i;
-    struct dosdate_t d;
-
     // Setup for APOGEECD thingie.
-    //
     InitDestPath();
 
     // Make sure there's room to play the game
-    //
     CheckDiskSpace(DISK_SPACE_NEEDED, CANT_PLAY_TXT, cds_dos_print);
 
     // Which version is this? (SHAREWARE? 1-3? 1-6?)
     //
     CheckForEpisodes();
 
-    for (i = 1; i < _argc; i++)
-        switch (US_CheckParm(_argv[i], MainStrs))
+    for (int i = 1; i < argc; i++)
+        switch (US_CheckParm(argv[i], MainStrs))
         {
 #if IN_DEVELOPMENT || TECH_SUPPORT_VERSION
         case 0: // quick run
@@ -1958,12 +1951,12 @@ void freed_main()
 
         case 2: // starting level
             gamestate.flags |= GS_STARTLEVEL;
-            starting_level = scan_atoi(_argv[i]);
+            starting_level = scan_atoi(argv[i]);
             break;
 
         case 3:
             gamestate.flags |= GS_STARTLEVEL;
-            starting_episode = scan_atoi(_argv[i]) - 1;
+            starting_episode = scan_atoi(argv[i]) - 1;
             break;
 
         case 4:
@@ -1984,7 +1977,7 @@ void freed_main()
 #if IN_DEVELOPMENT
 #ifdef DEBUG_VALUE
         case 6:
-            debug_value = scan_atoi(_argv[i]);
+            debug_value = scan_atoi(argv[i]);
             break;
 #endif
 #endif
@@ -2003,7 +1996,7 @@ void freed_main()
 
         case 11:
             gamestate.flags |= GS_STARTLEVEL;
-            starting_difficulty = scan_atoi(_argv[i]) - 1;
+            starting_difficulty = scan_atoi(argv[i]) - 1;
             break;
 
         case 10:
@@ -2020,6 +2013,7 @@ void freed_main()
     // THIS IS FOR BETA ONLY!
     //
 
+    struct dosdate_t d;
     _dos_getdate(&d);
     if ((d.year > BETA_YEAR) ||
         ((d.year == BETA_YEAR) && (d.month > BETA_MONTH)) ||
@@ -2043,7 +2037,6 @@ void freed_main()
     bufferofs = SCREENSIZE;
 
     PreDemo();
-#endif
 }
 
 //-------------------------------------------------------------------------
