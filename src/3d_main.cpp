@@ -2,6 +2,7 @@
 
 #include "3d_def.hpp"
 #include <cctype>
+#include <string>
 // #include <dos.h>
 // #include <fcntl.h>
 // #include <io.h>
@@ -74,8 +75,8 @@ char* MainStrs[] = {
 
 short starting_episode, starting_level, starting_difficulty;
 
-char destPath[MAX_DEST_PATH_LEN + 1];
-char tempPath[MAX_DEST_PATH_LEN + 15];
+std::string destPath;
+char        tempPath[MAX_DEST_PATH_LEN + 15];
 
 #if BETA_TEST
 char bc_buffer[] = BETA_CODE;
@@ -1930,7 +1931,7 @@ void InitDestPath(void)
 //-------------------------------------------------------------------------
 void MakeDestPath(char* file)
 {
-    strcpy(tempPath, destPath);
+    strcpy(tempPath, destPath.c_str());
     strcat(tempPath, file);
 }
 
