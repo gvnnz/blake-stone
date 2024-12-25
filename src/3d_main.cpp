@@ -1236,7 +1236,7 @@ void CycleColors()
         VL_SetPalette(CRNG_LOW, CRNG_SIZE, (byte*)cbuffer);
     else
         assert(false);
-        //VW_WaitVBL(1);
+    // VW_WaitVBL(1);
 }
 
 //===========================================================================

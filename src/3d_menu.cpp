@@ -424,7 +424,7 @@ void US_ControlPanel(byte scancode)
 
     DrawMainMenu();
     assert(false);
-    //MenuFadeIn();
+    // MenuFadeIn();
     StartGame = 0;
 
     //
@@ -443,7 +443,7 @@ void US_ControlPanel(byte scancode)
 
             DrawMainMenu();
             assert(false);
-            //MenuFadeIn();
+            // MenuFadeIn();
             break;
 
         case -1:
@@ -456,7 +456,7 @@ void US_ControlPanel(byte scancode)
             {
                 DrawMainMenu();
                 assert(false);
-                //MenuFadeIn();
+                // MenuFadeIn();
             }
         }
 
@@ -579,7 +579,7 @@ int CP_CheckQuick(unsigned scancode)
         //
     case sc_F7:
         assert(false);
-        //VW_ScreenToScreen(displayofs, bufferofs, 80, 160);
+        // VW_ScreenToScreen(displayofs, bufferofs, 80, 160);
         CA_CacheGrChunk(STARTFONT + 1);
 
         WindowH = 160;
@@ -605,7 +605,7 @@ int CP_CheckQuick(unsigned scancode)
             strcat(string, SaveGameNames[LSItems.curpos]);
             strcat(string, "\"?");
             assert(false);
-            //VW_ScreenToScreen(displayofs, bufferofs, 80, 160);
+            // VW_ScreenToScreen(displayofs, bufferofs, 80, 160);
 
 #if IN_DEVELOPMENT
             if (TestQuickSave || Confirm(string))
@@ -652,7 +652,7 @@ int CP_CheckQuick(unsigned scancode)
             strcat(string, SaveGameNames[LSItems.curpos]);
             strcat(string, "\"?");
             assert(false);
-            //VW_ScreenToScreen(displayofs, bufferofs, 80, 160);
+            // VW_ScreenToScreen(displayofs, bufferofs, 80, 160);
 
             if (Confirm(string))
                 CP_LoadGame(1);
@@ -689,7 +689,7 @@ int CP_CheckQuick(unsigned scancode)
     case sc_F10:
         CA_CacheGrChunk(STARTFONT + 1);
         assert(false);
-        //VW_ScreenToScreen(displayofs, bufferofs, 80, 160);
+        // VW_ScreenToScreen(displayofs, bufferofs, 80, 160);
 
         WindowX = WindowY = 0;
         WindowW           = 320;
@@ -994,7 +994,7 @@ void CP_GameOptions(void)
     CA_CacheScreen(BACKGROUND_SCREENPIC);
     DrawGopMenu();
     assert(false);
-    //MenuFadeIn();
+    // MenuFadeIn();
     WaitKeyUp();
 
     do
@@ -1057,7 +1057,7 @@ void CP_Switches(void)
     CA_CacheScreen(BACKGROUND_SCREENPIC);
     DrawSwitchMenu();
     assert(false);
-    //MenuFadeIn();
+    // MenuFadeIn();
     WaitKeyUp();
 
     do
@@ -1207,7 +1207,7 @@ void CP_Sound(void)
     CA_CacheScreen(BACKGROUND_SCREENPIC);
     DrawSoundMenu();
     assert(false);
-    //MenuFadeIn();
+    // MenuFadeIn();
     WaitKeyUp();
 
     do
@@ -1769,7 +1769,7 @@ void CP_Control(void)
 
     DrawCtlScreen();
     assert(false);
-    //MenuFadeIn();
+    // MenuFadeIn();
     WaitKeyUp();
 
     do
@@ -1818,7 +1818,7 @@ void CP_Control(void)
         case CUSTOMIZE:
             DrawCtlScreen();
             assert(false);
-            //MenuFadeIn();
+            // MenuFadeIn();
             WaitKeyUp();
             break;
         }
@@ -3842,7 +3842,7 @@ void CheckPause(void)
 
         SoundStatus ^= 1;
         assert(false);
-        //VW_WaitVBL(3);
+        // VW_WaitVBL(3);
         IN_ClearKeysDown();
         Paused = false;
     }
