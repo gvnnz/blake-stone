@@ -1415,47 +1415,6 @@ void ReadConfig(void)
 #endif
 }
 
-/*
-========================
-=
-= Patch386
-=
-= Patch ldiv to use 32 bit instructions
-=
-========================
-*/
-
-void Patch386(void)
-{
-    assert(false);
-#if 0
-    extern void jabhack2(void);
-    extern int  CheckIs386(void);
-
-    int i;
-
-    for (i = 1; i < _argc; i++)
-        switch (US_CheckParm(_argv[i], JHParmStrings))
-        {
-        case 0:
-            IsA386 = false;
-            return;
-
-        case 1:
-            IsA386 = true;
-            return;
-        }
-
-    if (CheckIs386())
-    {
-        IsA386 = true;
-        jabhack2();
-    }
-    else
-        IsA386 = false;
-#endif
-}
-
 #pragma warn - rvl
 
 #if 0
@@ -1984,8 +1943,6 @@ void freed_main()
     // Which version is this? (SHAREWARE? 1-3? 1-6?)
     //
     CheckForEpisodes();
-
-    Patch386();
 
     for (i = 1; i < _argc; i++)
         switch (US_CheckParm(_argv[i], MainStrs))
