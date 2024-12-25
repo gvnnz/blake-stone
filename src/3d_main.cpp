@@ -1,7 +1,6 @@
 // 3D_MAIN.C
 
 #include "3d_def.hpp"
-#pragma hdrstop
 #include <cctype>
 // #include <dos.h>
 // #include <fcntl.h>
@@ -531,8 +530,6 @@ bool LoadLevel(short levelnum)
     //  Re-Establish links to barrier switches
     //
 
-#pragma warn - pia
-
     ob = objlist;
     do
     {
@@ -546,8 +543,6 @@ bool LoadLevel(short levelnum)
             break;
         }
     } while (ob = ob->next);
-
-#pragma warn + pia
 
     ConnectBarriers();
 
@@ -740,8 +735,6 @@ exit_func:;
 #endif
 }
 
-#pragma warn - pia
-
 //--------------------------------------------------------------------------
 // DeleteChunk()
 //--------------------------------------------------------------------------
@@ -789,8 +782,6 @@ long DeleteChunk(int handle, char* chunk)
     return (cksize);
 #endif
 }
-
-#pragma warn + pia
 
 char SavegameInfoText[] = "\n\r"
                           "\n\r"
@@ -892,7 +883,6 @@ bool LoadTheGame(int handle)
     if ((shandle = open(tempPath, O_CREAT | O_RDWR | O_TRUNC | O_BINARY, S_IREAD | S_IWRITE)) == -1)
         goto cleanup;
 
-#pragma warn - pia
     while (cksize = NextChunk(handle))
     {
         cksize += 8;                        // include chunk ID and LENGTH
@@ -902,7 +892,6 @@ bool LoadTheGame(int handle)
         IO_FarWrite(shandle, temp, cksize); // write chunk to PLAYTEMP file
         MM_FreePtr(&temp);                  // free temp buffer
     }
-#pragma warn + pia
 
     close(shandle);
     rt_value = true;
@@ -1906,7 +1895,6 @@ void InitDestPath(void)
 #if 0
     char* ptr;
 
-#pragma warn - pia
     if (ptr = getenv("APOGEECD"))
     {
         struct ffblk ffblk;
@@ -1933,7 +1921,6 @@ void InitDestPath(void)
     }
     else
         _fstrcpy(destPath, "");
-#pragma warn + pia
 #endif
 }
 
