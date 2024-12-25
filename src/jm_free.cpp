@@ -11,6 +11,7 @@
 #include <cassert>
 #include <cstdio>
 #include <cstring>
+#include <filesystem>
 #pragma hdrstop
 
 #include "3d_def.hpp"
@@ -1504,29 +1505,38 @@ extern CP_itemtype NewEmenu[];
 extern int         EpisodeSelect[];
 
 //-------------------------------------------------------------------------
-// CheckForEpisodes() - CHECK FOR VERSION/EXTESION
+// CheckForEpisodes() - CHECK FOR VERSION/EXTENSION
 //-------------------------------------------------------------------------
-void CheckForEpisodes(void)
+void CheckForEpisodes()
 {
-    assert(false);
-#if 0
-    struct ffblk f;
-    short        i;
+    namespace fs = std::filesystem;
 
 #if (GAME_VERSION != SHAREWARE_VERSION)
-    if (!findfirst("*.VSI", &f, FA_ARCH))
-        strcpy(extension, "VSI");
+    const auto pExt = ".VSI";
+    const auto ext  = "VSI";
 #else
-    if (!findfirst("*.FSW", &f, FA_ARCH))
-        strcpy(extension, "FSW");
+    const auto pExt = ".FSW";
+    const auto ext  = "FSW";
 #endif
-    else
+
+    bool found = false;
+    for (const auto& entry : fs::directory_iterator(fs::current_path()))
+    {
+        if (entry.is_regular_file() && entry.path().extension() == pExt)
+        {
+            strcpy(extension, ext);
+            found = true;
+            break;
+        }
+    }
+
+    if (!found)
     {
         printf("No Fire Strike data files found!");
         exit(0);
     }
 
-    for (i = 0; i < mv_NUM_MOVIES; i++)
+    for (int i = 0; i < mv_NUM_MOVIES; i++)
         strcat(Movies[i].FName, extension);
 
 #ifdef ACTIVATE_TERMINAL
@@ -1535,15 +1545,15 @@ void CheckForEpisodes(void)
 #endif
 
     strcat(configname, extension);
-    _fstrcat(SaveName, extension);
+    strcat(SaveName, extension);
     strcat(PageFileName, extension);
     strcat(audioname, extension);
     strcat(demoname, extension);
 
 #if DUAL_SWAP_FILES
+    struct ffblk f;
     strcat(AltPageFileName, extension);
     ShadowsAvail = (!findfirst(AltPageFileName, &f, FA_ARCH));
-#endif
 #endif
 }
 

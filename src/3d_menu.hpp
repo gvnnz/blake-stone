@@ -267,7 +267,7 @@ void CustomControls(void);
 void MouseSensitivity(void);
 
 void DrawMenuTitle(char* title);
-void CheckForEpisodes(void);
+void CheckForEpisodes();
 void HelpPresenter(char* fname, bool continuekeys, unsigned id_cache, bool startmusic);
 void ShadowPrint(char* string, int x, int y);
 
