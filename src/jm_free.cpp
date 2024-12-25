@@ -2040,9 +2040,6 @@ void freed_main()
 
     InitGame();
 
-    if (!IsA386)
-        Quit(nullptr);
-
     bufferofs = SCREENSIZE;
 
     PreDemo();

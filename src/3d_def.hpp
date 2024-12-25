@@ -3217,7 +3217,6 @@ extern char        str[80], str2[20];
 // extern  unsigned        tedlevelnum;
 // extern  bool         tedlevel;
 extern bool nospr;
-extern bool IsA386;
 
 extern fixed    focallength;
 extern unsigned viewangles;

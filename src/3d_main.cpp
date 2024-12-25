@@ -91,7 +91,6 @@ unsigned TopColor, BottomColor;
 #endif
 
 bool nospr;
-bool IsA386;
 
 int dirangle[9] = {0, ANGLES / 8, 2 * ANGLES / 8, 3 * ANGLES / 8, 4 * ANGLES / 8, 5 * ANGLES / 8, 6 * ANGLES / 8, 7 * ANGLES / 8, ANGLES};
 
@@ -1464,11 +1463,6 @@ void Quit(char* error, ...)
             diz  = grsegs[DIZ_ERR_TEXT];
             end  = _fstrstr(diz, "^XX");
             *end = 0;
-        }
-        else if (!IsA386)
-        {
-            CA_CacheGrChunk(NO386SCREEN);
-            screen = MK_FP(grsegs[NO386SCREEN], 7);
         }
 //		else
 #endif
