@@ -128,7 +128,7 @@ void writeTokenStr(char* str);
 
 void ShowOverheadChunk(void);
 void LoadOverheadChunk(short tpNum);
-void SaveOverheadChunk(short tpNum);
+void SaveOverheadChunk(short tpNum, const char* outFile);
 void DisplayTeleportName(char tpNum, bool locked);
 
 void ForceUpdateStatusBar(void);
@@ -2904,7 +2904,7 @@ short InputFloor(void)
     memcpy(&ov_stats, &gamestuff.level[gamestate.mapon].stats, sizeof(statsInfoType));
     ShowOverhead(TOV_X, TOV_Y, 32, 0, RADAR_FLAGS);
     assert(false);
-    // SaveOverheadChunk(tpNum);
+    // SaveOverheadChunk(tpNum, tempPath);
 
     px         = 115;
     py         = 188;
@@ -3166,7 +3166,7 @@ void LoadOverheadChunk(short tpNum)
 //--------------------------------------------------------------------------
 // SaveOverheadChunk()
 //--------------------------------------------------------------------------
-void SaveOverheadChunk(short tpNum)
+void SaveOverheadChunk(short tpNum, const char* outFile)
 {
     int  handle;
     long cksize   = 4096 + sizeof(statsInfoType);
@@ -3175,7 +3175,7 @@ void SaveOverheadChunk(short tpNum)
     // Open PLAYTEMP file
     //
     MakeDestPath(PLAYTEMP_FILE);
-    if ((handle = open(tempPath, O_CREAT | O_RDWR | O_BINARY, S_IREAD | S_IWRITE)) == -1)
+    if ((handle = open(outFile, O_CREAT | O_RDWR | O_BINARY, S_IREAD | S_IWRITE)) == -1)
         MAIN_ERROR(SAVELEVEL_DISKERR);
 
     // Remove level chunk from file
