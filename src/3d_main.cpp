@@ -1891,14 +1891,13 @@ void fprint(char* text)
 //-------------------------------------------------------------------------
 // InitDestPath()
 //-------------------------------------------------------------------------
-void InitDestPath(void)
+void InitDestPath()
 {
-    assert(false);
-#if 0
     char* ptr;
-
     if (ptr = getenv("APOGEECD"))
     {
+        assert(false);
+#if 0
         struct ffblk ffblk;
         short        len;
 
@@ -1920,10 +1919,10 @@ void InitDestPath(void)
         }
 
         _fstrcat(destPath, "\\");
+#endif
     }
     else
-        _fstrcpy(destPath, "");
-#endif
+        destPath = "";
 }
 
 //-------------------------------------------------------------------------

@@ -3284,7 +3284,7 @@ void InitDigiMap(void);
 void CleanUpDoors_N_Actors(void);
 
 void MakeDestPath(char* file);
-void InitDestPath(void);
+void InitDestPath();
 
 extern long FindChunk(int file, char* chunk);
 extern long NextChunk(int file);
