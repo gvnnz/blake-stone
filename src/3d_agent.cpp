@@ -127,7 +127,7 @@ unsigned player_oldtiley;
 void writeTokenStr(char* str);
 
 void ShowOverheadChunk(void);
-void LoadOverheadChunk(short tpNum);
+void LoadOverheadChunk(short tpNum, const char* inFile);
 void SaveOverheadChunk(short tpNum, const char* outFile);
 void DisplayTeleportName(char tpNum, bool locked);
 
@@ -3048,7 +3048,7 @@ short InputFloor(void)
             VWB_DrawMPic(teleX[lastTpNum], teleY[lastTpNum], TELEPORT1OFFPIC + lastTpNum);
             VWB_DrawMPic(teleX[tpNum], teleY[tpNum], TELEPORT1ONPIC + tpNum);
 
-            LoadOverheadChunk(tpNum);
+            LoadOverheadChunk(tpNum, tempPath);
             ShowOverheadChunk();
             if (ov_noImage)
             {
@@ -3128,7 +3128,7 @@ void ShowOverheadChunk(void)
 //--------------------------------------------------------------------------
 // LoadOverheadChunk()
 //--------------------------------------------------------------------------
-void LoadOverheadChunk(short tpNum)
+void LoadOverheadChunk(short tpNum, const char* inFile)
 {
     assert(false);
 #if 0
@@ -3139,7 +3139,7 @@ void LoadOverheadChunk(short tpNum)
     // Open PLAYTEMP file
     //
     MakeDestPath(PLAYTEMP_FILE);
-    if ((handle = open(tempPath, O_CREAT | O_RDWR | O_BINARY, S_IREAD | S_IWRITE)) == -1)
+    if ((handle = open(inFile, O_CREAT | O_RDWR | O_BINARY, S_IREAD | S_IWRITE)) == -1)
         MAIN_ERROR(SAVELEVEL_DISKERR);
 
     // Find and load chunk
