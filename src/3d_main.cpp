@@ -1874,7 +1874,7 @@ void InitDestPath()
 //-------------------------------------------------------------------------
 // MakeDestPath()
 //-------------------------------------------------------------------------
-void MakeDestPath(char* file)
+void MakeDestPath(const char* file)
 {
     destPath = tempPath;
     tempPath = tempPath + file;

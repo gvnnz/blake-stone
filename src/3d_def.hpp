@@ -38,7 +38,7 @@
 #define BETA_DAY 1
 #define BETA_YEAR 1994
 
-#define PLAYTEMP_FILE "PLAYTEMP"
+constexpr auto PLAYTEMP_FILE = "PLAYTEMP";
 #define OLD_PLAYTEMP_FILE "OLDPTEMP"
 
 #define DISK_SPACE_NEEDED (1024l * 1024l)
@@ -3282,7 +3282,7 @@ void InitDigiMap(void);
 
 void CleanUpDoors_N_Actors(void);
 
-void MakeDestPath(char* file);
+void MakeDestPath(const char* file);
 void InitDestPath();
 
 extern long FindChunk(int file, char* chunk);
