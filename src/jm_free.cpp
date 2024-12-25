@@ -1519,40 +1519,40 @@ void CheckForEpisodes()
     const auto ext  = "FSW";
 #endif
 
-    bool found = false;
+    std::string extension_ = "";
     for (const auto& entry : fs::directory_iterator(fs::current_path()))
     {
         if (entry.is_regular_file() && entry.path().extension() == pExt)
         {
-            strcpy(extension, ext);
-            found = true;
+            extension_ = ext;
+            strcpy(extension, ext); // [MCL] global!
             break;
         }
     }
 
-    if (!found)
+    if (extension_.empty())
     {
         printf("No Fire Strike data files found!");
         exit(0);
     }
 
     for (int i = 0; i < mv_NUM_MOVIES; i++)
-        strcat(Movies[i].FName, extension);
+        strcat(Movies[i].FName, extension_.c_str());
 
 #ifdef ACTIVATE_TERMINAL
-    strcat(term_com_name, extension);
-    strcat(term_msg_name, extension);
+    strcat(term_com_name, extension.c_str());
+    strcat(term_msg_name, extension.c_str());
 #endif
 
-    strcat(configname, extension);
-    strcat(SaveName, extension);
-    strcat(PageFileName, extension);
-    strcat(audioname, extension);
-    strcat(demoname, extension);
+    strcat(configname, extension_.c_str());
+    strcat(SaveName, extension_.c_str());
+    strcat(PageFileName, extension_.c_str());
+    strcat(audioname, extension_.c_str());
+    strcat(demoname, extension_.c_str());
 
 #if DUAL_SWAP_FILES
     struct ffblk f;
-    strcat(AltPageFileName, extension);
+    strcat(AltPageFileName, extension.c_str());
     ShadowsAvail = (!findfirst(AltPageFileName, &f, FA_ARCH));
 #endif
 }
