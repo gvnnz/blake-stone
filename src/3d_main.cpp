@@ -1041,58 +1041,10 @@ bool LevelInPlaytemp(char levelnum)
 //--------------------------------------------------------------------------
 // CheckDiskSpace()
 //--------------------------------------------------------------------------
-bool CheckDiskSpace(long needed, char* text, cds_io_type io_type)
+bool CheckDiskSpace(long, char*, cds_io_type)
 {
-    assert(false);
-    return false;
-#if 0
-    struct ffblk      finfo;
-    struct diskfree_t dfree;
-    long              avail;
-
-    // Figure amount of space free on hard disk and let the gamer know if
-    // disk space is too low.
-    //
-    if (_dos_getdiskfree(0, &dfree))
-        MAIN_ERROR(CHECKDISK_GDFREE);
-
-    avail = (long)dfree.avail_clusters *
-            dfree.bytes_per_sector *
-            dfree.sectors_per_cluster;
-
-    if (avail < needed)
-    {
-        unsigned old_DS = _DS;
-
-        switch (io_type)
-        {
-        case cds_dos_print:
-            _DS = FP_SEG(text);
-            printf("%s", text);
-            _DS = old_DS;
-            exit(0);
-            break;
-
-        case cds_menu_print:
-        case cds_id_print:
-            WindowX = 0;
-            WindowY = 16;
-            WindowW = 320;
-            WindowH = 168;
-            SD_PlaySound(NOWAYSND);
-            Message(text);
-            IN_ClearKeysDown();
-            IN_Ack();
-            if (io_type == cds_menu_print)
-                MenuFadeOut();
-            break;
-        }
-
-        return (false);
-    }
-
-    return (true);
-#endif
+    /* [MCL] Assuming this is always true for a '90s game! */
+    return true;
 }
 
 //--------------------------------------------------------------------------
