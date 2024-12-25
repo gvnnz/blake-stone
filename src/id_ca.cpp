@@ -70,7 +70,7 @@ extern byte mapdict;
 extern byte audiohead;
 extern byte audiodict;
 
-char extension[5], // Need a string, not constant to change cache files
+char g_extension[5], // Need a string, not constant to change cache files
     gheadname[10] = GREXT "HEAD.",
     gfilename[10] = GREXT "GRAPH.",
     gdictname[10] = GREXT "DICT.",

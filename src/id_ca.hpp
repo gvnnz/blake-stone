@@ -65,7 +65,7 @@ extern char* titleptr[8];
 
 extern int profilehandle, debughandle;
 
-extern char extension[5],
+extern char g_extension[5],
     gheadname[10],
     gfilename[10],
     gdictname[10],

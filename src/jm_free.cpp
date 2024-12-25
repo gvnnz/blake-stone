@@ -1223,7 +1223,7 @@ void CAL_SetupMapFile(void)
 //
 #ifndef MAPHEADERLINKED
     strcpy(fname, mheadname);
-    strcat(fname, extension);
+    strcat(fname, g_extension);
 
     if ((handle = open(fname,
              O_RDONLY | O_BINARY, S_IREAD)) == -1)
@@ -1484,7 +1484,7 @@ void CheckForEpisodes()
         if (entry.is_regular_file() && entry.path().extension() == pExt)
         {
             extension_ = ext;
-            strcpy(extension, ext); // [MCL] global!
+            strcpy(g_extension, ext); // [MCL] global!
             break;
         }
     }
@@ -2051,7 +2051,7 @@ void CheckValidity(char* file, long valid_checksum)
         MAIN_ERROR(CHECK_FILENAME_TOO_LONG);
 
     strcpy(filename, file);
-    strcat(filename, extension);
+    strcat(filename, g_extension);
 
     checksum = ChecksumFile(filename, 0);
     if (checksum != valid_checksum)
