@@ -73,10 +73,10 @@ char* MainStrs[] = {
     "radar", BETA_CODE,
     nil};
 
-short starting_episode, starting_level, starting_difficulty;
+short g_starting_episode, g_starting_level, g_starting_difficulty;
 
-std::string destPath;
-std::string tempPath;
+std::string g_destPath;
+std::string g_tempPath;
 
 #if BETA_TEST
 char bc_buffer[] = BETA_CODE;
@@ -158,7 +158,7 @@ void WriteConfig(void)
     int file;
 
     MakeDestPath(configname);
-    file = open(tempPath.c_str(), O_CREAT | O_BINARY | O_WRONLY,
+    file = open(g_tempPath.c_str(), O_CREAT | O_BINARY | O_WRONLY,
         S_IREAD | S_IWRITE | S_IFREG);
 
     if (file != -1)
@@ -248,9 +248,9 @@ void NewGame(int difficulty, int episode)
 #if IN_DEVELOPMENT || TECH_SUPPORT_VERSION
     if (gamestate.flags & GS_STARTLEVEL)
     {
-        gamestate.mapon      = starting_level;
-        gamestate.difficulty = starting_difficulty;
-        gamestate.episode    = starting_episode;
+        gamestate.mapon      = g_starting_level;
+        gamestate.difficulty = g_starting_difficulty;
+        gamestate.episode    = g_starting_episode;
     }
     else
 #endif
@@ -302,7 +302,7 @@ void InitPlaytemp()
     long size;
 
     MakeDestPath(PLAYTEMP_FILE);
-    if ((handle = open(tempPath.c_str(), O_CREAT | O_TRUNC | O_RDWR | O_BINARY, S_IREAD | S_IWRITE)) == -1)
+    if ((handle = open(g_tempPath.c_str(), O_CREAT | O_TRUNC | O_RDWR | O_BINARY, S_IREAD | S_IWRITE)) == -1)
         MAIN_ERROR(INITPLAYTEMP_OPEN_ERR);
 
     close(handle);
@@ -464,7 +464,7 @@ bool LoadLevel(short levelnum)
     // Open PLAYTEMP file
     //
     MakeDestPath(PLAYTEMP_FILE);
-    handle = open(tempPath.c_str(), O_RDONLY | O_BINARY);
+    handle = open(g_tempPath.c_str(), O_RDONLY | O_BINARY);
 
     // If level exists in PLAYTEMP file, use it; otherwise, load it from scratch!
     //
@@ -655,7 +655,7 @@ bool SaveLevel(short levelnum)
     // Open PLAYTEMP file
     //
     MakeDestPath(PLAYTEMP_FILE);
-    if ((handle = open(tempPath.c_str(), O_CREAT | O_RDWR | O_BINARY, S_IREAD | S_IWRITE)) == -1)
+    if ((handle = open(g_tempPath.c_str(), O_CREAT | O_RDWR | O_BINARY, S_IREAD | S_IWRITE)) == -1)
         MAIN_ERROR(SAVELEVEL_DISKERR);
 
     // Remove level chunk from file
@@ -766,7 +766,7 @@ long DeleteChunk(int handle, char* chunk)
             lseek(handle, cksize, SEEK_CUR); // seek source to NEXT chunk
 
             MakeDestPath(PLAYTEMP_FILE);
-            if ((dhandle = open(tempPath.c_str(), O_CREAT | O_RDWR | O_BINARY, S_IREAD | S_IWRITE)) == -1)
+            if ((dhandle = open(g_tempPath.c_str(), O_CREAT | O_RDWR | O_BINARY, S_IREAD | S_IWRITE)) == -1)
                 MAIN_ERROR(SAVELEVEL_DISKERR);
 
             lseek(dhandle, offset, SEEK_SET);      // seek dest to THIS chunk
@@ -881,7 +881,7 @@ bool LoadTheGame(int handle)
     // Copy all remaining chunks to PLAYTEMP file
     //
     MakeDestPath(PLAYTEMP_FILE);
-    if ((shandle = open(tempPath.c_str(), O_CREAT | O_RDWR | O_TRUNC | O_BINARY, S_IREAD | S_IWRITE)) == -1)
+    if ((shandle = open(g_tempPath.c_str(), O_CREAT | O_RDWR | O_TRUNC | O_BINARY, S_IREAD | S_IWRITE)) == -1)
         goto cleanup;
 
     while (cksize = NextChunk(handle))
@@ -978,10 +978,10 @@ bool SaveTheGame(int handle, char* description)
     // Append PLAYTEMP file to savegame file
     //
     MakeDestPath(PLAYTEMP_FILE);
-    if (findfirst(tempPath.c_str(), &finfo, 0))
+    if (findfirst(g_tempPath.c_str(), &finfo, 0))
         goto cleanup;
 
-    if ((shandle = open(tempPath.c_str(), O_RDONLY | O_BINARY)) == -1)
+    if ((shandle = open(g_tempPath.c_str(), O_RDONLY | O_BINARY)) == -1)
         goto cleanup;
 
     IO_CopyHandle(shandle, handle, -1);
@@ -1022,7 +1022,7 @@ bool LevelInPlaytemp(char levelnum)
     // Open PLAYTEMP file
     //
     MakeDestPath(PLAYTEMP_FILE);
-    handle = open(tempPath.c_str(), O_RDONLY | O_BINARY);
+    handle = open(g_tempPath.c_str(), O_RDONLY | O_BINARY);
 
     // See if level exists in PLAYTEMP file...
     //
@@ -1449,7 +1449,7 @@ void Quit(char* error, ...)
     va_start(ap, error);
 
     MakeDestPath(PLAYTEMP_FILE);
-    remove(tempPath.c_str());
+    remove(g_tempPath.c_str());
     ClearMemory();
 
     if (!*error)
@@ -1503,7 +1503,7 @@ void Quit(char* error, ...)
         gotoxy(1, 8);
 
         MakeDestPath("BS_VSI.ERR");
-        fp = fopen(tempPath.c_str(), "wb");
+        fp = fopen(g_tempPath.c_str(), "wb");
         fprintf(fp, "$%02x%02x", unit, err);
         if (fp)
             fclose(fp);
@@ -1779,11 +1779,11 @@ int main(int argc, char* argv[])
 #if 0
 #if IN_DEVELOPMENT
     MakeDestPath(ERROR_LOG);
-    remove(tempPath.c_str());
+    remove(g_tempPath.c_str());
 #endif
 
     MakeDestPath(PLAYTEMP_FILE);
-    remove(tempPath.c_str());
+    remove(g_tempPath.c_str());
 
     freed_main(argc, argv);
 
@@ -1854,21 +1854,21 @@ void InitDestPath()
             exit(0);
         }
 
-        _fstrcpy(destPath, ptr);
-        if (destPath[len - 1] == '\\')
-            destPath[len - 1] = 0;
+        _fstrcpy(g_destPath, ptr);
+        if (g_destPath[len - 1] == '\\')
+            g_destPath[len - 1] = 0;
 
-        if (findfirst(destPath, &ffblk, FA_DIREC) == -1)
+        if (findfirst(g_destPath, &ffblk, FA_DIREC) == -1)
         {
             printf("\nAPOGEECD directory not found.\n");
             exit(0);
         }
 
-        _fstrcat(destPath, "\\");
+        _fstrcat(g_destPath, "\\");
 #endif
     }
     else
-        destPath = "";
+        g_destPath = "";
 }
 
 //-------------------------------------------------------------------------
@@ -1876,8 +1876,8 @@ void InitDestPath()
 //-------------------------------------------------------------------------
 void MakeDestPath(const char* file)
 {
-    destPath = tempPath;
-    tempPath = tempPath + file;
+    g_destPath = g_tempPath;
+    g_tempPath = g_tempPath + file;
 }
 
 #if IN_DEVELOPMENT

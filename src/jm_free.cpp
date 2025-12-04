@@ -1297,7 +1297,7 @@ void ReadConfig(void)
     unsigned flags        = gamestate.flags;
     MakeDestPath(configname);
 
-    if ((file = open(tempPath.c_str(), O_BINARY | O_RDONLY)) != -1)
+    if ((file = open(g_tempPath.c_str(), O_BINARY | O_RDONLY)) != -1)
     {
         //
         // valid config file
@@ -1920,7 +1920,7 @@ unsigned scan_atoi(char* s)
 }
 
 extern char* MainStrs[];
-extern short starting_episode, starting_level, starting_difficulty;
+extern short g_starting_episode, g_starting_level, g_starting_difficulty;
 
 //-------------------------------------------------------------------------
 // freed_main()
@@ -1951,12 +1951,12 @@ void freed_main(int argc, char* argv[])
 
         case 2: // starting level
             gamestate.flags |= GS_STARTLEVEL;
-            starting_level = scan_atoi(argv[i]);
+            g_starting_level = scan_atoi(argv[i]);
             break;
 
         case 3:
             gamestate.flags |= GS_STARTLEVEL;
-            starting_episode = scan_atoi(argv[i]) - 1;
+            g_starting_episode = scan_atoi(argv[i]) - 1;
             break;
 
         case 4:
@@ -1996,7 +1996,7 @@ void freed_main(int argc, char* argv[])
 
         case 11:
             gamestate.flags |= GS_STARTLEVEL;
-            starting_difficulty = scan_atoi(argv[i]) - 1;
+            g_starting_difficulty = scan_atoi(argv[i]) - 1;
             break;
 
         case 10:

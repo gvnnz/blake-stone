@@ -3048,7 +3048,7 @@ short InputFloor(void)
             VWB_DrawMPic(teleX[lastTpNum], teleY[lastTpNum], TELEPORT1OFFPIC + lastTpNum);
             VWB_DrawMPic(teleX[tpNum], teleY[tpNum], TELEPORT1ONPIC + tpNum);
 
-            LoadOverheadChunk(tpNum, tempPath.c_str());
+            LoadOverheadChunk(tpNum, g_tempPath.c_str());
             ShowOverheadChunk();
             if (ov_noImage)
             {

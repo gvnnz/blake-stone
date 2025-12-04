@@ -3201,13 +3201,13 @@ typedef struct
                       "ERROR: Insufficient disk space.\n" \
                       "Try deleting some files from your hard disk.\n\n"
 
-extern std::string tempPath;
+extern std::string g_tempPath;
 
 extern const float radtoint; // = (float)FINEANGLES/2/PI;
 
 extern levelinfo default_level[MAPS_PER_EPISODE];
 extern short     view_xl, view_xh, view_yl, view_yh;
-extern short     starting_level, debug_value, starting_episode, starting_difficulty;
+extern short     g_starting_level, debug_value, g_starting_episode, g_starting_difficulty;
 
 extern bool MS_CheckParm(char* string);
 
