@@ -2006,6 +2006,9 @@ void freed_main(int argc, char* argv[])
         case 12:
             gamestate.flags |= GS_SHOW_OVERHEAD;
             break;
+
+        default:
+            break;
         }
 
 #if BETA_TEST
