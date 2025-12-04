@@ -8,14 +8,14 @@
 
 #pragma hdrstop
 
-extern extern void CA_CacheScreen(int chunk);
-extern void        DrawHighScores();
-extern void        ClearMemory();
-extern void        DrawTopInfo(sp_type type);
-extern void        PreloadUpdate(unsigned current, unsigned total);
-extern void        ShowViewSize(int width);
-extern void        INL_GetJoyDelta(word joy, int* dx, int* dy);
-extern bool        SD_PlaySound(soundnames sound);
+extern void CA_CacheScreen(int chunk);
+extern void DrawHighScores();
+extern void ClearMemory();
+extern void DrawTopInfo(sp_type type);
+extern void PreloadUpdate(unsigned current, unsigned total);
+extern void ShowViewSize(int width);
+extern void INL_GetJoyDelta(word joy, int* dx, int* dy);
+extern bool SD_PlaySound(soundnames sound);
 
 // As is, this switch will not work ... the data associated with this
 // is not saved out correctly.
