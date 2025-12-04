@@ -1774,9 +1774,7 @@ short debug_value = 0;
 
 int main(int argc, char* argv[])
 {
-    assert(false);
-    return 0;
-#if 0
+
 #if IN_DEVELOPMENT
     MakeDestPath(ERROR_LOG);
     remove(g_tempPath.c_str());
@@ -1794,8 +1792,7 @@ int main(int argc, char* argv[])
 
     DemoLoop();
 
-    Quit(NULL);
-#endif
+    Quit(nullptr);
 }
 
 #if FREE_FUNCTIONS
